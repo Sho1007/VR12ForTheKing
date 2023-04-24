@@ -4,7 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "HexTile.h"
 #include "HexGridManager.generated.h"
+
+USTRUCT(BlueprintType)
+struct FTileRow
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AHexTile*> TileRowArray;
+};
 
 UCLASS()
 class HEXGRIDPLUGIN_API AHexGridManager : public AActor
@@ -22,5 +32,23 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	int32 Height = 20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	int32 Width = 20;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float XOffset = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float XStartOffset = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float YOffset = 0.0f;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AHexTile> HexTileClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	TArray<FTileRow> HexGrid;
 };
