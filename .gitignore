@@ -3,6 +3,7 @@
 
 ###VR12ForTheKing###
 Content/Resources/*
+Config/DefaultEngine.ini
 
 ### UnrealEngine ###
 # Visual Studio 2015 user specific files
