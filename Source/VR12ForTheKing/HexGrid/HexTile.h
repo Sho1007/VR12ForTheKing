@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "HexTile.generated.h"
 
+class UStaticMeshComponent;
 UCLASS()
 class VR12FORTHEKING_API AHexTile : public AActor
 {
@@ -23,4 +24,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMeshComponent* StaticMeshComponent;
 };

@@ -3,19 +3,22 @@
 
 #include "../HexGrid/HexTile.h"
 
+#include "Components/StaticMeshComponent.h"
+
 // Sets default values
 AHexTile::AHexTile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponet"));
+	SetRootComponent(StaticMeshComponent);
 }
 
 // Called when the game starts or when spawned
 void AHexTile::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
