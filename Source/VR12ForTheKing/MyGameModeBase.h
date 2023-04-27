@@ -7,6 +7,8 @@
 #include "MyGameModeBase.generated.h"
 
 class AHexGridManager;
+class AHexTile;
+class AMyCharacter;
 /**
  * 
  */
@@ -17,9 +19,31 @@ class VR12FORTHEKING_API AMyGameModeBase : public AGameModeBase
 	
 public:
 	virtual void BeginPlay() override;
+
+public:
+	void SetStartTile(AHexTile* NewStartTile);
+	void SetEndTile(AHexTile* NewEndTile);
+
+private:
+	void FindPath();
+
+	void CreateHexGrid();
+	void CreatePlayer();
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AHexGridManager> HexGridManagerClass;
-	
 	AHexGridManager* HexGridManager;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AHexTile> HexTileClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AMyCharacter> CharacterClass;
+	TArray<AMyCharacter*> CharacterArray;
+
+
+	AHexTile* StartTile;
+	AHexTile* EndTile;
+
+	int CurrentCharacterIndex = 0;
 };

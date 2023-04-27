@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "HexTile.generated.h"
 
+class UTextRenderComponent;
 class UStaticMeshComponent;
 UCLASS()
 class VR12FORTHEKING_API AHexTile : public AActor
@@ -16,6 +17,8 @@ public:
 	// Sets default values for this actor's properties
 	AHexTile();
 
+public:
+	void SetPos(FIntPoint NewPos);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -24,7 +27,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void ClickTile();
+	void UnClickTile();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* StaticMeshComponent;
+	UPROPERTY(EditDefaultsOnly)
+	UTextRenderComponent* TextRenderComponent;
+
+	FIntPoint Pos;
 };

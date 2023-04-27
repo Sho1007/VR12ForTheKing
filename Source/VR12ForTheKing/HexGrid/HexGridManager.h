@@ -26,7 +26,7 @@ public:
 	// Sets default values for this actor's properties
 	AHexGridManager();
 
-	//void Initialize(int32 NewWidth, int32 NewHeight, float NewXOffset, float NewXStartOffset, float NewYOffset);
+	void InitGirdInfo(TSubclassOf<AHexTile> NewHexTileClass, int32 NewWidth, int32 NewHeight, float NewXOffset, float NewXStartOffset, float NewYOffset);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,7 +35,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
+public:
 	void CreateGrid();
 
 private:

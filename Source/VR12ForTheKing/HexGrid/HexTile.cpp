@@ -4,6 +4,7 @@
 #include "../HexGrid/HexTile.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Components/TextRenderComponent.h"
 
 // Sets default values
 AHexTile::AHexTile()
@@ -13,6 +14,15 @@ AHexTile::AHexTile()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponet"));
 	SetRootComponent(StaticMeshComponent);
+
+	TextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRednerComponent"));
+	TextRenderComponent->SetupAttachment(RootComponent);
+}
+
+void AHexTile::SetPos(FIntPoint NewPos)
+{
+	Pos = NewPos;
+	TextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%d, %d"), Pos.Y, Pos.X)));
 }
 
 // Called when the game starts or when spawned
@@ -25,6 +35,15 @@ void AHexTile::BeginPlay()
 void AHexTile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+void AHexTile::ClickTile()
+{
+	StaticMeshComponent->SetRenderCustomDepth(true);
+}
+
+void AHexTile::UnClickTile()
+{
+	StaticMeshComponent->SetRenderCustomDepth(false);
 }
 

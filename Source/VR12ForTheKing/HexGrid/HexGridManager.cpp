@@ -12,11 +12,23 @@ AHexGridManager::AHexGridManager()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AHexGridManager::InitGirdInfo(TSubclassOf<AHexTile> NewHexTileClass, int32 NewWidth, int32 NewHeight, float NewXOffset, float NewXStartOffset, float NewYOffset)
+{
+	HexTileClass = NewHexTileClass;
+
+	Width = NewWidth;
+	Height = NewHeight;
+	XOffset = NewXOffset;
+	XStartOffset = NewXStartOffset;
+	YOffset = NewYOffset;
+
+	CreateGrid();
+}
+
 // Called when the game starts or when spawned
 void AHexGridManager::BeginPlay()
 {
 	Super::BeginPlay();
-	CreateGrid();
 }
 
 // Called every frame
@@ -37,10 +49,10 @@ void AHexGridManager::CreateGrid()
 		for (int j = 0; j < Width; ++j)
 		{
 			AHexTile* HexTile = GetWorld()->SpawnActor<AHexTile>(HexTileClass, SpawnLocation, SpawnRotation);
+			HexTile->SetPos(FIntPoint(j, i));
 			HexGrid[i].TileArray.Add(HexTile);
-			SpawnLocation.X += XOffset;
+			SpawnLocation.X -= XOffset;
 		}
 		SpawnLocation.Y += YOffset;
 	}
 }
-

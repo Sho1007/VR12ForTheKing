@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "MyCharacter.generated.h"
 
+class UCapsuleComponent;
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -26,8 +27,10 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 private:
 	// Component
-	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
 	USkeletalMeshComponent* SkeletalMeshComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
+	UCapsuleComponent* CapsuleComponent;
 
 	// Status
 	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
