@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 class AMyGameModeBase;
+class AHexTile;
 /**
  * 
  */
@@ -19,7 +20,11 @@ class VR12FORTHEKING_API AMyPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+	AMyPlayerController();
+
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 private:
 	void LeftClickPressed();
 protected:
@@ -29,6 +34,8 @@ protected:
 	UInputAction* IA_LeftClick;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float LineTraceDistance = 300.0f;
+
+	AHexTile* SelectTile;
 
 private:
 	AMyGameModeBase* GameMode;

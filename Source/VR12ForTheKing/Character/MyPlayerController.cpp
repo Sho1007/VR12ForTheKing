@@ -10,6 +10,11 @@
 #include "../MyGameModeBase.h"
 #include "../HexGrid/HexTile.h"
 
+AMyPlayerController::AMyPlayerController()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -26,14 +31,54 @@ void AMyPlayerController::BeginPlay()
 	{
 		SubSystem->AddMappingContext(IMC_Default, 0);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("SubSystem or IMC is not valid!"));
+	}
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInputComponent->IsValidLowLevelFast())
+	if (EnhancedInputComponent)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *EnhancedInputComponent->GetName());
 		if (IA_LeftClick)
 		{
 			EnhancedInputComponent->BindAction(IA_LeftClick, ETriggerEvent::Started, this, &AMyPlayerController::LeftClickPressed);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("IA_LeftClick is not valid!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("EnhancedInputComponent is not valid!"));
+	}
+}
+
+void AMyPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (SelectTile)
+	{
+		FVector WorldLocation, WorldDirection;
+
+		if (DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+		{
+			FVector EndPoint = WorldLocation + (WorldDirection * LineTraceDistance);
+			FHitResult HitResult;
+			FCollisionObjectQueryParams ObjectQueryParams;
+			ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+
+			//DrawDebugLine(GetWorld(), WorldLocation, EndPoint, FColor::Green, true, 300.0f);
+
+			if (GetWorld()->LineTraceSingleByObjectType(HitResult, WorldLocation, EndPoint, ObjectQueryParams))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
+				if (AHexTile* HexTile = Cast<AHexTile>(HitResult.GetActor()))
+				{
+					GameMode->SetEndTile(HexTile);
+				}
+			}
 		}
 	}
 }
@@ -56,10 +101,16 @@ void AMyPlayerController::LeftClickPressed()
 
 		if (GetWorld()->LineTraceSingleByObjectType(HitResult, WorldLocation, EndPoint, ObjectQueryParams))
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
 			if (AHexTile* HexTile = Cast<AHexTile>(HitResult.GetActor()))
 			{
-
+				if (SelectTile)
+				{
+					SelectTile->UnClickTile();
+				}
+				SelectTile = HexTile;
+				SelectTile->ClickTile();
+				GameMode->SetStartTile(SelectTile);
 			}
 		}
 	}
