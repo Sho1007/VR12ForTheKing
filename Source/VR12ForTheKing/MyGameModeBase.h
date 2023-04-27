@@ -25,8 +25,6 @@ public:
 	void SetEndTile(AHexTile* NewEndTile);
 
 private:
-	void FindPath();
-
 	void CreateHexGrid();
 	void CreatePlayer();
 private:
@@ -40,10 +38,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AMyCharacter> CharacterClass;
 	TArray<AMyCharacter*> CharacterArray;
-
-
-	AHexTile* StartTile;
-	AHexTile* EndTile;
 
 	int CurrentCharacterIndex = 0;
 };

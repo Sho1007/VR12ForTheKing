@@ -25,18 +25,12 @@ void AMyGameModeBase::BeginPlay()
 
 void AMyGameModeBase::SetStartTile(AHexTile* NewStartTile)
 {
-	StartTile = NewStartTile;
+	HexGridManager->SetStartTile(NewStartTile);
 }
 
 void AMyGameModeBase::SetEndTile(AHexTile* NewEndTile)
 {
-	EndTile = NewEndTile;
-	FindPath();
-}
-
-void AMyGameModeBase::FindPath()
-{
-	
+	HexGridManager->SetEndTile(NewEndTile);
 }
 
 void AMyGameModeBase::CreateHexGrid()

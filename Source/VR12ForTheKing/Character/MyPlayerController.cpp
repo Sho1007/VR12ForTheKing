@@ -73,7 +73,7 @@ void AMyPlayerController::Tick(float DeltaTime)
 
 			if (GetWorld()->LineTraceSingleByObjectType(HitResult, WorldLocation, EndPoint, ObjectQueryParams))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
 				if (AHexTile* HexTile = Cast<AHexTile>(HitResult.GetActor()))
 				{
 					GameMode->SetEndTile(HexTile);
