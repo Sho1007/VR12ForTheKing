@@ -9,14 +9,32 @@
 class AHexTile;
 
 
+
 USTRUCT(BlueprintType)
 struct FTileRow
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<AHexTile*> TileArray;
 };
+
+USTRUCT(BlueprintType)
+struct FTileNode
+{
+	GENERATED_BODY()
+	
+	FTileNode() {}
+	FTileNode(AHexTile* NewTile, float NewG, float NewH)
+		: Tile(NewTile), G(NewG), H(NewH)
+	{
+	}
+
+	AHexTile* Tile;
+	float G;
+	float H;
+};
+
 UCLASS()
 class VR12FORTHEKING_API AHexGridManager : public AActor
 {
@@ -38,11 +56,20 @@ public:
 public:
 	void CreateGrid();
 
+public:
+	// A* Algorithm Function
+	void SetStartTile(AHexTile* NewStartTile);
+	void SetEndTile(AHexTile* NewEndTile);
+private:
+	void FindPath(TArray<AHexTile*>& OutArray);
+	void GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray);
+	int GetIndex(FIntPoint Pos);
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AHexTile> HexTileClass;
 
 	TArray<FTileRow> HexGrid;
+	TArray<AHexTile*> Path;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	int32 Width;
@@ -55,4 +82,12 @@ private:
 	float XStartOffset;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float YOffset;
+
+private:
+	// A* Algorithm
+	AHexTile* StartTile;
+	AHexTile* EndTile;
+
+	TArray<FTileNode> OpenArray;
+	TArray<FTileNode> CloseArray;
 };

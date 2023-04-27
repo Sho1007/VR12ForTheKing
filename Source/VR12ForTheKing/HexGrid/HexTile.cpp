@@ -19,6 +19,11 @@ AHexTile::AHexTile()
 	TextRenderComponent->SetupAttachment(RootComponent);
 }
 
+void AHexTile::SetParentTile(AHexTile* NewParentTile)
+{
+	ParentTile = NewParentTile;
+}
+
 void AHexTile::SetPos(FIntPoint NewPos)
 {
 	Pos = NewPos;
@@ -35,6 +40,16 @@ void AHexTile::BeginPlay()
 void AHexTile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AHexTile::SetIsPath(bool bNewIsPath, int NewDistance)
+{
+	TextRenderComponent->SetVisibility(bNewIsPath);
+	StaticMeshComponent->SetRenderCustomDepth(bNewIsPath);
+	if (bNewIsPath)
+	{
+		TextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%d"), NewDistance)));
+	}
 }
 
 void AHexTile::ClickTile()

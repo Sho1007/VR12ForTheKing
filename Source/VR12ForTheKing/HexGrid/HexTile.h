@@ -18,7 +18,10 @@ public:
 	AHexTile();
 
 public:
+	void SetParentTile(AHexTile* NewParentTile);
+	AHexTile* GetParentTile() { return ParentTile; }
 	void SetPos(FIntPoint NewPos);
+	const FIntPoint& GetPos() { return Pos; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -26,6 +29,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void SetIsPath(bool bNewIsPath, int NewDistance = 0);
 
 	void ClickTile();
 	void UnClickTile();
@@ -37,4 +42,6 @@ protected:
 	UTextRenderComponent* TextRenderComponent;
 
 	FIntPoint Pos;
+	// A*
+	AHexTile* ParentTile;
 };

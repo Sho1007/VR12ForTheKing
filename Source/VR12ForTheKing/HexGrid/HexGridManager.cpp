@@ -8,7 +8,7 @@
 // Sets default values
 AHexGridManager::AHexGridManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -40,19 +40,183 @@ void AHexGridManager::Tick(float DeltaTime)
 
 void AHexGridManager::CreateGrid()
 {
+	// ! Warning : X, Y is Y, X in Unreal Coordinate
 	FVector SpawnLocation;
 	FRotator SpawnRotation(0, 0, 0);
 	for (int i = 0; i < Height; ++i)
 	{
-		SpawnLocation.X = i % 2 == 0 ? 0 : XStartOffset;
+		SpawnLocation.Y = i % 2 == 0 ? 0 : -XStartOffset;
 		HexGrid.Add(FTileRow());
 		for (int j = 0; j < Width; ++j)
 		{
 			AHexTile* HexTile = GetWorld()->SpawnActor<AHexTile>(HexTileClass, SpawnLocation, SpawnRotation);
 			HexTile->SetPos(FIntPoint(j, i));
 			HexGrid[i].TileArray.Add(HexTile);
-			SpawnLocation.X -= XOffset;
+			SpawnLocation.Y -= XOffset;
 		}
-		SpawnLocation.Y += YOffset;
+		SpawnLocation.X += YOffset;
 	}
+}
+
+void AHexGridManager::SetStartTile(AHexTile* NewStartTile)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("SetStartTile Called"));
+	StartTile = NewStartTile;
+}
+
+void AHexGridManager::SetEndTile(AHexTile* NewEndTile)
+{
+	if (StartTile == NewEndTile || EndTile == NewEndTile || !NewEndTile) return;
+	//UE_LOG(LogTemp, Warning, TEXT("SetEndTile Called"));
+
+	if (EndTile)
+	{
+		EndTile->UnClickTile();
+	}
+	EndTile = NewEndTile;
+	EndTile->ClickTile();
+
+	for (int i = 0; i < Path.Num(); ++i)
+	{
+		Path[i]->SetIsPath(false);
+	}
+	TArray<AHexTile*> NewPath;
+	FindPath(NewPath);
+	Path = NewPath;
+
+	for (int i = 0; i < Path.Num(); ++i)
+	{
+		Path[i]->SetIsPath(true, Path.Num() - i - 1);
+	}
+}
+
+void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("PathFind--------------------------------------")));
+	TArray<FTileNode> Open;
+	TArray<bool> IsInOpen;
+	TArray<bool> IsInClose;
+	IsInOpen.Init(false, Width * Height);
+	IsInClose.Init(false, Width * Height);
+
+	StartTile->SetParentTile(NULL);
+	EndTile->SetParentTile(NULL);
+
+	GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Start : %d, %d"), StartTile->GetPos().Y, StartTile->GetPos().X));
+	Open.Add(FTileNode(StartTile, 0, FVector::Distance(StartTile->GetActorLocation(), EndTile->GetActorLocation())));
+
+	IsInOpen[GetIndex(StartTile->GetPos())] = true;
+
+	while (!Open.IsEmpty() && !EndTile->GetParentTile())
+	{
+		Open.Sort([](const FTileNode& A, const FTileNode& B)
+			{
+				return (A.G + A.H) < (B.G + B.H);
+			});
+
+		FTileNode Now = Open[0];
+		Open.RemoveAt(0);
+		IsInClose[GetIndex(Now.Tile->GetPos())] = true;
+		GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Now : %d, %d"), Now.Tile->GetPos().Y, Now.Tile->GetPos().X));
+
+		// Get Adj Tiles
+		TArray<AHexTile*> AdjArray;
+		GetAdjTileArray(Now.Tile, AdjArray);
+		for (AHexTile* Iter : AdjArray)
+		{
+			if (Iter == EndTile)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("End : %d, %d"), Iter->GetPos().Y, Iter->GetPos().X));
+				EndTile->SetParentTile(Now.Tile);
+				break;
+			}
+			if (IsInClose[GetIndex(Iter->GetPos())]) continue;
+
+			if (IsInOpen[GetIndex(Iter->GetPos())])
+			{
+				for (FTileNode& TileNode : Open)
+				{
+					if (TileNode.Tile == Iter)
+					{
+						TileNode.G = FMath::Min(TileNode.G, Now.G + 1);
+						break;
+					}
+				}
+			}
+			else
+			{
+				Iter->SetParentTile(Now.Tile);
+				IsInOpen[GetIndex(Iter->GetPos())] = true;
+				Open.Add(FTileNode(Iter, Now.G + 1, FVector::Distance(Iter->GetActorLocation(), EndTile->GetActorLocation())));
+				GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Add : %d, %d"), Iter->GetPos().Y, Iter->GetPos().X));
+			}
+		}
+		GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Adj %d, Open %d"), AdjArray.Num(), Open.Num()));
+	}
+
+	if (EndTile->GetParentTile())
+	{
+		AHexTile* Now = EndTile;
+		while (Now)
+		{
+			OutArray.Add(Now);
+			Now = Now->GetParentTile();
+		}
+	}
+}
+
+void AHexGridManager::GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("GetAdjTileArray Called")));
+	FIntPoint CenterPoint = CenterTile->GetPos();
+
+	if (CenterPoint.Y > 0)
+	{
+		if (CenterPoint.Y % 2 == 0)
+		{
+			if (CenterPoint.X > 0)
+			{
+				OutArray.Add(HexGrid[CenterPoint.Y - 1].TileArray[CenterPoint.X - 1]);
+			}
+		}
+		else
+		{
+			if (CenterPoint.X < Width - 1)
+			{
+				OutArray.Add(HexGrid[CenterPoint.Y - 1].TileArray[CenterPoint.X + 1]);
+			}
+		}
+		OutArray.Add(HexGrid[CenterPoint.Y - 1].TileArray[CenterPoint.X]);
+	}
+	if (CenterPoint.X > 0)
+	{
+		OutArray.Add(HexGrid[CenterPoint.Y].TileArray[CenterPoint.X - 1]);
+	}
+	if (CenterPoint.X < Width - 1)
+	{
+		OutArray.Add(HexGrid[CenterPoint.Y].TileArray[CenterPoint.X + 1]);
+	}
+	if (CenterPoint.Y < Height - 1)
+	{
+		if (CenterPoint.Y % 2 == 0)
+		{
+			if (CenterPoint.X > 0)
+			{
+				OutArray.Add(HexGrid[CenterPoint.Y + 1].TileArray[CenterPoint.X - 1]);
+			}
+		}
+		else
+		{
+			if (CenterPoint.X < Width - 1)
+			{
+				OutArray.Add(HexGrid[CenterPoint.Y + 1].TileArray[CenterPoint.X + 1]);
+			}
+		}
+		OutArray.Add(HexGrid[CenterPoint.Y + 1].TileArray[CenterPoint.X]);
+	}
+}
+
+int AHexGridManager::GetIndex(FIntPoint Pos)
+{
+	return Pos.Y * Width + Pos.X;
 }
