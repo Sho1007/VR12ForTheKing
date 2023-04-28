@@ -10,6 +10,7 @@ class UInputMappingContext;
 class UInputAction;
 class AMyGameModeBase;
 class AHexTile;
+class AMyCharacter;
 /**
  * 
  */
@@ -27,6 +28,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 private:
 	void LeftClickPressed();
+	void CheckEndTile();
+	AHexTile* CheckTile();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputMappingContext* IMC_Default;

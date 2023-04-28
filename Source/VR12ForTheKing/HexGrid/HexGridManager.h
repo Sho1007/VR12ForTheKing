@@ -54,10 +54,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	UFUNCTION(BlueprintCallable, CallInEditor)
 	void CreateGrid();
 
 public:
 	// A* Algorithm Function
+	TArray<AHexTile*> GetPath();
+	AHexTile* GetTile(int X, int Y);
+
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
 private:
@@ -69,7 +73,7 @@ private:
 	TSubclassOf<AHexTile> HexTileClass;
 
 	TArray<FTileRow> HexGrid;
-	TArray<AHexTile*> Path;
+	TArray<AHexTile*> CurrentPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	int32 Width;
@@ -87,7 +91,4 @@ private:
 	// A* Algorithm
 	AHexTile* StartTile;
 	AHexTile* EndTile;
-
-	TArray<FTileNode> OpenArray;
-	TArray<FTileNode> CloseArray;
 };

@@ -4,12 +4,13 @@
 #include "../Character/MyCharacter.h"
 
 #include "Components/CapsuleComponent.h"
+#include "../HexGrid/HexTile.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
 	SetRootComponent(CapsuleComponent);
@@ -22,15 +23,44 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	SetActorTickEnabled(false);
 }
 
 // Called every frame
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("Distance : %f"), FVector::Distance(Destination, GetActorLocation())));
+	if (FVector::Distance(Destination, GetActorLocation()) <= 10)
+	{
+		SetActorTickEnabled(false);
+	}
+	else
+	{
+		FVector Direction = Destination - GetActorLocation();
+		Direction.Normalize();
+		AddActorWorldOffset(Direction * 1000.0f * DeltaTime);
+	}
 }
 
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+}
 
+void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
+{
+	CurrentTile = NewCurrentTile;
+}
+
+void AMyCharacter::SetDestination(FVector NewDestination)
+{
+	
+	Destination = FVector(NewDestination.X, NewDestination.Y, GetActorLocation().Z);
+	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("SetDestination Called : %s"), *Destination.ToString()));
+	SetActorTickEnabled(true);
+}
+
+AHexTile* AMyCharacter::GetCurrentTile()
+{
+	return CurrentTile;
 }

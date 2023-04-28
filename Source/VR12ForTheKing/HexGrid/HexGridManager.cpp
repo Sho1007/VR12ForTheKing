@@ -50,6 +50,8 @@ void AHexGridManager::CreateGrid()
 		for (int j = 0; j < Width; ++j)
 		{
 			AHexTile* HexTile = GetWorld()->SpawnActor<AHexTile>(HexTileClass, SpawnLocation, SpawnRotation);
+			FAttachmentTransformRules AttachRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepWorld, false);
+			HexTile->AttachToActor(this, AttachRules);
 			HexTile->SetPos(FIntPoint(j, i));
 			HexGrid[i].TileArray.Add(HexTile);
 			SpawnLocation.Y -= XOffset;
@@ -58,10 +60,21 @@ void AHexGridManager::CreateGrid()
 	}
 }
 
+TArray<AHexTile*> AHexGridManager::GetPath()
+{
+	return CurrentPath;
+}
+
+AHexTile* AHexGridManager::GetTile(int X, int Y)
+{
+	return HexGrid[Y].TileArray[X];
+}
+
 void AHexGridManager::SetStartTile(AHexTile* NewStartTile)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("SetStartTile Called"));
 	StartTile = NewStartTile;
+	StartTile->ClickTile();
 }
 
 void AHexGridManager::SetEndTile(AHexTile* NewEndTile)
@@ -76,23 +89,28 @@ void AHexGridManager::SetEndTile(AHexTile* NewEndTile)
 	EndTile = NewEndTile;
 	EndTile->ClickTile();
 
-	for (int i = 0; i < Path.Num(); ++i)
-	{
-		Path[i]->SetIsPath(false);
-	}
+	
 	TArray<AHexTile*> NewPath;
 	FindPath(NewPath);
-	Path = NewPath;
-
-	for (int i = 0; i < Path.Num(); ++i)
+	if (NewPath.Num() > 0)
 	{
-		Path[i]->SetIsPath(true, Path.Num() - i - 1);
+		for (int i = 0; i < CurrentPath.Num(); ++i)
+		{
+			CurrentPath[i]->SetIsPath(false);
+		}
+		CurrentPath.Empty();
+	}
+	CurrentPath = NewPath;
+
+	for (int i = 0; i < CurrentPath.Num(); ++i)
+	{
+		CurrentPath[i]->SetIsPath(true, CurrentPath.Num() - i - 1);
 	}
 }
 
 void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("PathFind--------------------------------------")));
+	//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("PathFind--------------------------------------")));
 	TArray<FTileNode> Open;
 	TArray<bool> IsInOpen;
 	TArray<bool> IsInClose;
@@ -102,7 +120,7 @@ void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 	StartTile->SetParentTile(NULL);
 	EndTile->SetParentTile(NULL);
 
-	GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Start : %d, %d"), StartTile->GetPos().Y, StartTile->GetPos().X));
+	//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Start : %d, %d"), StartTile->GetPos().Y, StartTile->GetPos().X));]
 	Open.Add(FTileNode(StartTile, 0, FVector::Distance(StartTile->GetActorLocation(), EndTile->GetActorLocation())));
 
 	IsInOpen[GetIndex(StartTile->GetPos())] = true;
@@ -117,7 +135,7 @@ void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 		FTileNode Now = Open[0];
 		Open.RemoveAt(0);
 		IsInClose[GetIndex(Now.Tile->GetPos())] = true;
-		GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Now : %d, %d"), Now.Tile->GetPos().Y, Now.Tile->GetPos().X));
+		//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Now : %d, %d"), Now.Tile->GetPos().Y, Now.Tile->GetPos().X));
 
 		// Get Adj Tiles
 		TArray<AHexTile*> AdjArray;
@@ -126,7 +144,7 @@ void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 		{
 			if (Iter == EndTile)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("End : %d, %d"), Iter->GetPos().Y, Iter->GetPos().X));
+				//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("End : %d, %d"), Iter->GetPos().Y, Iter->GetPos().X));
 				EndTile->SetParentTile(Now.Tile);
 				break;
 			}
@@ -148,10 +166,10 @@ void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 				Iter->SetParentTile(Now.Tile);
 				IsInOpen[GetIndex(Iter->GetPos())] = true;
 				Open.Add(FTileNode(Iter, Now.G + 1, FVector::Distance(Iter->GetActorLocation(), EndTile->GetActorLocation())));
-				GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Add : %d, %d"), Iter->GetPos().Y, Iter->GetPos().X));
+				//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Add : %d, %d"), Iter->GetPos().Y, Iter->GetPos().X));
 			}
 		}
-		GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Adj %d, Open %d"), AdjArray.Num(), Open.Num()));
+		//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("Adj %d, Open %d"), AdjArray.Num(), Open.Num()));
 	}
 
 	if (EndTile->GetParentTile())
@@ -167,7 +185,7 @@ void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 
 void AHexGridManager::GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("GetAdjTileArray Called")));
+	//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("GetAdjTileArray Called")));
 	FIntPoint CenterPoint = CenterTile->GetPos();
 
 	if (CenterPoint.Y > 0)

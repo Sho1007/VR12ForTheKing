@@ -2,13 +2,16 @@
 
 
 #include "../Character/MyPlayerController.h"
+
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+
 #include "../MyGameModeBase.h"
 #include "../HexGrid/HexTile.h"
+#include "../Character/MyCharacter.h"
 
 AMyPlayerController::AMyPlayerController()
 {
@@ -58,35 +61,31 @@ void AMyPlayerController::BeginPlay()
 void AMyPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (SelectTile)
-	{
-		FVector WorldLocation, WorldDirection;
 
-		if (DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
-		{
-			FVector EndPoint = WorldLocation + (WorldDirection * LineTraceDistance);
-			FHitResult HitResult;
-			FCollisionObjectQueryParams ObjectQueryParams;
-			ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-
-			//DrawDebugLine(GetWorld(), WorldLocation, EndPoint, FColor::Green, true, 300.0f);
-
-			if (GetWorld()->LineTraceSingleByObjectType(HitResult, WorldLocation, EndPoint, ObjectQueryParams))
-			{
-				//UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
-				if (AHexTile* HexTile = Cast<AHexTile>(HitResult.GetActor()))
-				{
-					GameMode->SetEndTile(HexTile);
-				}
-			}
-		}
-	}
+	CheckEndTile();
 }
 
 void AMyPlayerController::LeftClickPressed()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("LeftClickPressed Called"));
+	if (!GameMode->GetIsMoved() && GameMode->GetCurrentPlayer() == this)
+	{
+		GameMode->MoveCharacter();
+	}
+}
 
+void AMyPlayerController::CheckEndTile()
+{
+	if (!GameMode->GetIsMoved() && GameMode->GetCurrentPlayer() == this)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CheckEndTile Called")));
+		AHexTile* HexTile = CheckTile();
+		if (!HexTile) return;
+		GameMode->SetEndTile(HexTile);
+	}
+}
+
+AHexTile* AMyPlayerController::CheckTile()
+{
 	FVector WorldLocation, WorldDirection;
 
 	if (DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
@@ -104,14 +103,10 @@ void AMyPlayerController::LeftClickPressed()
 			UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
 			if (AHexTile* HexTile = Cast<AHexTile>(HitResult.GetActor()))
 			{
-				if (SelectTile)
-				{
-					SelectTile->UnClickTile();
-				}
-				SelectTile = HexTile;
-				SelectTile->ClickTile();
-				GameMode->SetStartTile(SelectTile);
+				return HexTile;
 			}
 		}
 	}
+
+	return NULL;
 }

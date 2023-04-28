@@ -9,6 +9,7 @@
 class AHexGridManager;
 class AHexTile;
 class AMyCharacter;
+class AMyPlayerController;
 /**
  * 
  */
@@ -24,20 +25,30 @@ public:
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
 
+	void MoveCharacter();
+
+	const AMyPlayerController* GetCurrentPlayer() const;
+	const bool GetIsMoved() const;
+
 private:
-	void CreateHexGrid();
 	void CreatePlayer();
+
+	void DoNextTurn();
 private:
+	// Turn Var
+	int CurrentTurn = 0;
+	// Move Var
+	bool bIsMoved;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AHexGridManager> HexGridManagerClass;
 	AHexGridManager* HexGridManager;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<AHexTile> HexTileClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AMyCharacter> CharacterClass;
-	TArray<AMyCharacter*> CharacterArray;
 
-	int CurrentCharacterIndex = 0;
+	TArray<AMyPlayerController*> PlayerControllerArray;
+	TArray<AMyCharacter*> CharacterArray;
+	AMyPlayerController* CurrentPlayer;
+	AMyCharacter* CurrentCharacter;
 };

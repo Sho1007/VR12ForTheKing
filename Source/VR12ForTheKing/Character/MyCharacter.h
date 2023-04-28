@@ -7,6 +7,7 @@
 #include "MyCharacter.generated.h"
 
 class UCapsuleComponent;
+class AHexTile;
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -25,6 +26,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	void SetCurrentTile(AHexTile* NewCurrentTile);
+	void SetDestination(FVector NewDestination);
+	AHexTile* GetCurrentTile();
 private:
 	// Component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
@@ -55,4 +60,8 @@ private:
 	float Talent;
 	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
 	float Vitality;
+
+	// Move Var
+	AHexTile* CurrentTile;
+	FVector Destination;
 };
