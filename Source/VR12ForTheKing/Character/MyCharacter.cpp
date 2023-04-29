@@ -5,6 +5,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "../HexGrid/HexTile.h"
+#include "../MyGameModeBase.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -17,6 +18,11 @@ AMyCharacter::AMyCharacter()
 
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	SkeletalMeshComponent->SetupAttachment(RootComponent);
+}
+
+void AMyCharacter::Init(AMyGameModeBase* NewGameMode)
+{
+	GameMode = NewGameMode;
 }
 
 // Called when the game starts or when spawned

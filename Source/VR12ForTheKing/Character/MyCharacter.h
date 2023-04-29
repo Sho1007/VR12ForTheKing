@@ -8,6 +8,7 @@
 
 class UCapsuleComponent;
 class AHexTile;
+class AMyGameModeBase;
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -17,6 +18,7 @@ public:
 	// Sets default values for this character's properties
 	AMyCharacter();
 
+	void Init(AMyGameModeBase* NewGameMode);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,6 +38,8 @@ private:
 	USkeletalMeshComponent* SkeletalMeshComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
 	UCapsuleComponent* CapsuleComponent;
+
+	AMyGameModeBase* GameMode;
 
 	// Status
 	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
