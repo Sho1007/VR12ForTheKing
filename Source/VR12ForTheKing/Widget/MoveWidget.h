@@ -15,6 +15,6 @@ class VR12FORTHEKING_API UMoveWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateMoveJudge(int32 Index, bool bSuccess);
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdateMoveJudgeAt(int32 Index, bool bSuccess);
 };

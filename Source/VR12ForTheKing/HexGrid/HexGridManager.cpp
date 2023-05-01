@@ -65,6 +65,18 @@ TArray<AHexTile*> AHexGridManager::GetPath()
 	return CurrentPath;
 }
 
+AHexTile* AHexGridManager::GetNextPath()
+{
+	CurrentPathIndex++;
+	UE_LOG(LogTemp, Error, TEXT("CurrentPathIndex : %d"), CurrentPathIndex);
+	if (CurrentPathIndex < CurrentPath.Num())
+	{
+		return CurrentPath[CurrentPathIndex];
+	}
+	
+	return NULL;
+}
+
 AHexTile* AHexGridManager::GetTile(int X, int Y)
 {
 	return HexGrid[Y].TileArray[X];
@@ -72,22 +84,18 @@ AHexTile* AHexGridManager::GetTile(int X, int Y)
 
 void AHexGridManager::SetStartTile(AHexTile* NewStartTile)
 {
+	CurrentPathIndex = -1;
 	//UE_LOG(LogTemp, Warning, TEXT("SetStartTile Called"));
 	StartTile = NewStartTile;
 	StartTile->ClickTile();
 }
 
-void AHexGridManager::SetEndTile(AHexTile* NewEndTile)
+void AHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
 {
 	if (StartTile == NewEndTile || EndTile == NewEndTile || !NewEndTile) return;
 	//UE_LOG(LogTemp, Warning, TEXT("SetEndTile Called"));
 
-	if (EndTile)
-	{
-		EndTile->UnClickTile();
-	}
 	EndTile = NewEndTile;
-	EndTile->ClickTile();
 
 	
 	TArray<AHexTile*> NewPath;
@@ -99,12 +107,15 @@ void AHexGridManager::SetEndTile(AHexTile* NewEndTile)
 			CurrentPath[i]->SetIsPath(false);
 		}
 		CurrentPath.Empty();
-	}
-	CurrentPath = NewPath;
-
-	for (int i = 0; i < CurrentPath.Num(); ++i)
-	{
-		CurrentPath[i]->SetIsPath(true, CurrentPath.Num() - i - 1);
+		int PathEndIndex = MovableCount + 1 < NewPath.Num() ? MovableCount + 1 : NewPath.Num();
+		for (int i = 0; i < PathEndIndex; ++i)
+		{
+			CurrentPath.Add(NewPath[NewPath.Num() - 1 - i]);
+		}
+		for (int i = 0; i < CurrentPath.Num(); ++i)
+		{
+			CurrentPath[i]->SetIsPath(true, i);
+		}
 	}
 }
 

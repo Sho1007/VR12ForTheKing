@@ -60,10 +60,11 @@ public:
 public:
 	// A* Algorithm Function
 	TArray<AHexTile*> GetPath();
+	AHexTile* GetNextPath();
 	AHexTile* GetTile(int X, int Y);
 
 	void SetStartTile(AHexTile* NewStartTile);
-	void SetEndTile(AHexTile* NewEndTile);
+	void SetEndTile(AHexTile* NewEndTile, int32 MovableCount);
 private:
 	void FindPath(TArray<AHexTile*>& OutArray);
 	void GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray);
@@ -91,4 +92,7 @@ private:
 	// A* Algorithm
 	AHexTile* StartTile;
 	AHexTile* EndTile;
+
+	// Move Var
+	int32 CurrentPathIndex;
 };

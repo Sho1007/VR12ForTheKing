@@ -3,6 +3,6 @@
 
 #include "../Widget/MoveWidget.h"
 
-void UMoveWidget::UpdateMoveJudge_Implementation(int32 Index, bool bSuccess)
+void UMoveWidget::UpdateMoveJudgeAt_Implementation(int32 Index, bool bSuccess)
 {
 }

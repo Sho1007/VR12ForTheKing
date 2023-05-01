@@ -25,7 +25,10 @@ public:
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
 
+	void CheckMoveCount();
 	void MoveCharacter();
+
+	void ReachToTile();
 
 	const AMyPlayerController* GetCurrentPlayer() const;
 	const bool GetIsMoved() const;
@@ -38,7 +41,10 @@ private:
 	// Turn Var
 	int CurrentTurn = 0;
 	// Move Var
+	AHexTile* NextTile;
 	bool bIsMoved;
+	int32 CurrentMovableCount;
+	TArray<bool> MoveJudgeArray;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AHexGridManager> HexGridManagerClass;
