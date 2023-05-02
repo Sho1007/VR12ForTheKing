@@ -68,7 +68,7 @@ TArray<AHexTile*> AHexGridManager::GetPath()
 AHexTile* AHexGridManager::GetNextPath()
 {
 	CurrentPathIndex++;
-	UE_LOG(LogTemp, Error, TEXT("CurrentPathIndex : %d"), CurrentPathIndex);
+	//UE_LOG(LogTemp, Error, TEXT("CurrentPathIndex : %d"), CurrentPathIndex);
 	if (CurrentPathIndex < CurrentPath.Num())
 	{
 		return CurrentPath[CurrentPathIndex];
@@ -114,7 +114,7 @@ void AHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
 		}
 		for (int i = 0; i < CurrentPath.Num(); ++i)
 		{
-			CurrentPath[i]->SetIsPath(true, i);
+			CurrentPath[i]->SetIsPath(true, MovableCount - i);
 		}
 	}
 }

@@ -29,6 +29,9 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void BackToBattlePos();
+
 	void SetCurrentTile(AHexTile* NewCurrentTile);
 	void SetDestination(FVector NewDestination);
 	AHexTile* GetCurrentTile();
@@ -66,6 +69,8 @@ private:
 	float Vitality;
 
 	// Move Var
+	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
+	bool bIsMoveMode = true;
 	AHexTile* CurrentTile;
 	FVector Destination;
 

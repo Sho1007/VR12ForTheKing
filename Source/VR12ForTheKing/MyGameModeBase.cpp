@@ -37,6 +37,7 @@ void AMyGameModeBase::BeginPlay()
 
 void AMyGameModeBase::SetStartTile(AHexTile* NewStartTile)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("SetStartTile Called")));
 	HexGridManager->SetStartTile(NewStartTile);
 }
 
@@ -56,40 +57,56 @@ void AMyGameModeBase::CheckMoveCount()
 			CurrentMovableCount++;
 		}
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CurrentMovableCount : %d"), CurrentMovableCount));
 }
 
 void AMyGameModeBase::MoveCharacter()
 {
 	bIsMoved = true;
-	GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Yellow, FString::Printf(TEXT("MoveCharacter Called")));
+	//GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Yellow, FString::Printf(TEXT("MoveCharacter Called")));
 	NextTile = HexGridManager->GetNextPath();
 	if (NextTile)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NextTile : %s"), *NextTile->GetPos().ToString());
+		//UE_LOG(LogTemp, Error, TEXT("NextTile : %s"), *NextTile->GetPos().ToString());
 		CurrentCharacter->SetDestination(NextTile->GetActorLocation());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("NextTile is NULL"));
+		//UE_LOG(LogTemp, Error, TEXT("NextTile is NULL"));
 		// NextTile == NULL 목적지에 도착함
-		DoNextTurn();
+		if (CurrentMovableCount)
+		{
+			SetStartTile(CurrentCharacter->GetCurrentTile());
+			bIsMoved = false;
+		}
+		else
+		{
+			EndTurn();
+		}
 	}
 	
 }
 
 void AMyGameModeBase::ReachToTile()
 {
-	UE_LOG(LogTemp, Error, TEXT("ReachToTile is Called"));
+	//UE_LOG(LogTemp, Error, TEXT("ReachToTile is Called"));
+
+	if (CurrentCharacter->GetCurrentTile() != NextTile)
+	{
+		CurrentMovableCount--;
+	}
+	
+	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("CurrentMovalbeCount : %d"), CurrentMovableCount));
 
 	if (NextTile)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NextTile : %s"), *NextTile->GetPos().ToString());
+		//UE_LOG(LogTemp, Error, TEXT("NextTile : %s"), *NextTile->GetPos().ToString());
 		NextTile->SetIsPath(false);
 		CurrentCharacter->SetCurrentTile(NextTile);
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("NextTile is NULL")));
+		//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("NextTile is NULL")));
 	}
 	
 	// Todo : Random Encounter
@@ -118,7 +135,7 @@ void AMyGameModeBase::CreatePlayer()
 			MyCharacter->Init(this);
 			MyCharacter->SetCurrentTile(HexGridManager->GetTile(0,0));
 			CharacterArray.Add(MyCharacter);
-			GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CharacterArray Num : %d"), CharacterArray.Num()));
+			//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CharacterArray Num : %d"), CharacterArray.Num()));
 		}
 	}
 	else
@@ -132,18 +149,26 @@ void AMyGameModeBase::CreatePlayer()
 	}
 }
 
+void AMyGameModeBase::EndTurn()
+{
+	//Todo: Heal as much as Remain Movable Count;
+	//CurrentCharacter->HealHP(CurrentMovableCount);
+	DoNextTurn();
+}
+
 void AMyGameModeBase::DoNextTurn()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("DoNextTurn Called")));
 	if (CharacterArray.Num())
 	{
 		bIsMoved = false;
 		CurrentTurn++;
 		CurrentCharacter = CharacterArray[(CurrentTurn - 1) % CharacterArray.Num()];
 		CurrentPlayer = PlayerControllerArray[(CurrentTurn - 1) % PlayerControllerArray.Num()];
-		UE_LOG(LogTemp, Warning, TEXT("CurrentCharacter : %s , CurrentPlayerController : %s"), *CurrentCharacter->GetName(), *CurrentPlayer->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("CurrentCharacter : %s , CurrentPlayerController : %s"), *CurrentCharacter->GetName(), *CurrentPlayer->GetName());
 		// 카메라 이동
 		// // 시작 바닥 설정
-		HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
+		SetStartTile(CurrentCharacter->GetCurrentTile());
 		// 이동 확률 체크
 		CheckMoveCount();
 		// 이동 -> 이동은 Widget Animation 끝나고

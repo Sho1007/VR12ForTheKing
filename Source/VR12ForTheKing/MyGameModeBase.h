@@ -36,6 +36,7 @@ public:
 private:
 	void CreatePlayer();
 
+	void EndTurn();
 	void DoNextTurn();
 private:
 	// Turn Var

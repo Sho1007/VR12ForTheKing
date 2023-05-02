@@ -40,11 +40,17 @@ void AMyCharacter::Tick(float DeltaTime)
 	if (FVector::Distance(Destination, GetActorLocation()) <= 10)
 	{
 		SetActorTickEnabled(false);
-		if (GameMode)
+		if (bIsMoveMode)
 		{
-			GameMode->ReachToTile();
+			if (GameMode)
+			{
+				GameMode->ReachToTile();
+			}
 		}
-		
+		else
+		{
+			BackToBattlePos();
+		}
 	}
 	else
 	{
@@ -58,6 +64,10 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 }
 
+void AMyCharacter::BackToBattlePos_Implementation()
+{
+}
+
 void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
 {
 	CurrentTile = NewCurrentTile;
@@ -67,7 +77,7 @@ void AMyCharacter::SetDestination(FVector NewDestination)
 {
 	
 	Destination = FVector(NewDestination.X, NewDestination.Y, GetActorLocation().Z);
-	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("SetDestination Called : %s"), *Destination.ToString()));
+	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("SetDestination Called : %s"), *Destination.ToString()));
 	SetActorTickEnabled(true);
 }
 
