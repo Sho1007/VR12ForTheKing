@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FinishUpdateMoveWidget();
 
+	UFUNCTION(BlueprintCallable)
+	void CreateMoveWidget();
+
 private:
 	void CreatePlayer();
 

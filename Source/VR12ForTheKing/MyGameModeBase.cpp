@@ -30,6 +30,8 @@ void AMyGameModeBase::BeginPlay()
 		CreatePlayer();
 	}
 
+	CreateMoveWidget();
+
 	MoveJudgeArray.Init(true, 5);
 	NextTile = NULL;
 
@@ -129,6 +131,19 @@ void AMyGameModeBase::FinishUpdateMoveWidget()
 	bIsMoved = false;
 }
 
+void AMyGameModeBase::CreateMoveWidget()
+{
+	if (MoveWidgetClass)
+	{
+		MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
+		MoveWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidgetClass is not valid"));
+	}
+}
+
 void AMyGameModeBase::CreatePlayer()
 {
 	if (CharacterClass)
@@ -152,16 +167,6 @@ void AMyGameModeBase::CreatePlayer()
 	for (int i = 0; i < PlayerNum; ++i)
 	{
 		PlayerControllerArray.Add(Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, i)));
-	}
-
-	if (MoveWidgetClass)
-	{
-		MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
-		MoveWidget->AddToViewport();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidgetClass is not valid"));
 	}
 }
 
