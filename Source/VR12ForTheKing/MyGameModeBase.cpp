@@ -21,7 +21,14 @@ void AMyGameModeBase::BeginPlay()
 	UGameplayStatics::GetAllActorsOfClass(this, HexGridManagerClass, OutActors);
 	if (OutActors.Num() > 0)
 	{
-		HexGridManager = CastChecked<AHexGridManager>(OutActors[0]);
+		for (int i = 0; i < OutActors.Num(); ++i)
+		{
+			HexGridManager = CastChecked<AHexGridManager>(OutActors[i]);
+			if (HexGridManager)
+			{
+				break;
+			}
+		}
 	}
 
 	if (HexGridManager)
