@@ -54,6 +54,7 @@ private:
 	// MoveWidget Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UMoveWidget> MoveWidgetClass;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UMoveWidget* MoveWidget;
 
 	// HexGridManager Var
@@ -62,7 +63,7 @@ private:
 	AHexGridManager* HexGridManager;
 
 	// Character Var
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AMyCharacter> CharacterClass;
 
 
