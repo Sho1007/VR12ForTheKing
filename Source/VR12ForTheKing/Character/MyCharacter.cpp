@@ -37,20 +37,9 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("Distance : %f"), FVector::Distance(Destination, GetActorLocation())));
-	if (FVector::Distance(Destination, GetActorLocation()) <= 10)
+	if (FVector::Distance(Destination, GetActorLocation()) <= ReachSuccessRadius)
 	{
-		SetActorTickEnabled(false);
-		if (bIsMoveMode)
-		{
-			if (GameMode)
-			{
-				GameMode->ReachToTile();
-			}
-		}
-		else
-		{
-			BackToBattlePos();
-		}
+		ReachToDestination();
 	}
 	else
 	{
@@ -63,9 +52,14 @@ void AMyCharacter::Tick(float DeltaTime)
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 }
-
-void AMyCharacter::BackToBattlePos_Implementation()
+void AMyCharacter::ReachToDestination_Implementation()
 {
+	SetActorTickEnabled(false);
+	if (bIsMoveMode)
+	{
+		GameMode->ReachToTile();
+		return;
+	}
 }
 
 void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
@@ -73,9 +67,16 @@ void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
 	CurrentTile = NewCurrentTile;
 }
 
-void AMyCharacter::SetDestination(FVector NewDestination)
+void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float NewRadius)
 {
-	
+	if (NewSpeed)
+	{
+		MoveSpeed = NewSpeed;
+	}
+	if (NewRadius != ReachSuccessRadius)
+	{
+		ReachSuccessRadius = NewRadius;
+	}
 	Destination = FVector(NewDestination.X, NewDestination.Y, GetActorLocation().Z);
 	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("SetDestination Called : %s"), *Destination.ToString()));
 	SetActorTickEnabled(true);

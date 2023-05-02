@@ -30,10 +30,12 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintNativeEvent)
-	void BackToBattlePos();
+	void ReachToDestination();
 
 	void SetCurrentTile(AHexTile* NewCurrentTile);
-	void SetDestination(FVector NewDestination);
+
+	UFUNCTION(BlueprintCallable)
+	void SetDestination(FVector NewDestination, float NewSpeed = 0.0f, float NewRadius = 10.0f);
 	AHexTile* GetCurrentTile();
 private:
 	// Component
@@ -71,6 +73,7 @@ private:
 	// Move Var
 	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
 	bool bIsMoveMode = true;
+	float ReachSuccessRadius = 10.0f;
 	AHexTile* CurrentTile;
 	FVector Destination;
 
