@@ -34,6 +34,9 @@ public:
 	const AMyPlayerController* GetCurrentPlayer() const;
 	const bool GetIsMoved() const;
 
+	UFUNCTION(BlueprintCallable)
+	void FinishUpdateMoveWidget();
+
 private:
 	void CreatePlayer();
 

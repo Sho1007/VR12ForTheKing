@@ -124,6 +124,11 @@ const bool AMyGameModeBase::GetIsMoved() const
 	return bIsMoved;
 }
 
+void AMyGameModeBase::FinishUpdateMoveWidget()
+{
+	bIsMoved = false;
+}
+
 void AMyGameModeBase::CreatePlayer()
 {
 	if (CharacterClass)
@@ -172,7 +177,6 @@ void AMyGameModeBase::DoNextTurn()
 	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("DoNextTurn Called")));
 	if (CharacterArray.Num())
 	{
-		bIsMoved = false;
 		CurrentTurn++;
 		CurrentCharacter = CharacterArray[(CurrentTurn - 1) % CharacterArray.Num()];
 		CurrentPlayer = PlayerControllerArray[(CurrentTurn - 1) % PlayerControllerArray.Num()];
@@ -191,6 +195,5 @@ void AMyGameModeBase::DoNextTurn()
 		{
 			UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidget is not valid"));
 		}
-		
 	}
 }
