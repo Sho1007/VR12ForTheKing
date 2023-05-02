@@ -21,6 +21,7 @@ AMyPlayerController::AMyPlayerController()
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	SetShowMouseCursor(true);
 
 	GameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));

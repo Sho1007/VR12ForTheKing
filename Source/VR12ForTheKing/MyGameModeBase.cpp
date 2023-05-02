@@ -10,6 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Character/MyPlayerController.h"
 #include "AIController.h"
+#include "Widget/MoveWidget.h"
 
 void AMyGameModeBase::BeginPlay()
 {
@@ -147,6 +148,16 @@ void AMyGameModeBase::CreatePlayer()
 	{
 		PlayerControllerArray.Add(Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, i)));
 	}
+
+	if (MoveWidgetClass)
+	{
+		MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
+		MoveWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidgetClass is not valid"));
+	}
 }
 
 void AMyGameModeBase::EndTurn()
@@ -172,5 +183,14 @@ void AMyGameModeBase::DoNextTurn()
 		// 이동 확률 체크
 		CheckMoveCount();
 		// 이동 -> 이동은 Widget Animation 끝나고
+		if (MoveWidget)
+		{
+			MoveWidget->UpdateMoveJudge(MoveJudgeArray);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidget is not valid"));
+		}
+		
 	}
 }

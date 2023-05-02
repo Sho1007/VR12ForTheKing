@@ -10,6 +10,7 @@ class AHexGridManager;
 class AHexTile;
 class AMyCharacter;
 class AMyPlayerController;
+class UMoveWidget;
 /**
  * 
  */
@@ -47,12 +48,20 @@ private:
 	int32 CurrentMovableCount;
 	TArray<bool> MoveJudgeArray;
 
+	// MoveWidget Var
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UMoveWidget> MoveWidgetClass;
+	UMoveWidget* MoveWidget;
+
+	// HexGridManager Var
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AHexGridManager> HexGridManagerClass;
 	AHexGridManager* HexGridManager;
 
+	// Character Var
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AMyCharacter> CharacterClass;
+
 
 	TArray<AMyPlayerController*> PlayerControllerArray;
 	TArray<AMyCharacter*> CharacterArray;

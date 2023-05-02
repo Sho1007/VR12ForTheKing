@@ -14,7 +14,6 @@ class AMyCharacter;
 /**
  * 
  */
-
 UCLASS()
 class VR12FORTHEKING_API AMyPlayerController : public APlayerController
 {
