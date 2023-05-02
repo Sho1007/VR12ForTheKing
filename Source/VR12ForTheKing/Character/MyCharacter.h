@@ -29,7 +29,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ReachToDestination();
 
 	void SetCurrentTile(AHexTile* NewCurrentTile);
