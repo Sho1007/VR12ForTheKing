@@ -158,7 +158,6 @@ void AMyGameModeBase::CreatePlayer()
 		FVector SpawnLocation(0, 0, 100);
 		for (int i = 0; i < 3; ++i)
 		{
-			
 			AMyCharacter* MyCharacter = GetWorld()->SpawnActor<AMyCharacter>(CharacterClass, SpawnLocation, FRotator(0, 0, 0));
 			MyCharacter->Init(this);
 			MyCharacter->SetCurrentTile(HexGridManager->GetTile(0,0));
