@@ -6,3 +6,7 @@
 void UMoveWidget::UpdateMoveJudge_Implementation(const TArray<bool>& SuccessArray)
 {
 }
+
+void UMoveWidget::HideMoveJudgeWidget_Implementation()
+{
+}
