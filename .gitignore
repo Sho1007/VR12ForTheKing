@@ -1,9 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,unrealengine
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,unrealengine
 
-###VR12ForTheKing###
+### VR12ForTheKing ###
 Content/Resources/*
-Config/DefaultEngine.*
+Config/*
 
 ### UnrealEngine ###
 # Visual Studio 2015 user specific files
