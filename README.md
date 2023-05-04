@@ -25,3 +25,8 @@ git commit -m "커밋 내용"
 ```c++
 git push origin [브랜치 이름]
 ```
+
+### .gitignore 가 작동하지 않을 때
+```c++
+git rm -r --cached .
+```
