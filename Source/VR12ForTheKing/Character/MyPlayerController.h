@@ -25,6 +25,9 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	const FText GetPlayerName() const;
 private:
 	void LeftClickPressed();
 	void CheckEndTile();
@@ -41,4 +44,5 @@ protected:
 
 private:
 	AMyGameModeBase* GameMode;
+	FText PlayerName = FText::FromString(FString("Player"));
 };

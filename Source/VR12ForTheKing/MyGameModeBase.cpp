@@ -44,7 +44,6 @@ void AMyGameModeBase::BeginPlay()
 
 	DoNextTurn();
 }
-
 void AMyGameModeBase::SetStartTile(AHexTile* NewStartTile)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("SetStartTile Called")));

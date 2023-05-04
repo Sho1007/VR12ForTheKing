@@ -23,6 +23,7 @@ public:
 	virtual void BeginPlay() override;
 
 public:
+
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
 
