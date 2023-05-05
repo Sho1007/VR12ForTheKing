@@ -43,7 +43,7 @@ struct FAction
 	EStatusType StatType;
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -64,3 +64,4 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<FAction> ActionArray;
 };
+	
