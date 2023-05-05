@@ -90,4 +90,4 @@ AHexTile* AMyCharacter::GetCurrentTile()
 float AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)
 {
 	return 0.0f;
-}
+}	
