@@ -46,6 +46,9 @@ private:
 
 	void EndTurn();
 	void DoNextTurn();
+
+	// Battle Function
+	void CalculateTurn();
 private:
 	// Turn Var
 	int CurrentTurn = 0;
@@ -73,6 +76,7 @@ private:
 
 	TArray<AMyPlayerController*> PlayerControllerArray;
 	TArray<AMyCharacter*> CharacterArray;
+	TArray<AMyCharacter*> EnemyArray;
 	AMyPlayerController* CurrentPlayer;
 	AMyCharacter* CurrentCharacter;
 };

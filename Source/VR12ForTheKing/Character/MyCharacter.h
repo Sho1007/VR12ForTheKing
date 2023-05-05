@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetDestination(FVector NewDestination, float NewSpeed = 0.0f, float NewRadius = 10.0f);
 	AHexTile* GetCurrentTile();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetTurnSpeed(const int32 CurrentRoundCount);
 private:
 	// Component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))

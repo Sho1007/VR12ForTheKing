@@ -207,3 +207,8 @@ void AMyGameModeBase::DoNextTurn()
 		}
 	}
 }
+
+void AMyGameModeBase::CalculateTurn()
+{
+	// CharacterArray[0]->GetTurnSpeed();
+}
