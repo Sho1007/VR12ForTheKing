@@ -9,6 +9,36 @@
 class UCapsuleComponent;
 class AHexTile;
 class AMyGameModeBase;
+
+
+
+UENUM(BlueprintType)
+enum class EStatusType : uint8
+{
+	Armor,	
+	Awareness,
+	Evasion,
+	Focus,
+	Intelligence,
+	Luck,
+	Resistance,
+	Speed,
+	Strength,
+	Talent,
+	Vitality,
+};
+
+USTRUCT(BlueprintType)
+struct FAction
+{
+	GENERATED_BODY()
+
+	FText Name;
+	int32 Power;
+	int32 CheckCount;
+	EStatusType StatType;
+};
+
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -40,7 +70,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	int32 GetTurnSpeed(const int32 CurrentRoundCount);
+
+	UFUNCTION(BlueprintCallable)
+	UTexture2D* GetCharacterImage();
 private:
+	//
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UTexture2D* CharacterImage;
+
 	// Component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
 	USkeletalMeshComponent* SkeletalMeshComponent;
