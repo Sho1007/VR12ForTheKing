@@ -39,7 +39,7 @@ public:
 	AHexTile* GetCurrentTile();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	float GetTurnSpeed(const int32 CurrentRoundCount);
+	int32 GetTurnSpeed(const int32 CurrentRoundCount);
 private:
 	// Component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))

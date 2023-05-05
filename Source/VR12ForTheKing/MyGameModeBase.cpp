@@ -254,8 +254,8 @@ void AMyGameModeBase::CalculateTurn()
 			BattleTurnArray.Add(EnemyArray[i]);
 		}
 	}
-	
-	//BattleWidget->SetTurnImage(BattleTurnArray);
+
+	//BattleWidget->SetTurnArray(BattleTurnArray);
 
 	// Make Use Array
 	for (int i = 0; i < BattleTurnArray.Num() * 2; ++i)

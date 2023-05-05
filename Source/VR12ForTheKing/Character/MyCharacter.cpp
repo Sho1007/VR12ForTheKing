@@ -87,7 +87,7 @@ AHexTile* AMyCharacter::GetCurrentTile()
 	return CurrentTile;
 }
 
-float AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)
+int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)
 {
 	return 0.0f;
 }	
