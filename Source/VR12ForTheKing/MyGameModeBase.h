@@ -11,6 +11,7 @@ class AHexTile;
 class AMyCharacter;
 class AMyPlayerController;
 class UMoveWidget;
+class UBattleWidget;
 /**
  * 
  */
@@ -23,6 +24,7 @@ public:
 	virtual void BeginPlay() override;
 
 public:
+
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
 
@@ -45,8 +47,11 @@ private:
 
 	void EndTurn();
 	void DoNextTurn();
+
+	// Battle Function
+	void CalculateTurn();
 private:
-	// Turn Var
+	// Move Turn Var
 	int CurrentTurn = 0;
 	// Move Var
 	AHexTile* NextTile;
@@ -59,6 +64,12 @@ private:
 	TSubclassOf<UMoveWidget> MoveWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UMoveWidget* MoveWidget;
+	// BattleWidget Var
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UBattleWidget> BattleWidgetClass;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UBattleWidget* BattleWidget;
+
 
 	// HexGridManager Var
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
@@ -69,9 +80,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AMyCharacter> CharacterClass;
 
+	// Battle Var
+	int32 CurrentBattleRound;
+	TArray<AMyCharacter*> BattleTurnArray;
+	TArray<AMyCharacter*> UseBattleTurnArray;
+
 
 	TArray<AMyPlayerController*> PlayerControllerArray;
 	TArray<AMyCharacter*> CharacterArray;
+	TArray<AMyCharacter*> EnemyArray;
 	AMyPlayerController* CurrentPlayer;
 	AMyCharacter* CurrentCharacter;
 };

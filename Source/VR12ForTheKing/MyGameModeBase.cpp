@@ -44,7 +44,6 @@ void AMyGameModeBase::BeginPlay()
 
 	DoNextTurn();
 }
-
 void AMyGameModeBase::SetStartTile(AHexTile* NewStartTile)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("SetStartTile Called")));
@@ -206,5 +205,61 @@ void AMyGameModeBase::DoNextTurn()
 		{
 			UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidget is not valid"));
 		}
+	}
+}
+
+void AMyGameModeBase::CalculateTurn()
+{
+	BattleTurnArray.Empty();
+	UseBattleTurnArray.Empty();
+
+
+	for (int32 i = 0; i < CharacterArray.Num(); ++i)
+	{
+		int32 CurrentTurnSpeed = CharacterArray[i]->GetTurnSpeed(CurrentBattleRound);
+
+		bool bFindPos = false;
+		for (int32 j = 0; j < BattleTurnArray.Num(); ++j)
+		{
+			if (BattleTurnArray[j]->GetTurnSpeed(CurrentBattleRound) >= CurrentTurnSpeed)
+			{
+				bFindPos = true;
+				BattleTurnArray.Insert(CharacterArray[i], j);
+				break;
+			}
+		}
+		if (!bFindPos)
+		{
+			BattleTurnArray.Add(CharacterArray[i]);
+		}
+	}
+
+	for (int32 i = 0; i < EnemyArray.Num(); ++i)
+	{
+
+		int32 CurrentTurnSpeed = EnemyArray[i]->GetTurnSpeed(CurrentBattleRound);
+
+		bool bFindPos = false;
+		for (int32 j = 0; j < BattleTurnArray.Num(); ++j)
+		{
+			if (BattleTurnArray[j]->GetTurnSpeed(CurrentBattleRound) >= CurrentTurnSpeed)
+			{
+				bFindPos = true;
+				BattleTurnArray.Insert(EnemyArray[i], j);
+				break;
+			}
+		}
+		if (!bFindPos)
+		{
+			BattleTurnArray.Add(EnemyArray[i]);
+		}
+	}
+
+	//BattleWidget->SetTurnArray(BattleTurnArray);
+
+	// Make Use Array
+	for (int i = 0; i < BattleTurnArray.Num() * 2; ++i)
+	{
+		UseBattleTurnArray.Add(BattleTurnArray[i % BattleTurnArray.Num()]);
 	}
 }

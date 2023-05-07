@@ -86,3 +86,13 @@ AHexTile* AMyCharacter::GetCurrentTile()
 {
 	return CurrentTile;
 }
+
+UTexture2D* AMyCharacter::GetCharacterImage()
+{
+	return CharacterImage;
+}
+
+int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)
+{
+	return 0.0f;
+}	

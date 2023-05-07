@@ -66,6 +66,11 @@ void AMyPlayerController::Tick(float DeltaTime)
 	CheckEndTile();
 }
 
+const FText AMyPlayerController::GetPlayerName() const
+{
+	return PlayerName;
+}
+
 void AMyPlayerController::LeftClickPressed()
 {
 	if (!GameMode->GetIsMoved() && GameMode->GetCurrentPlayer() == this)
