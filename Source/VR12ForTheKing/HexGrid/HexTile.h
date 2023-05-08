@@ -16,7 +16,6 @@ struct FTileEvent
 	FText Name;
 	FText Discription;
 	FText Discription2;
-	TArray<FAction> Actions;
 };
 
 class UTextRenderComponent;

@@ -48,6 +48,10 @@ private:
 	void EndTurn();
 	void DoNextTurn();
 
+	// Event Fucntion
+	void SpawnEvent();
+	void FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, FIntPoint CurrentPos);
+
 	// Battle Function
 	void CalculateTurn();
 private:
@@ -64,6 +68,9 @@ private:
 	TSubclassOf<UMoveWidget> MoveWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UMoveWidget* MoveWidget;
+	// Event Var
+	TArray<AHexTile*> NeighborTileArray;
+
 	// BattleWidget Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UBattleWidget> BattleWidgetClass;
