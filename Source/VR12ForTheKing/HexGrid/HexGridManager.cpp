@@ -119,6 +119,11 @@ void AHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
 	}
 }
 
+void AHexGridManager::SpawnEnemy(FIntPoint Center)
+{
+
+}
+
 void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("PathFind--------------------------------------")));

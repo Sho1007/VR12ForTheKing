@@ -62,3 +62,15 @@ void AHexTile::UnClickTile()
 	StaticMeshComponent->SetRenderCustomDepth(false);
 }
 
+bool AHexTile::GetIsSearched()
+{
+	return bIsSearched;
+}
+
+void AHexTile::Search()
+{
+	if (bIsSearched) return;
+	bIsSearched = true;
+
+
+}

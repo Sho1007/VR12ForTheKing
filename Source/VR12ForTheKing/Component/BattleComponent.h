@@ -4,44 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "../VR12ForTheKing.h"
 #include "BattleComponent.generated.h"
-
-UENUM(BlueprintType)
-enum class EStatusType : uint8
-{
-	Armor,
-	Awareness,
-	Evasion,
-	Focus,
-	Intelligence,
-	Luck,
-	Resistance,
-	Speed,
-	Strength,
-	Talent,
-	Vitality,
-};
-
-USTRUCT(BlueprintType)
-struct FAction
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UTexture2D* Image;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FText Name;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FText Discription;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Power;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 CheckCount;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 CheckPercent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EStatusType StatType;
-};
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
@@ -64,4 +28,3 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<FAction> ActionArray;
 };
-	
