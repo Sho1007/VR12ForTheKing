@@ -212,21 +212,7 @@ void AMyGameModeBase::SpawnEvent()
 {
 	FIntPoint CurrentPos = CurrentCharacter->GetCurrentTile()->GetPos();
 
-	FindNeighborTiles(NeighborTileArray, CurrentPos);
-}
-
-void AMyGameModeBase::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, FIntPoint CurrentPos)
-{
-	NewNeighborTileArray.Empty();
-
-	if (CurrentPos.Y % 2 == 0)
-	{
-		// Row is Even
-	}
-	else
-	{
-		// Row is Odd
-	}
+	HexGridManager->FindNeighborTiles(NeighborTileArray, CurrentPos);
 }
 
 void AMyGameModeBase::CalculateTurn()

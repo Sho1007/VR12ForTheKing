@@ -50,7 +50,6 @@ private:
 
 	// Event Fucntion
 	void SpawnEvent();
-	void FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, FIntPoint CurrentPos);
 
 	// Battle Function
 	void CalculateTurn();
