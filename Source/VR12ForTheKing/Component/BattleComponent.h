@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "../VR12ForTheKing.h"
 #include "BattleComponent.generated.h"
+
+// Check Chance
 
 UENUM(BlueprintType)
 enum class EStatusType : uint8
@@ -64,4 +67,3 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<FAction> ActionArray;
 };
-	

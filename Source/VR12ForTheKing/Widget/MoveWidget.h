@@ -9,6 +9,7 @@
 /**
  * 
  */
+class UEventWidget;
 UCLASS()
 class VR12FORTHEKING_API UMoveWidget : public UUserWidget
 {
@@ -19,4 +20,10 @@ public:
 	void UpdateMoveJudge(const TArray<bool>& SuccessArray);
 	UFUNCTION(BlueprintNativeEvent)
 	void HideMoveJudgeWidget();
+	UFUNCTION(BlueprintCallable)
+	void HideEventWidget();
+
+private:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
+	UEventWidget* WBP_Event;
 };

@@ -4,7 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "../VR12ForTheKing.h"
 #include "HexTile.generated.h"
+
+
+USTRUCT(BlueprintType)
+struct FTileEvent
+{
+	GENERATED_BODY()
+
+	FText Name;
+	FText Discription;
+	FText Discription2;
+};
 
 class UTextRenderComponent;
 class UStaticMeshComponent;
@@ -35,6 +47,9 @@ public:
 	void ClickTile();
 	void UnClickTile();
 
+	bool GetIsSearched();
+	void Search();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* StaticMeshComponent;
@@ -42,6 +57,12 @@ protected:
 	UTextRenderComponent* TextRenderComponent;
 
 	FIntPoint Pos;
-	// A*
+
+	// A* Algorithm
 	AHexTile* ParentTile;
+
+	FTileEvent TileEvent;
+
+private:
+	bool bIsSearched = false;
 };

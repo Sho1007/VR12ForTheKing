@@ -119,6 +119,28 @@ void AHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
 	}
 }
 
+void AHexGridManager::SpawnEnemy(FIntPoint Center)
+{
+
+}
+
+void AHexGridManager::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, FIntPoint CurrentPos)
+{
+	for (int i = -2; i <= 2; ++i)
+	{
+		if (CurrentPos.Y + i <= 0 && CurrentPos.Y + i > Height)
+		{
+			for (int j = -2; j <= 2; ++j)
+			{
+				if (CurrentPos.X + i <= 0 && CurrentPos.X + i > Width)
+				{
+
+				}
+			}
+		}
+	}
+}
+
 void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 6000, FColor::Cyan, FString::Printf(TEXT("PathFind--------------------------------------")));

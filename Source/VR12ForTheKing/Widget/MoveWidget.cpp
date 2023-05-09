@@ -2,6 +2,7 @@
 
 
 #include "../Widget/MoveWidget.h"
+#include "../Widget/EventWidget.h"
 
 void UMoveWidget::UpdateMoveJudge_Implementation(const TArray<bool>& SuccessArray)
 {
@@ -9,4 +10,12 @@ void UMoveWidget::UpdateMoveJudge_Implementation(const TArray<bool>& SuccessArra
 
 void UMoveWidget::HideMoveJudgeWidget_Implementation()
 {
+}
+
+void UMoveWidget::HideEventWidget()
+{
+	if (WBP_Event)
+	{
+		WBP_Event->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }

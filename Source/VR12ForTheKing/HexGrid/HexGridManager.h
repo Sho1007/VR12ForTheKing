@@ -65,6 +65,10 @@ public:
 
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile, int32 MovableCount);
+
+	// Event Function
+	void SpawnEnemy(FIntPoint Center);
+	void FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, FIntPoint CurrentPos);
 private:
 	void FindPath(TArray<AHexTile*>& OutArray);
 	void GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray);

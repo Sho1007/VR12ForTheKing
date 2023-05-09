@@ -208,6 +208,13 @@ void AMyGameModeBase::DoNextTurn()
 	}
 }
 
+void AMyGameModeBase::SpawnEvent()
+{
+	FIntPoint CurrentPos = CurrentCharacter->GetCurrentTile()->GetPos();
+
+	HexGridManager->FindNeighborTiles(NeighborTileArray, CurrentPos);
+}
+
 void AMyGameModeBase::CalculateTurn()
 {
 	BattleTurnArray.Empty();
