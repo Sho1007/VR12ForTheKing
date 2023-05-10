@@ -12,6 +12,7 @@ class AMyCharacter;
 class AMyPlayerController;
 class UMoveWidget;
 class UBattleWidget;
+class AEventActor;
 /**
  * 
  */
@@ -41,6 +42,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateMoveWidget();
+
+	// Event Widget
+	UFUNCTION(BlueprintCallable)
+	void HideEventInfoWidget();
+	
+	UFUNCTION(BlueprintCallable)
+	void InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVector2D WidgetPos);
 
 private:
 	void CreatePlayer();

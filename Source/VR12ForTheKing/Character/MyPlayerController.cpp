@@ -84,11 +84,14 @@ void AMyPlayerController::LeftClickPressed()
 void AMyPlayerController::CheckEndTile()
 {
 	AActor* HitActor = CheckTile();
-	if (!HitActor) return;
-	if (EventActor && EventActor != HitActor)
+
+	if (EventActor && HitActor != EventActor)
 	{
-		// Todo : Hide EventInfo Widget
+		GameMode->HideEventInfoWidget();
+		EventActor = NULL;
 	}
+	if (HitActor == NULL) return;
+
 	if (!GameMode->GetIsMoved() && GameMode->GetCurrentPlayer() == this)
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CheckEndTile Called")));
@@ -104,8 +107,10 @@ void AMyPlayerController::CheckEndTile()
 	if (NewEventActor && (EventActor == NULL || EventActor != NewEventActor))
 	{
 		EventActor = NewEventActor;
-		UE_LOG(LogTemp, Warning, TEXT("Event Actor : %s"), *EventActor->GetName());
-		// Todo : Show Event Widget;
+		FVector2D ScreenLocation;
+		ProjectWorldLocationToScreen(EventActor->GetActorLocation(), ScreenLocation);
+		UE_LOG(LogTemp, Warning, TEXT("Event Actor : %s's Location : %s"), *EventActor->GetName(), *ScreenLocation.ToString());
+		GameMode->InitAndShowEventInfoWidget(EventActor, ScreenLocation);
 	}
 }
 
