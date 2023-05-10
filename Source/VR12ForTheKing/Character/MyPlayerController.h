@@ -11,6 +11,7 @@ class UInputAction;
 class AMyGameModeBase;
 class AHexTile;
 class AMyCharacter;
+class AEventActor;
 /**
  * 
  */
@@ -31,7 +32,7 @@ public:
 private:
 	void LeftClickPressed();
 	void CheckEndTile();
-	AHexTile* CheckTile();
+	AActor* CheckTile();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputMappingContext* IMC_Default;
@@ -41,6 +42,9 @@ protected:
 	float LineTraceDistance = 300.0f;
 
 	AHexTile* SelectTile;
+
+	// Event Var
+	AEventActor* EventActor;
 
 private:
 	AMyGameModeBase* GameMode;
