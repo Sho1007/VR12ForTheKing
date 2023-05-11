@@ -9,7 +9,7 @@
 class UCapsuleComponent;
 class AHexTile;
 class AMyGameModeBase;
-
+class UBattleComponent;
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -44,6 +44,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetCharacterImage();
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
+	UBattleComponent* BattleComponent;
 private:
 	//
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
@@ -55,8 +58,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
 	UCapsuleComponent* CapsuleComponent;
 
-	AMyGameModeBase* GameMode;
 
+
+
+	AMyGameModeBase* GameMode;
 	// Status
 	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
 	int32 Armor;

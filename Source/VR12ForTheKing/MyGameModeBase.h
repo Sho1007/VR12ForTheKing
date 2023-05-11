@@ -101,7 +101,9 @@ private:
 
 
 	TArray<AMyPlayerController*> PlayerControllerArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> CharacterArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> EnemyArray;
 	AMyPlayerController* CurrentPlayer;
 	AMyCharacter* CurrentCharacter;

@@ -32,3 +32,18 @@ void UBattleComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
+void UBattleComponent::SetFactionType(EFactionType NewFactionType)
+{
+	FactionType = NewFactionType;
+}
+
+bool UBattleComponent::Action_Implementation()
+{
+	return false;
+}
+
+bool UBattleComponent::Attack_Implementation()
+{
+	return false;
+}
+

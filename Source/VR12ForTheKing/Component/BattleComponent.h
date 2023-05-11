@@ -5,9 +5,31 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "../VR12ForTheKing.h"
+#include "Engine/DataTable.h"
 #include "BattleComponent.generated.h"
 
 // Check Chance
+
+UENUM(BlueprintType)
+enum class EFactionType : uint8
+{
+	Player,
+	Enemy
+};
+
+UENUM(BlueprintType)
+enum class EActionType : uint8
+{
+	Attack,
+	Buff
+};
+
+UENUM(BlueprintType)
+enum class EActionRange : uint8
+{
+	Single,
+	All,
+};
 
 UENUM(BlueprintType)
 enum class EStatusType : uint8
@@ -26,7 +48,7 @@ enum class EStatusType : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FAction
+struct FAction : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -44,8 +66,13 @@ struct FAction
 	int32 CheckPercent;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EStatusType StatType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	EActionType ActionType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	EActionRange ActionRange;
 };
 
+class AMyCharacter;
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
 {
@@ -63,7 +90,19 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-private:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	TArray<FAction> ActionArray;
+public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, CallInEditor)
+	bool Action();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool Attack();
+	UFUNCTION(BlueprintCallable)
+	void SetFactionType(EFactionType NewFactionType);
+
+protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	EFactionType FactionType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FName> ActionArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	AMyCharacter* ActionTarget;
 };
