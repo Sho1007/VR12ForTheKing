@@ -10,6 +10,7 @@ class UCapsuleComponent;
 class AHexTile;
 class AMyGameModeBase;
 class UBattleComponent;
+class UStatusComponent;
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -45,8 +46,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetCharacterImage();
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UBattleComponent* BattleComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UStatusComponent* StatusComponent;
 private:
 	//
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

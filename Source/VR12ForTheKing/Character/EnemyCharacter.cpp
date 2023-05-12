@@ -6,5 +6,14 @@
 
 AEnemyCharacter::AEnemyCharacter()
 {
-	BattleComponent->SetFactionType(EFactionType::Enemy);
+}
+
+void AEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	checkf(BattleComponent != nullptr, TEXT("BattleComponent is not valid"));
+	if (BattleComponent)
+	{
+		BattleComponent->SetFactionType(EFactionType::Enemy);
+	}	
 }

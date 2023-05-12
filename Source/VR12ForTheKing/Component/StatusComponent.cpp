@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "../Component/BattleComponent.h"
+#include "../Component/StatusComponent.h"
 
 // Sets default values for this component's properties
-UBattleComponent::UBattleComponent()
+UStatusComponent::UStatusComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -15,7 +15,7 @@ UBattleComponent::UBattleComponent()
 
 
 // Called when the game starts
-void UBattleComponent::BeginPlay()
+void UStatusComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -25,23 +25,10 @@ void UBattleComponent::BeginPlay()
 
 
 // Called every frame
-void UBattleComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UStatusComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-}
-
-void UBattleComponent::SetFactionType(EFactionType NewFactionType)
-{
-	FactionType = NewFactionType;
-}
-
-void UBattleComponent::BattleAction_Implementation()
-{
-}
-
-void UBattleComponent::Attack_Implementation()
-{
 }
 

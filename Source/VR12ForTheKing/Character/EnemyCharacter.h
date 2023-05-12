@@ -19,4 +19,6 @@ class VR12FORTHEKING_API AEnemyCharacter : public AMyCharacter
 	
 public:
 	AEnemyCharacter();
+
+	void BeginPlay() override;
 };

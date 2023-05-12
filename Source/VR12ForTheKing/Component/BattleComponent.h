@@ -92,9 +92,13 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, CallInEditor)
-	bool Action();
+	void BattleAction();
+	void BattleAction_Implementation();
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool Attack();
+	void Attack();
+	void Attack_Implementation();
+
 	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
 
