@@ -4,6 +4,7 @@
 #include "../Character/MyCharacter.h"
 
 #include "Components/CapsuleComponent.h"
+#include "../Component/BattleComponent.h"
 #include "../HexGrid/HexTile.h"
 #include "../MyGameModeBase.h"
 
@@ -18,6 +19,8 @@ AMyCharacter::AMyCharacter()
 
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	SkeletalMeshComponent->SetupAttachment(RootComponent);
+
+	BattleComponent = CreateDefaultSubobject<UBattleComponent>("NewBattleComponent");
 }
 
 void AMyCharacter::Init(AMyGameModeBase* NewGameMode)

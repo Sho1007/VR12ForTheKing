@@ -13,6 +13,8 @@
 #include "../HexGrid/HexTile.h"
 #include "../Character/MyCharacter.h"
 
+#include "../Event/EventActor.h"
+
 AMyPlayerController::AMyPlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -81,16 +83,38 @@ void AMyPlayerController::LeftClickPressed()
 
 void AMyPlayerController::CheckEndTile()
 {
+	AActor* HitActor = CheckTile();
+
+	if (EventActor && HitActor != EventActor)
+	{
+		GameMode->HideEventInfoWidget();
+		EventActor = NULL;
+	}
+	if (HitActor == NULL) return;
+
 	if (!GameMode->GetIsMoved() && GameMode->GetCurrentPlayer() == this)
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CheckEndTile Called")));
-		AHexTile* HexTile = CheckTile();
-		if (!HexTile) return;
-		GameMode->SetEndTile(HexTile);
+
+		AHexTile* HexTile = Cast<AHexTile>(HitActor);
+		if (HexTile)
+		{
+			GameMode->SetEndTile(HexTile);
+		}
+	}
+
+	AEventActor* NewEventActor = Cast<AEventActor>(HitActor);
+	if (NewEventActor && (EventActor == NULL || EventActor != NewEventActor))
+	{
+		EventActor = NewEventActor;
+		FVector2D ScreenLocation;
+		ProjectWorldLocationToScreen(EventActor->GetActorLocation(), ScreenLocation);
+		UE_LOG(LogTemp, Warning, TEXT("Event Actor : %s's Location : %s"), *EventActor->GetName(), *ScreenLocation.ToString());
+		GameMode->InitAndShowEventInfoWidget(EventActor, ScreenLocation);
 	}
 }
 
-AHexTile* AMyPlayerController::CheckTile()
+AActor* AMyPlayerController::CheckTile()
 {
 	FVector WorldLocation, WorldDirection;
 
@@ -101,16 +125,13 @@ AHexTile* AMyPlayerController::CheckTile()
 		FHitResult HitResult;
 		FCollisionObjectQueryParams ObjectQueryParams;
 		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 
 		//DrawDebugLine(GetWorld(), WorldLocation, EndPoint, FColor::Green, true, 300.0f);
 
 		if (GetWorld()->LineTraceSingleByObjectType(HitResult, WorldLocation, EndPoint, ObjectQueryParams))
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("Hitted : %s"), *HitResult.GetActor()->GetName());
-			if (AHexTile* HexTile = Cast<AHexTile>(HitResult.GetActor()))
-			{
-				return HexTile;
-			}
+			return HitResult.GetActor();
 		}
 	}
 

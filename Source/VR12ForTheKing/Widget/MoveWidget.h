@@ -10,6 +10,8 @@
  * 
  */
 class UEventWidget;
+class UEventInfoWidget;
+class AEventActor;
 UCLASS()
 class VR12FORTHEKING_API UMoveWidget : public UUserWidget
 {
@@ -22,8 +24,16 @@ public:
 	void HideMoveJudgeWidget();
 	UFUNCTION(BlueprintCallable)
 	void HideEventWidget();
+	UFUNCTION(BlueprintCallable)
+	void ShowEventInfoWidget(FVector2D NewPos);
+	UFUNCTION(BlueprintCallable)
+	void HideEventInfoWidget();
+	UFUNCTION(BlueprintCallable)
+	void InitEventInfoWidget(AEventActor* NewEventActor);
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
 	UEventWidget* WBP_Event;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
+	UEventInfoWidget* WBP_EventInfo;
 };

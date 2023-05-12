@@ -150,6 +150,17 @@ void AMyGameModeBase::CreateMoveWidget()
 	}
 }
 
+void AMyGameModeBase::HideEventInfoWidget()
+{
+	MoveWidget->HideEventInfoWidget();
+}
+
+void AMyGameModeBase::InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVector2D WidgetPos)
+{
+	MoveWidget->InitEventInfoWidget(NewEventActor);
+	MoveWidget->ShowEventInfoWidget(WidgetPos);
+}
+
 void AMyGameModeBase::CreatePlayer()
 {
 	if (CharacterClass)
