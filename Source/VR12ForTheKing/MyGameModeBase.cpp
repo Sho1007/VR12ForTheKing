@@ -11,12 +11,14 @@
 #include "Character/MyPlayerController.h"
 #include "AIController.h"
 #include "Widget/MoveWidget.h"
+#include "Event/TileEventManager.h"
 
 void AMyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	PrimaryActorTick.bCanEverTick = false;
 
+	// HexGridManager / Todo : Create instead Find in Outliner
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(this, HexGridManagerClass, OutActors);
 	if (OutActors.Num() > 0)
@@ -30,12 +32,16 @@ void AMyGameModeBase::BeginPlay()
 			}
 		}
 	}
-
 	if (HexGridManager)
 	{
 		HexGridManager->CreateGrid();
 		CreatePlayer();
 	}
+
+	// TileEventManager
+	checkf(TileEventManagerClass != nullptr, TEXT("AMyGameModeBase::BeginPlay : Tile Event Manager Class is nullptr"));
+	TileEventManager = GetWorld()->SpawnActor<ATileEventManager>(TileEventManagerClass, FVector(0, 0, 0), FRotator(0,0,0));
+	checkf(TileEventManager != nullptr, TEXT("AMyGameModeBase::BeginPlay : Tile Event Manager is not spawned"));
 
 	CreateMoveWidget();
 
@@ -159,6 +165,11 @@ void AMyGameModeBase::InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVe
 {
 	MoveWidget->InitEventInfoWidget(NewEventActor);
 	MoveWidget->ShowEventInfoWidget(WidgetPos);
+}
+
+ATileEventManager* AMyGameModeBase::GetTileEventManager()
+{
+	return TileEventManager;
 }
 
 void AMyGameModeBase::CreatePlayer()

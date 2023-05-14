@@ -6,6 +6,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "../Event/EventActor.h"
+#include "Kismet/GamePlayStatics.h"
+#include "../MyGameModeBase.h"
+#include "../Event/TileEventManager.h"
 
 // Sets default values
 AHexTile::AHexTile()
@@ -85,4 +88,15 @@ void AHexTile::SpawnEvent()
 {
 	// Random Spawn Event But Now Static Enemy Event
 	//EventActor = GetWorld()->SpawnActor<AEventActor>();
+
+	AMyGameModeBase* GameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
+	checkf(GameMode != nullptr, TEXT("AHexTile::SpawnEvent : GameMode is not valid"));
+	UDataTable* EventDataTable = GameMode->GetTileEventManager()->GetDataTable();
+	TArray<FName> List = EventDataTable->GetRowNames();
+	FName RandomName = List[FMath::RandRange(0, List.Num() - 1)];
+	FEventInfo* EventInfo = EventDataTable->FindRow<FEventInfo>(RandomName, FString(""));
+
+	EventActor = GetWorld()->SpawnActor<AEventActor>(EventInfo->EventActorClass, GetActorLocation(), GetActorRotation());
+	checkf(EventActor != nullptr, TEXT("AHexTile::SpawnEvent : EventActor is not spawned"));
+	EventActor->SetEventInfo(*EventInfo);
 }

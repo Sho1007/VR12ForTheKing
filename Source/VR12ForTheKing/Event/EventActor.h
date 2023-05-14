@@ -59,6 +59,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetEventInfo(const FEventInfo& NewEventInfo);
+
 	const FText GetEventName() const;
 	const FText GetDiscription1() const;
 	const EEventType GetEventType() const;

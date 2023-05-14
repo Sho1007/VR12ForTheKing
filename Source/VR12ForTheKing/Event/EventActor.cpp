@@ -32,6 +32,11 @@ void AEventActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AEventActor::SetEventInfo(const FEventInfo& NewEventInfo)
+{
+	EventInfo = NewEventInfo;
+}
+
 const FText AEventActor::GetEventName() const
 {
 	return EventInfo.EventName;

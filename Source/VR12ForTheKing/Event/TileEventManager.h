@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "TileEventManager.generated.h"
 
+class UDataTable;
 UCLASS()
 class VR12FORTHEKING_API ATileEventManager : public AActor
 {
@@ -23,4 +24,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UDataTable* GetDataTable();
+
+
+private:
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UDataTable* EventDataTable;
 };

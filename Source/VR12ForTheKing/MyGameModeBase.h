@@ -13,7 +13,7 @@ class AMyPlayerController;
 class UMoveWidget;
 class UBattleWidget;
 class AEventActor;
-class AEventManager;
+class ATileEventManager;
 /**
  * 
  */
@@ -50,6 +50,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVector2D WidgetPos);
+
+	UFUNCTION(BlueprintCallable)
+	ATileEventManager* GetTileEventManager();
 
 private:
 	void CreatePlayer();
@@ -94,9 +97,9 @@ private:
 	AHexGridManager* HexGridManager;
 
 	// EventManager Var
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	//TSubclassOf<AEventManager> EventManagerClass;
-	//AEventManager* EventManager;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<ATileEventManager> TileEventManagerClass;
+	ATileEventManager* TileEventManager;
 
 	// Character Var
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
