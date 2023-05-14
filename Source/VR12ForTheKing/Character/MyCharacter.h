@@ -46,9 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetCharacterImage();
 protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UBattleComponent* BattleComponent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UStatusComponent* StatusComponent;
 private:
 	//

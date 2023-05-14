@@ -72,6 +72,7 @@ public:
 private:
 	void FindPath(TArray<AHexTile*>& OutArray);
 	void GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray);
+	void GetNewAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray, int32 distance = 1);
 	int GetIndex(FIntPoint Pos);
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
@@ -96,6 +97,9 @@ private:
 	// A* Algorithm
 	AHexTile* StartTile;
 	AHexTile* EndTile;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	float FindAdjOffset = 350;
 
 	// Move Var
 	int32 CurrentPathIndex;

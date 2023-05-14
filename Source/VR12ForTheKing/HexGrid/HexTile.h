@@ -7,19 +7,9 @@
 #include "../VR12ForTheKing.h"
 #include "HexTile.generated.h"
 
-
-USTRUCT(BlueprintType)
-struct FTileEvent
-{
-	GENERATED_BODY()
-
-	FText Name;
-	FText Discription;
-	FText Discription2;
-};
-
 class UTextRenderComponent;
 class UStaticMeshComponent;
+class AEventActor;
 UCLASS()
 class VR12FORTHEKING_API AHexTile : public AActor
 {
@@ -61,7 +51,9 @@ protected:
 	// A* Algorithm
 	AHexTile* ParentTile;
 
-	FTileEvent TileEvent;
+	// Event Var
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	AEventActor* EventActor;
 
 private:
 	bool bIsSearched = false;

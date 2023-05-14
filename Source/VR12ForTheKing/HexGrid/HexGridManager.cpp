@@ -267,6 +267,24 @@ void AHexGridManager::GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& O
 	}
 }
 
+void AHexGridManager::GetNewAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray, int32 distance)
+{
+	FIntPoint CenterPos = CenterTile->GetPos();
+	for (int i = -distance; i <= distance; ++i)
+	{
+		for (int j = -distance; j <= distance; ++j)
+		{
+			if (CenterPos.Y + i < 0 || CenterPos.Y + i >= Height) continue;
+			if (CenterPos.X + j < 0 || CenterPos.X + j >= Width) continue;
+			if (i == 0 && j == 0) continue;
+			if (FVector::Distance(CenterTile->GetActorLocation(), HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]->GetActorLocation()) <= distance * FindAdjOffset)
+			{
+				OutArray.Add(HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]);
+			}
+		}
+	}
+}
+
 int AHexGridManager::GetIndex(FIntPoint Pos)
 {
 	return Pos.Y * Width + Pos.X;
