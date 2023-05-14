@@ -5,6 +5,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "../Event/EventActor.h"
 
 // Sets default values
 AHexTile::AHexTile()
@@ -73,4 +74,15 @@ void AHexTile::Search()
 	bIsSearched = true;
 
 
+}
+
+AEventActor* AHexTile::GetTileEvent()
+{
+	return EventActor;
+}
+
+void AHexTile::SpawnEvent()
+{
+	// Random Spawn Event But Now Static Enemy Event
+	//EventActor = GetWorld()->SpawnActor<AEventActor>();
 }

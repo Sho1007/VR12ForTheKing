@@ -13,6 +13,7 @@ class AMyPlayerController;
 class UMoveWidget;
 class UBattleWidget;
 class AEventActor;
+class AEventManager;
 /**
  * 
  */
@@ -75,8 +76,10 @@ private:
 	TSubclassOf<UMoveWidget> MoveWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UMoveWidget* MoveWidget;
+
 	// Event Var
 	TArray<AHexTile*> NeighborTileArray;
+	int32 MaxSpawnEventCountPerTurn = 3;
 
 	// BattleWidget Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -89,6 +92,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AHexGridManager> HexGridManagerClass;
 	AHexGridManager* HexGridManager;
+
+	// EventManager Var
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	//TSubclassOf<AEventManager> EventManagerClass;
+	//AEventManager* EventManager;
 
 	// Character Var
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))

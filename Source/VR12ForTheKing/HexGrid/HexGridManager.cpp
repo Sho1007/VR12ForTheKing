@@ -124,18 +124,19 @@ void AHexGridManager::SpawnEnemy(FIntPoint Center)
 
 }
 
-void AHexGridManager::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, FIntPoint CurrentPos)
+void AHexGridManager::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, AHexTile* CurrentTile, int32 distance)
 {
-	for (int i = -2; i <= 2; ++i)
+	FIntPoint CenterPos = CurrentTile->GetPos();
+	for (int i = -distance; i <= distance; ++i)
 	{
-		if (CurrentPos.Y + i <= 0 && CurrentPos.Y + i > Height)
+		for (int j = -distance; j <= distance; ++j)
 		{
-			for (int j = -2; j <= 2; ++j)
+			if (CenterPos.Y + i < 0 || CenterPos.Y + i >= Height) continue;
+			if (CenterPos.X + j < 0 || CenterPos.X + j >= Width) continue;
+			if (i == 0 && j == 0) continue;
+			if (FVector::Distance(CurrentTile->GetActorLocation(), HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]->GetActorLocation()) <= distance * FindAdjOffset)
 			{
-				if (CurrentPos.X + i <= 0 && CurrentPos.X + i > Width)
-				{
-
-				}
+				NewNeighborTileArray.Add(HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]);
 			}
 		}
 	}
@@ -269,20 +270,7 @@ void AHexGridManager::GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& O
 
 void AHexGridManager::GetNewAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray, int32 distance)
 {
-	FIntPoint CenterPos = CenterTile->GetPos();
-	for (int i = -distance; i <= distance; ++i)
-	{
-		for (int j = -distance; j <= distance; ++j)
-		{
-			if (CenterPos.Y + i < 0 || CenterPos.Y + i >= Height) continue;
-			if (CenterPos.X + j < 0 || CenterPos.X + j >= Width) continue;
-			if (i == 0 && j == 0) continue;
-			if (FVector::Distance(CenterTile->GetActorLocation(), HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]->GetActorLocation()) <= distance * FindAdjOffset)
-			{
-				OutArray.Add(HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]);
-			}
-		}
-	}
+	
 }
 
 int AHexGridManager::GetIndex(FIntPoint Pos)

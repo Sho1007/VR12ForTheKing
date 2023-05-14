@@ -195,35 +195,66 @@ void AMyGameModeBase::EndTurn()
 
 void AMyGameModeBase::DoNextTurn()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("DoNextTurn Called")));
-	if (CharacterArray.Num())
+	if (CharacterArray.Num() == 0)
 	{
-		CurrentTurn++;
-		CurrentCharacter = CharacterArray[(CurrentTurn - 1) % CharacterArray.Num()];
-		CurrentPlayer = PlayerControllerArray[(CurrentTurn - 1) % PlayerControllerArray.Num()];
-		//UE_LOG(LogTemp, Warning, TEXT("CurrentCharacter : %s , CurrentPlayerController : %s"), *CurrentCharacter->GetName(), *CurrentPlayer->GetName());
-		// 카메라 이동
-		// // 시작 바닥 설정
-		SetStartTile(CurrentCharacter->GetCurrentTile());
-		// 이동 확률 체크
-		CheckMoveCount();
-		// 이동 -> 이동은 Widget Animation 끝나고
-		if (MoveWidget)
-		{
-			MoveWidget->UpdateMoveJudge(MoveJudgeArray);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidget is not valid"));
-		}
+		UE_LOG(LogTemp, Error, TEXT("Character Array is Empty"));
+		return;
+	}
+
+	CurrentTurn++;
+	CurrentCharacter = CharacterArray[(CurrentTurn - 1) % CharacterArray.Num()];
+	CurrentPlayer = PlayerControllerArray[(CurrentTurn - 1) % PlayerControllerArray.Num()];
+
+	// Spawn Event
+	SpawnEvent();
+
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentCharacter : %s , CurrentPlayerController : %s"), *CurrentCharacter->GetName(), *CurrentPlayer->GetName());
+	// 카메라 이동
+	// // 시작 바닥 설정
+	SetStartTile(CurrentCharacter->GetCurrentTile());
+	// 이동 확률 체크
+	CheckMoveCount();
+	// 이동 -> 이동은 Widget Animation 끝나고
+	if (MoveWidget)
+	{
+		MoveWidget->UpdateMoveJudge(MoveJudgeArray);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidget is not valid"));
 	}
 }
 
 void AMyGameModeBase::SpawnEvent()
 {
-	FIntPoint CurrentPos = CurrentCharacter->GetCurrentTile()->GetPos();
+	if (CurrentCharacter == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase::SpawnEvent : CurrentCharacter is NULL"));
+		return;
+	}
+	else
+	{
+		if (CurrentCharacter->GetCurrentTile() == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase::SpawnEvent : CurrentTile is NULL"));
+			return;
+		}
+	}
 
-	HexGridManager->FindNeighborTiles(NeighborTileArray, CurrentPos);
+	NeighborTileArray.Empty();
+
+	HexGridManager->FindNeighborTiles(NeighborTileArray, CurrentCharacter->GetCurrentTile(), 2);
+
+	int32 CurrentSpawnEventCount = FMath::RandRange(0, MaxSpawnEventCountPerTurn);
+
+	for (AHexTile* Iter : NeighborTileArray)
+	{
+		if (Iter->GetTileEvent() == nullptr)
+		{
+			Iter->SpawnEvent();
+			if (--CurrentSpawnEventCount == 0) break;
+		}
+	}
 }
 
 void AMyGameModeBase::CalculateTurn()

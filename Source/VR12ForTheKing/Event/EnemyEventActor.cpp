@@ -5,7 +5,7 @@
 
 AEnemyEventActor::AEnemyEventActor()
 {
-    EventType = EEventType::ENEMY;
+    EventInfo.EventType = EEventType::ENEMY;
 }
 
 const int32 AEnemyEventActor::GetEnemyNum() const

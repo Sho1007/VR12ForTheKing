@@ -40,6 +40,10 @@ public:
 	bool GetIsSearched();
 	void Search();
 
+	// Event Function
+	AEventActor* GetTileEvent();
+	void SpawnEvent();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* StaticMeshComponent;
@@ -53,7 +57,8 @@ protected:
 
 	// Event Var
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	AEventActor* EventActor;
+	AEventActor* EventActor = nullptr;
+
 
 private:
 	bool bIsSearched = false;

@@ -68,11 +68,11 @@ public:
 
 	// Event Function
 	void SpawnEnemy(FIntPoint Center);
-	void FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, FIntPoint CurrentPos);
+	void FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, AHexTile* CurrentTile, int32 distance = 1);
+	void GetNewAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray, int32 distance = 1);
 private:
 	void FindPath(TArray<AHexTile*>& OutArray);
 	void GetAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray);
-	void GetNewAdjTileArray(AHexTile* CenterTile, TArray<AHexTile*>& OutArray, int32 distance = 1);
 	int GetIndex(FIntPoint Pos);
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))

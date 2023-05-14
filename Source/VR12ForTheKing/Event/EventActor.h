@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "Engine/DataTable.h"
+
 #include "EventActor.generated.h"
 
 UENUM(BlueprintType)
@@ -16,6 +18,26 @@ enum class EEventType : uint8
 	TOWN,
 	MERCHANT,
 	DUNGEON,
+};
+
+//class AEventMesh;
+USTRUCT(BlueprintType)
+struct FEventInfo : public FTableRowBase
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	EEventType EventType;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<AEventActor> EventActorClass;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FText EventName;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FText Discription1;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FText Discription2;
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//TSubclassOf<AEventMesh> EventMeshClass;
 };
 
 class UBoxComponent;
@@ -42,19 +64,11 @@ public:
 	const EEventType GetEventType() const;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
-	EEventType EventType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	FEventInfo EventInfo;
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UBoxComponent* BoxCollisionComponent;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UChildActorComponent* EventMeshComponent;
-
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
-	FText EventName;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
-	FText Discription1;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
-	FText Discription2;
 };

@@ -17,33 +17,32 @@ AEventActor::AEventActor()
 
 	EventMeshComponent = CreateDefaultSubobject<UChildActorComponent>("EventMesh");
 	EventMeshComponent->SetupAttachment(RootComponent);
+	//EventMeshComponent->SetChildActorClass(EventInfo.EventMeshClass);
 }
 
 // Called when the game starts or when spawned
 void AEventActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AEventActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 const FText AEventActor::GetEventName() const
 {
-	return EventName;
+	return EventInfo.EventName;
 }
 
 const FText AEventActor::GetDiscription1() const
 {
-	return Discription1;
+	return EventInfo.Discription1;
 }
 
 const EEventType AEventActor::GetEventType() const
 {
-	return EventType;
+	return EventInfo.EventType;
 }
