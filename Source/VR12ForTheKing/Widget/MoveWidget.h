@@ -37,7 +37,7 @@ public:
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UEventWidget* WBP_Event;
+	UEventWidget* WBP_TileEvent;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
 	UEventInfoWidget* WBP_EventInfo;
 };

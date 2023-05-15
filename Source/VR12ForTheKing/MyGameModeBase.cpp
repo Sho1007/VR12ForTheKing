@@ -155,15 +155,10 @@ void AMyGameModeBase::FinishUpdateMoveWidget()
 
 void AMyGameModeBase::CreateMoveWidget()
 {
-	if (MoveWidgetClass)
-	{
-		MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
-		MoveWidget->AddToViewport();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidgetClass is not valid"));
-	}
+	checkf(MoveWidgetClass != nullptr, TEXT("AMyGameModeBase::CreateMoveWidget : MoveWidgetClass is nullptr"));
+	MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
+	MoveWidget->ShowEventWidget();
+	MoveWidget->AddToViewport();
 }
 
 void AMyGameModeBase::HideEventInfoWidget()
