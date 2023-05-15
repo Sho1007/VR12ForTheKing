@@ -12,6 +12,7 @@
 #include "AIController.h"
 #include "Widget/MoveWidget.h"
 #include "Event/TileEventManager.h"
+#include "Event/TileEventMeshCapturor.h"
 
 void AMyGameModeBase::BeginPlay()
 {
@@ -44,6 +45,11 @@ void AMyGameModeBase::BeginPlay()
 	checkf(TileEventManager != nullptr, TEXT("AMyGameModeBase::BeginPlay : Tile Event Manager is not spawned"));
 
 	CreateMoveWidget();
+
+	// TileEventMeshCapturor
+	checkf(TileEventMeshCapturorClass != nullptr, TEXT("AMyGameModeBase::BeginPlay : TileEventMeshCapturor Class is nullptr"));
+	TileEventMeshCapturor = GetWorld()->SpawnActor<ATileEventMeshCapturor>(TileEventMeshCapturorClass, FVector(0, 0, 0), FRotator(0, 0, 0));
+	checkf(TileEventMeshCapturor != nullptr, TEXT("AMyGameModeBase::BeginPlay : TileEventMeshCapturor is not spawned"));
 
 	MoveJudgeArray.Init(true, 5);
 	NextTile = NULL;
@@ -92,6 +98,7 @@ void AMyGameModeBase::MoveCharacter()
 		{
 			// Todo : Move Half Distance to Event Tile
 			MoveWidget->InitEventWidget(TileEvent);
+			TileEventMeshCapturor->SetFocusTarget(TileEvent);
 			MoveWidget->ShowEventWidget();
 		}
 	}
@@ -157,7 +164,8 @@ void AMyGameModeBase::CreateMoveWidget()
 {
 	checkf(MoveWidgetClass != nullptr, TEXT("AMyGameModeBase::CreateMoveWidget : MoveWidgetClass is nullptr"));
 	MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
-	MoveWidget->ShowEventWidget();
+	MoveWidget->HideEventWidget();
+	MoveWidget->HideEventInfoWidget();
 	MoveWidget->AddToViewport();
 }
 

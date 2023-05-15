@@ -4,17 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "TileEventMesh.generated.h"
+#include "TileEventMeshCapturor.generated.h"
 
-class UArrowComponent;
+
+class USceneCaptureComponent2D;
+class AEventActor;
 UCLASS()
-class VR12FORTHEKING_API ATileEventMesh : public AActor
+class VR12FORTHEKING_API ATileEventMeshCapturor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ATileEventMesh();
+	ATileEventMeshCapturor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,9 +26,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	const FTransform& GetCapturePosition() const;
-
-protected:
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	UArrowComponent* CapturePosition;
+	UFUNCTION(BlueprintCallable)
+	void SetFocusTarget(AEventActor* NewTargetActor);
+private:
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	USceneCaptureComponent2D* SceneCaptureComponent;
 };

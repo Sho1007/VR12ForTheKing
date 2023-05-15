@@ -26,17 +26,17 @@ struct FEventInfo : public FTableRowBase
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EEventType EventType;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<AEventActor> EventActorClass;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText EventName;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText Discription1;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText Discription2;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ATileEventMesh> TileEventMeshClass;
 };
 
@@ -65,6 +65,7 @@ public:
 	const FText GetDiscription1() const;
 	const EEventType GetEventType() const;
 	const FEventInfo& GetEventInfo() const;
+	ATileEventMesh* GetTileEventMesh() const;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
@@ -73,5 +74,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UBoxComponent* BoxCollisionComponent;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	UChildActorComponent* EventMeshComponent;
+	ATileEventMesh* TileEventMesh;
 };

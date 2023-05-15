@@ -15,10 +15,6 @@ AEventActor::AEventActor()
 
 	BoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>("BoxCollision");
 	SetRootComponent(BoxCollisionComponent);
-
-	EventMeshComponent = CreateDefaultSubobject<UChildActorComponent>("EventMesh");
-	EventMeshComponent->SetupAttachment(RootComponent);
-	//EventMeshComponent->SetChildActorClass(EventInfo.EventMeshClass);
 }
 
 // Called when the game starts or when spawned
@@ -38,7 +34,8 @@ void AEventActor::SetEventInfo(const FEventInfo& NewEventInfo)
 	EventInfo = NewEventInfo;
 	if (EventInfo.TileEventMeshClass != nullptr)
 	{
-		EventMeshComponent->SetChildActorClass(EventInfo.TileEventMeshClass);
+		TileEventMesh = GetWorld()->SpawnActor<ATileEventMesh>(EventInfo.TileEventMeshClass, GetActorLocation(), GetActorRotation());
+		checkf(TileEventMesh, TEXT("TileEventMesh Actor is not spawned"));
 	}
 }
 
@@ -60,4 +57,9 @@ const EEventType AEventActor::GetEventType() const
 const FEventInfo& AEventActor::GetEventInfo() const
 {
 	return EventInfo;
+}
+
+ATileEventMesh* AEventActor::GetTileEventMesh() const
+{
+	return TileEventMesh;
 }

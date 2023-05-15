@@ -14,6 +14,7 @@ class UMoveWidget;
 class UBattleWidget;
 class AEventActor;
 class ATileEventManager;
+class ATileEventMeshCapturor;
 /**
  * 
  */
@@ -83,6 +84,9 @@ private:
 	// Event Var
 	TArray<AHexTile*> NeighborTileArray;
 	int32 MaxSpawnEventCountPerTurn = 3;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<ATileEventMeshCapturor> TileEventMeshCapturorClass;
+	ATileEventMeshCapturor* TileEventMeshCapturor;
 
 	// BattleWidget Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
