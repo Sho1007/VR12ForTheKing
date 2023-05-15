@@ -83,7 +83,17 @@ void AMyGameModeBase::MoveCharacter()
 	if (NextTile)
 	{
 		//UE_LOG(LogTemp, Error, TEXT("NextTile : %s"), *NextTile->GetPos().ToString());
-		CurrentCharacter->SetDestination(NextTile->GetActorLocation());
+		AEventActor* TileEvent = NextTile->GetTileEvent();
+		if (TileEvent == nullptr)
+		{
+			CurrentCharacter->SetDestination(NextTile->GetActorLocation());
+		}
+		else
+		{
+			// Todo : Move Half Distance to Event Tile
+			MoveWidget->InitEventWidget(TileEvent);
+			MoveWidget->ShowEventWidget();
+		}
 	}
 	else
 	{

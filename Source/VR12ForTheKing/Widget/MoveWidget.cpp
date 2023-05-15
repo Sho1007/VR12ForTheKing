@@ -15,6 +15,18 @@ void UMoveWidget::HideMoveJudgeWidget_Implementation()
 {
 }
 
+void UMoveWidget::ShowEventWidget()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UMoveWidget::ShowEventWidget : Called"));
+	checkf(WBP_Event != NULL, TEXT("UMoveWidget::ShowEventWidget : Event Widget is not valid"));
+	WBP_Event->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMoveWidget::InitEventWidget(const AEventActor* NewEventActor)
+{
+	WBP_Event->InitWidget(NewEventActor);
+}
+
 void UMoveWidget::HideEventWidget()
 {
 	checkf(WBP_Event != NULL, TEXT("UMoveWidget::HideEventWidget : Event Widget is not valid"));
@@ -33,7 +45,7 @@ void UMoveWidget::HideEventInfoWidget()
 	WBP_EventInfo->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UMoveWidget::InitEventInfoWidget(AEventActor* NewEventActor)
+void UMoveWidget::InitEventInfoWidget(const AEventActor* NewEventActor)
 {
 	WBP_EventInfo->Init(NewEventActor);
 }

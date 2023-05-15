@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Components/ChildActorComponent.h"
+#include "TileEventMesh.h"
 
 // Sets default values
 AEventActor::AEventActor()
@@ -35,6 +36,10 @@ void AEventActor::Tick(float DeltaTime)
 void AEventActor::SetEventInfo(const FEventInfo& NewEventInfo)
 {
 	EventInfo = NewEventInfo;
+	if (EventInfo.TileEventMeshClass != nullptr)
+	{
+		EventMeshComponent->SetChildActorClass(EventInfo.TileEventMeshClass);
+	}
 }
 
 const FText AEventActor::GetEventName() const
@@ -50,4 +55,9 @@ const FText AEventActor::GetDiscription1() const
 const EEventType AEventActor::GetEventType() const
 {
 	return EventInfo.EventType;
+}
+
+const FEventInfo& AEventActor::GetEventInfo() const
+{
+	return EventInfo;
 }

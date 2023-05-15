@@ -8,7 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Border.h"
 
-void UEventInfoWidget::Init(AEventActor* NewEventActor)
+void UEventInfoWidget::Init(const AEventActor* NewEventActor)
 {
 	Border_MonsterLevel->SetVisibility(ESlateVisibility::Collapsed);
 	Border_MonsterCount->SetVisibility(ESlateVisibility::Collapsed);
