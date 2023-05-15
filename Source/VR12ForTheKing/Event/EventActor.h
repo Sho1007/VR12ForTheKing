@@ -20,7 +20,7 @@ enum class EEventType : uint8
 	DUNGEON,
 };
 
-//class AEventMesh;
+class ATileEventMesh;
 USTRUCT(BlueprintType)
 struct FEventInfo : public FTableRowBase
 {
@@ -36,8 +36,8 @@ struct FEventInfo : public FTableRowBase
 	FText Discription1;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FText Discription2;
-	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	//TSubclassOf<AEventMesh> EventMeshClass;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<ATileEventMesh> TileEventMeshClass;
 };
 
 class UBoxComponent;
@@ -64,6 +64,7 @@ public:
 	const FText GetEventName() const;
 	const FText GetDiscription1() const;
 	const EEventType GetEventType() const;
+	const FEventInfo& GetEventInfo() const;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

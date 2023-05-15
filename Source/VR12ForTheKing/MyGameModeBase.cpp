@@ -83,7 +83,17 @@ void AMyGameModeBase::MoveCharacter()
 	if (NextTile)
 	{
 		//UE_LOG(LogTemp, Error, TEXT("NextTile : %s"), *NextTile->GetPos().ToString());
-		CurrentCharacter->SetDestination(NextTile->GetActorLocation());
+		AEventActor* TileEvent = NextTile->GetTileEvent();
+		if (TileEvent == nullptr)
+		{
+			CurrentCharacter->SetDestination(NextTile->GetActorLocation());
+		}
+		else
+		{
+			// Todo : Move Half Distance to Event Tile
+			MoveWidget->InitEventWidget(TileEvent);
+			MoveWidget->ShowEventWidget();
+		}
 	}
 	else
 	{
@@ -145,15 +155,10 @@ void AMyGameModeBase::FinishUpdateMoveWidget()
 
 void AMyGameModeBase::CreateMoveWidget()
 {
-	if (MoveWidgetClass)
-	{
-		MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
-		MoveWidget->AddToViewport();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidgetClass is not valid"));
-	}
+	checkf(MoveWidgetClass != nullptr, TEXT("AMyGameModeBase::CreateMoveWidget : MoveWidgetClass is nullptr"));
+	MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
+	MoveWidget->ShowEventWidget();
+	MoveWidget->AddToViewport();
 }
 
 void AMyGameModeBase::HideEventInfoWidget()

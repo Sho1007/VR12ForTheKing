@@ -18,7 +18,7 @@ class VR12FORTHEKING_API UEventInfoWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void Init(AEventActor* NewEventActor);
+	void Init(const AEventActor* NewEventActor);
 
 private:
 	UPROPERTY(meta = (AllowPrivateAccess = true, BindWidget))
