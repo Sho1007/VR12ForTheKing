@@ -9,6 +9,7 @@
 /**
  * 
  */
+class AMyCharacter;
 UCLASS()
 class VR12FORTHEKING_API AEnemyEventActor : public AEventActor
 {
@@ -18,7 +19,11 @@ public:
 	AEnemyEventActor();
 
 	const int32 GetEnemyNum() const;
+	const TArray<TSubclassOf<AMyCharacter>>& GetEnemyArray() const;
+
+	UFUNCTION(BlueprintCallable)
+	void StartBattle();
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	TArray<AActor*> EnemyArray;
+	TArray<TSubclassOf<AMyCharacter>> EnemyArray;
 };

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "VR12ForTheKing.h"
 #include "GameFramework/Pawn.h"
 #include "MyPlayerPawn.generated.h"
 

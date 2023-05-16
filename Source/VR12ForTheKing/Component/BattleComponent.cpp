@@ -37,6 +37,11 @@ void UBattleComponent::SetFactionType(EFactionType NewFactionType)
 	FactionType = NewFactionType;
 }
 
+const EFactionType& UBattleComponent::GetFactionType() const
+{
+	return FactionType;
+}
+
 void UBattleComponent::BattleAction_Implementation()
 {
 }

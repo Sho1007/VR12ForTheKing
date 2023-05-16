@@ -2,50 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../VR12ForTheKing.h"
 #include "Components/ActorComponent.h"
 #include "../VR12ForTheKing.h"
 #include "Engine/DataTable.h"
 #include "BattleComponent.generated.h"
 
 // Check Chance
-
-UENUM(BlueprintType)
-enum class EFactionType : uint8
-{
-	Player,
-	Enemy
-};
-
-UENUM(BlueprintType)
-enum class EActionType : uint8
-{
-	Attack,
-	Buff
-};
-
-UENUM(BlueprintType)
-enum class EActionRange : uint8
-{
-	Single,
-	All,
-};
-
-UENUM(BlueprintType)
-enum class EStatusType : uint8
-{
-	Armor,
-	Awareness,
-	Evasion,
-	Focus,
-	Intelligence,
-	Luck,
-	Resistance,
-	Speed,
-	Strength,
-	Talent,
-	Vitality,
-};
 
 USTRUCT(BlueprintType)
 struct FAction : public FTableRowBase
@@ -101,6 +64,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
+	UFUNCTION(BlueprintCallable)
+	const EFactionType& GetFactionType() const;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

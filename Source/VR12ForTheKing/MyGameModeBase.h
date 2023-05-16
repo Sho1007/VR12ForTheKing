@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "VR12ForTheKing.h"
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
@@ -15,6 +15,7 @@ class UBattleWidget;
 class AEventActor;
 class ATileEventManager;
 class ATileEventMeshCapturor;
+class UBattleManagerComponent;
 /**
  * 
  */
@@ -24,6 +25,7 @@ class VR12FORTHEKING_API AMyGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+	AMyGameModeBase();
 	virtual void BeginPlay() override;
 
 public:
@@ -55,6 +57,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	ATileEventManager* GetTileEventManager();
 
+	// Event Button Function
+	void DoEventAction(ETileEventActionType NewEventActionType);
 private:
 	void CreatePlayer();
 
@@ -63,7 +67,7 @@ private:
 
 	// Event Fucntion
 	void SpawnEvent();
-
+	void StartBattle();
 	// Battle Function
 	void CalculateTurn();
 private:
@@ -82,6 +86,7 @@ private:
 	UMoveWidget* MoveWidget;
 
 	// Event Var
+	AEventActor* CurrentTileEvent = nullptr;
 	TArray<AHexTile*> NeighborTileArray;
 	int32 MaxSpawnEventCountPerTurn = 3;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -113,6 +118,10 @@ private:
 	int32 CurrentBattleRound;
 	TArray<AMyCharacter*> BattleTurnArray;
 	TArray<AMyCharacter*> UseBattleTurnArray;
+
+	// Battle Manager
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UBattleManagerComponent* BattleManager;
 
 
 	TArray<AMyPlayerController*> PlayerControllerArray;
