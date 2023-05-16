@@ -10,6 +10,7 @@
 class UTextRenderComponent;
 class UStaticMeshComponent;
 class AEventActor;
+class AMyCharacter;
 UCLASS()
 class VR12FORTHEKING_API AHexTile : public AActor
 {
@@ -40,6 +41,11 @@ public:
 	bool GetIsSearched();
 	void Search();
 
+	void ArriveToTile(AMyCharacter* NewArrival);
+	void LeaveFromTile(AMyCharacter* NewLeaver);
+
+	const TArray<AMyCharacter*>& GetInTileCharacterArray() const;
+
 	// Event Function
 	AEventActor* GetTileEvent();
 	void SpawnEvent();
@@ -49,7 +55,9 @@ protected:
 	UStaticMeshComponent* StaticMeshComponent;
 	UPROPERTY(EditDefaultsOnly)
 	UTextRenderComponent* TextRenderComponent;
-
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+	TArray<AMyCharacter*> InTileCharacterArray;
+	
 	FIntPoint Pos;
 
 	// A* Algorithm

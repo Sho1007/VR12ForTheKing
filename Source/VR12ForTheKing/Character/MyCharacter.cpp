@@ -69,7 +69,14 @@ void AMyCharacter::ReachToDestination_Implementation()
 
 void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
 {
+	// Todo : 타일을 떠날 때 (Collision 넣고, EndOverlap) Leave
+	// 타일에 딱 닿았을 때 (BeginOverlap) Arrive 실행하도록 변경
+	if (CurrentTile != nullptr)
+	{
+		CurrentTile->LeaveFromTile(this);
+	}
 	CurrentTile = NewCurrentTile;
+	CurrentTile->ArriveToTile(this);
 }
 
 void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float NewRadius)

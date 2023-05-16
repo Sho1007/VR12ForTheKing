@@ -15,6 +15,7 @@ class UBattleWidget;
 class AEventActor;
 class ATileEventManager;
 class ATileEventMeshCapturor;
+class UBattleManagerComponent;
 /**
  * 
  */
@@ -24,6 +25,7 @@ class VR12FORTHEKING_API AMyGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+	AMyGameModeBase();
 	virtual void BeginPlay() override;
 
 public:
@@ -116,6 +118,10 @@ private:
 	int32 CurrentBattleRound;
 	TArray<AMyCharacter*> BattleTurnArray;
 	TArray<AMyCharacter*> UseBattleTurnArray;
+
+	// Battle Manager
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UBattleManagerComponent* BattleManager;
 
 
 	TArray<AMyPlayerController*> PlayerControllerArray;

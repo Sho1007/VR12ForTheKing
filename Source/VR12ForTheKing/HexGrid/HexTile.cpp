@@ -77,6 +77,29 @@ void AHexTile::Search()
 	bIsSearched = true;
 }
 
+void AHexTile::ArriveToTile(AMyCharacter* NewArrival)
+{
+	checkf(NewArrival != nullptr, TEXT("AHexTile::ArriveToTile : NewArrival is nullptr"));
+	InTileCharacterArray.Add(NewArrival);
+
+	// Todo : Change In Tile Character Location
+}
+
+void AHexTile::LeaveFromTile(AMyCharacter* NewLeaver)
+{
+	checkf(NewLeaver != nullptr, TEXT("AHexTile::LeaveFromTile : NewLeaver is nullptr"));
+	int32 Index = InTileCharacterArray.Find(NewLeaver);
+	checkf(Index >= 0, TEXT("AHexTile::LeaveFromTile : Index is invalid"));
+	InTileCharacterArray.RemoveAt(Index);
+
+	// Todo : Change In Tile Character Location
+}
+
+const TArray<AMyCharacter*>& AHexTile::GetInTileCharacterArray() const
+{
+	return InTileCharacterArray;
+}
+
 AEventActor* AHexTile::GetTileEvent()
 {
 	return EventActor;

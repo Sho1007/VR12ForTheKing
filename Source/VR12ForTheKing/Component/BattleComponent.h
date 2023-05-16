@@ -64,6 +64,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
+	UFUNCTION(BlueprintCallable)
+	const EFactionType& GetFactionType() const;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

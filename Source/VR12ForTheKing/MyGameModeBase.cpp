@@ -14,6 +14,15 @@
 #include "Event/TileEventManager.h"
 #include "Event/TileEventMeshCapturor.h"
 #include "Event/EnemyEventActor.h"
+#include "Component/BattleManagerComponent.h"
+#include "Component/BattleComponent.h"
+
+AMyGameModeBase::AMyGameModeBase()
+{
+	// BattleManager
+	BattleManager = CreateDefaultSubobject<UBattleManagerComponent>(TEXT("BattleManager"));
+	checkf(BattleManager != nullptr, TEXT("BattleManager is not spawned"));
+}
 
 void AMyGameModeBase::BeginPlay()
 {
@@ -196,13 +205,32 @@ void AMyGameModeBase::StartBattle()
 	for (auto Iter : NeighborTileArray)
 	{
 		if (!Iter->GetIsSearched()) continue;
-		if (Iter->GetTileEvent() != nullptr && Cast<AEnemyEventActor>(Iter->GetTileEvent()))
+		TArray<AMyCharacter*> InTileCharacterArray = Iter->GetInTileCharacterArray();
+		for (AMyCharacter* InTileCharacterArrayIter : InTileCharacterArray)
 		{
+			
+			UBattleComponent* BattleComponent = Iter->FindComponentByClass<UBattleComponent>();
+			if (BattleComponent != nullptr)
+			{
+				if (BattleComponent->GetFactionType() == EFactionType::Player)
+				{
+					BattleManager->AddPlayerCharacter(InTileCharacterArrayIter);
+				}
+			}
+		}
+
+		AEnemyEventActor* EnemyEvent = Cast<AEnemyEventActor>(Iter->GetTileEvent());
+		if (EnemyEvent != nullptr)
+		{
+			const TArray<TSubclassOf<AMyCharacter>> TempEnemyArray = EnemyEvent->GetEnemyArray();
+			for (TSubclassOf<AMyCharacter> EnemyArrayIter : TempEnemyArray)
+			{
+				BattleManager->AddEnemyClass(EnemyArrayIter);
+			}
 		}
 	}
 
-
-	EnemyEventActor->StartBattle();
+	BattleManager->DebugInfo();
 }
 
 void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
