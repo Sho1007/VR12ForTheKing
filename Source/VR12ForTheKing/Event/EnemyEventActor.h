@@ -18,6 +18,9 @@ public:
 	AEnemyEventActor();
 
 	const int32 GetEnemyNum() const;
+
+	UFUNCTION(BlueprintCallable)
+	void StartBattle();
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AActor*> EnemyArray;

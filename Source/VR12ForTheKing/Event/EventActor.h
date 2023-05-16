@@ -2,22 +2,21 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../VR12ForTheKing.h"
 #include "GameFramework/Actor.h"
 
 #include "Engine/DataTable.h"
 
 #include "EventActor.generated.h"
 
-UENUM(BlueprintType)
-enum class EEventType : uint8
+USTRUCT(BlueprintType)
+struct FEventActionInfo
 {
-	NONE,
-	ENEMY,
-	STRUCTURE,
-	TOWN,
-	MERCHANT,
-	DUNGEON,
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ETileEventActionType TileEventActionType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText ButtonName;
 };
 
 class ATileEventMesh;
@@ -38,6 +37,8 @@ struct FEventInfo : public FTableRowBase
 	FText Discription2;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ATileEventMesh> TileEventMeshClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FEventActionInfo> EventActionButtonArray;
 };
 
 class UBoxComponent;

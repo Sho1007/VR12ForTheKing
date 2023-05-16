@@ -75,8 +75,6 @@ void AHexTile::Search()
 {
 	if (bIsSearched) return;
 	bIsSearched = true;
-
-
 }
 
 AEventActor* AHexTile::GetTileEvent()

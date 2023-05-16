@@ -12,6 +12,8 @@
 class AEventActor;
 class UTextBlock;
 class UBorder;
+class UUniformGridPanel;
+class UEventActionButtonWidget;
 UCLASS()
 class VR12FORTHEKING_API UEventWidget : public UUserWidget
 {
@@ -28,6 +30,11 @@ private:
 	UTextBlock* Txt_Discription1;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UTextBlock* Txt_Discription2;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UUniformGridPanel* UGP_ActionButtonArray;
+	// Button Var
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UEventActionButtonWidget> EventActionButtonClass;
 
 	// Enemy Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))

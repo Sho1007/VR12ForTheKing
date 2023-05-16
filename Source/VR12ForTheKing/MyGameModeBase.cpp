@@ -13,6 +13,7 @@
 #include "Widget/MoveWidget.h"
 #include "Event/TileEventManager.h"
 #include "Event/TileEventMeshCapturor.h"
+#include "Event/EnemyEventActor.h"
 
 void AMyGameModeBase::BeginPlay()
 {
@@ -89,16 +90,16 @@ void AMyGameModeBase::MoveCharacter()
 	if (NextTile)
 	{
 		//UE_LOG(LogTemp, Error, TEXT("NextTile : %s"), *NextTile->GetPos().ToString());
-		AEventActor* TileEvent = NextTile->GetTileEvent();
-		if (TileEvent == nullptr)
+		CurrentTileEvent = NextTile->GetTileEvent();
+		if (CurrentTileEvent == nullptr)
 		{
 			CurrentCharacter->SetDestination(NextTile->GetActorLocation());
 		}
 		else
 		{
 			// Todo : Move Half Distance to Event Tile
-			MoveWidget->InitEventWidget(TileEvent);
-			TileEventMeshCapturor->SetFocusTarget(TileEvent);
+			MoveWidget->InitEventWidget(CurrentTileEvent);
+			TileEventMeshCapturor->SetFocusTarget(CurrentTileEvent);
 			MoveWidget->ShowEventWidget();
 		}
 	}
@@ -183,6 +184,37 @@ void AMyGameModeBase::InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVe
 ATileEventManager* AMyGameModeBase::GetTileEventManager()
 {
 	return TileEventManager;
+}
+
+void AMyGameModeBase::StartBattle()
+{
+	AEnemyEventActor* EnemyEventActor = Cast<AEnemyEventActor>(CurrentTileEvent);
+	checkf(EnemyEventActor != nullptr, TEXT("AMyGameModeBase::StartBattle : CurrentTileEvent is not EnemyEventActor Class"));
+	HexGridManager->GetNewAdjTileArray(NextTile, NeighborTileArray, 2);
+	EnemyArray.Empty();
+
+	for (auto Iter : NeighborTileArray)
+	{
+		if (!Iter->GetIsSearched()) continue;
+		if (Iter->GetTileEvent() != nullptr && Cast<AEnemyEventActor>(Iter->GetTileEvent()))
+		{
+		}
+	}
+
+
+	EnemyEventActor->StartBattle();
+}
+
+void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
+{
+	switch (NewEventActionType)
+	{
+	case ETileEventActionType::Battle:
+		StartBattle();
+		break;
+	case ETileEventActionType::Retreat:
+		break;
+	}
 }
 
 void AMyGameModeBase::CreatePlayer()

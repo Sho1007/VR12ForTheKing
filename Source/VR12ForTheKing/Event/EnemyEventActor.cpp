@@ -12,3 +12,8 @@ const int32 AEnemyEventActor::GetEnemyNum() const
 {
     return EnemyArray.Num();
 }
+
+void AEnemyEventActor::StartBattle()
+{
+    UE_LOG(LogTemp, Warning, TEXT("AEnemyEventActor::StartBattle : Called"));
+}

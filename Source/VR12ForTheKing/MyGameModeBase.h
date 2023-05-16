@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "VR12ForTheKing.h"
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
@@ -55,6 +55,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	ATileEventManager* GetTileEventManager();
 
+	// Event Button Function
+	void DoEventAction(ETileEventActionType NewEventActionType);
 private:
 	void CreatePlayer();
 
@@ -63,7 +65,7 @@ private:
 
 	// Event Fucntion
 	void SpawnEvent();
-
+	void StartBattle();
 	// Battle Function
 	void CalculateTurn();
 private:
@@ -82,6 +84,7 @@ private:
 	UMoveWidget* MoveWidget;
 
 	// Event Var
+	AEventActor* CurrentTileEvent = nullptr;
 	TArray<AHexTile*> NeighborTileArray;
 	int32 MaxSpawnEventCountPerTurn = 3;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))

@@ -7,7 +7,7 @@
 #include "StatusComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UStatusComponent : public UActorComponent
 {
 	GENERATED_BODY()
