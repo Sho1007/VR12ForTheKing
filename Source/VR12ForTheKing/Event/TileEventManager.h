@@ -27,7 +27,12 @@ public:
 	UDataTable* GetDataTable();
 
 
+	const float GetEventOccurChance() const;
+
 private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UDataTable* EventDataTable;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	float EventOccurChance = 0.2f;
 };

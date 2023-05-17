@@ -29,6 +29,9 @@ public:
 	virtual void BeginPlay() override;
 
 public:
+	// Getter / Setter
+
+	AHexGridManager* GetHexGridManager() const;
 
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
@@ -67,7 +70,6 @@ private:
 
 	// Event Fucntion
 	void SpawnEvent();
-	void StartBattle();
 	// Battle Function
 	void CalculateTurn();
 private:

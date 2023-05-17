@@ -69,5 +69,6 @@ protected:
 
 
 private:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	bool bIsSearched = false;
 };

@@ -75,12 +75,16 @@ void AHexTile::Search()
 {
 	if (bIsSearched) return;
 	bIsSearched = true;
+
+	// Todo : If this tile already has event, invoke the event
 }
 
 void AHexTile::ArriveToTile(AMyCharacter* NewArrival)
 {
 	checkf(NewArrival != nullptr, TEXT("AHexTile::ArriveToTile : NewArrival is nullptr"));
 	InTileCharacterArray.Add(NewArrival);
+
+	Search();
 
 	// Todo : Change In Tile Character Location
 }

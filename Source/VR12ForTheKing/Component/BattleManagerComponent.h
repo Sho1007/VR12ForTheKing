@@ -30,6 +30,13 @@ public:
 
 	void DebugInfo();
 
+	void InitBattle(AActor* BattleTile);
+public:
+	// Getter / Setter
+	bool SetGameMode(AGameModeBase* NewGameMode);
+private:
+	bool SpawnEnemy();
+
 private:
 	// Battle Var
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
@@ -41,4 +48,8 @@ private:
 	TArray<AMyCharacter*> BattleTurnArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> UseBattleTurnArray;
+
+	int32 SpawnEnemyIndex;
+
+	AGameModeBase* GameMode;
 };

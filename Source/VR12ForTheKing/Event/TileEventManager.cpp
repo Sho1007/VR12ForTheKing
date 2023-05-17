@@ -33,3 +33,8 @@ UDataTable* ATileEventManager::GetDataTable()
 	return EventDataTable;
 }
 
+const float ATileEventManager::GetEventOccurChance() const
+{
+	return EventOccurChance;
+}
+

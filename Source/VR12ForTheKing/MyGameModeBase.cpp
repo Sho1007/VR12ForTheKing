@@ -22,6 +22,7 @@ AMyGameModeBase::AMyGameModeBase()
 	// BattleManager
 	BattleManager = CreateDefaultSubobject<UBattleManagerComponent>(TEXT("BattleManager"));
 	checkf(BattleManager != nullptr, TEXT("BattleManager is not spawned"));
+	BattleManager->SetGameMode(this);
 }
 
 void AMyGameModeBase::BeginPlay()
@@ -66,6 +67,12 @@ void AMyGameModeBase::BeginPlay()
 
 	DoNextTurn();
 }
+
+AHexGridManager* AMyGameModeBase::GetHexGridManager() const
+{
+	return HexGridManager;
+}
+
 void AMyGameModeBase::SetStartTile(AHexTile* NewStartTile)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("SetStartTile Called")));
@@ -195,50 +202,12 @@ ATileEventManager* AMyGameModeBase::GetTileEventManager()
 	return TileEventManager;
 }
 
-void AMyGameModeBase::StartBattle()
-{
-	AEnemyEventActor* EnemyEventActor = Cast<AEnemyEventActor>(CurrentTileEvent);
-	checkf(EnemyEventActor != nullptr, TEXT("AMyGameModeBase::StartBattle : CurrentTileEvent is not EnemyEventActor Class"));
-	HexGridManager->GetNewAdjTileArray(NextTile, NeighborTileArray, 2);
-	EnemyArray.Empty();
-
-	for (auto Iter : NeighborTileArray)
-	{
-		if (!Iter->GetIsSearched()) continue;
-		TArray<AMyCharacter*> InTileCharacterArray = Iter->GetInTileCharacterArray();
-		for (AMyCharacter* InTileCharacterArrayIter : InTileCharacterArray)
-		{
-			
-			UBattleComponent* BattleComponent = Iter->FindComponentByClass<UBattleComponent>();
-			if (BattleComponent != nullptr)
-			{
-				if (BattleComponent->GetFactionType() == EFactionType::Player)
-				{
-					BattleManager->AddPlayerCharacter(InTileCharacterArrayIter);
-				}
-			}
-		}
-
-		AEnemyEventActor* EnemyEvent = Cast<AEnemyEventActor>(Iter->GetTileEvent());
-		if (EnemyEvent != nullptr)
-		{
-			const TArray<TSubclassOf<AMyCharacter>> TempEnemyArray = EnemyEvent->GetEnemyArray();
-			for (TSubclassOf<AMyCharacter> EnemyArrayIter : TempEnemyArray)
-			{
-				BattleManager->AddEnemyClass(EnemyArrayIter);
-			}
-		}
-	}
-
-	BattleManager->DebugInfo();
-}
-
 void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 {
 	switch (NewEventActionType)
 	{
 	case ETileEventActionType::Battle:
-		StartBattle();
+		BattleManager->InitBattle(NextTile);
 		break;
 	case ETileEventActionType::Retreat:
 		break;
@@ -329,14 +298,14 @@ void AMyGameModeBase::SpawnEvent()
 
 	HexGridManager->FindNeighborTiles(NeighborTileArray, CurrentCharacter->GetCurrentTile(), 2);
 
-	int32 CurrentSpawnEventCount = FMath::RandRange(0, MaxSpawnEventCountPerTurn);
-
 	for (AHexTile* Iter : NeighborTileArray)
 	{
-		if (Iter->GetTileEvent() == nullptr)
+		if (Iter->GetIsSearched() || Iter->GetTileEvent() != nullptr || Iter->GetInTileCharacterArray().Num() > 0) continue;
+
+		if (FMath::RandRange(0.0, 1.0) <= TileEventManager->GetEventOccurChance())
 		{
+			Iter->Search();
 			Iter->SpawnEvent();
-			if (--CurrentSpawnEventCount == 0) break;
 		}
 	}
 }
