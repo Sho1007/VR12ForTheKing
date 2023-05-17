@@ -20,6 +20,7 @@ struct FEventActionInfo
 };
 
 class ATileEventMesh;
+class AMyCharacter;
 USTRUCT(BlueprintType)
 struct FEventInfo : public FTableRowBase
 {
@@ -39,6 +40,8 @@ struct FEventInfo : public FTableRowBase
 	TSubclassOf<ATileEventMesh> TileEventMeshClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FEventActionInfo> EventActionButtonArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
 };
 
 class UBoxComponent;

@@ -122,7 +122,7 @@ private:
 	TArray<AMyCharacter*> UseBattleTurnArray;
 
 	// Battle Manager
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UBattleManagerComponent* BattleManager;
 
 

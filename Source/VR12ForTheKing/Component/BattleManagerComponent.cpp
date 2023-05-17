@@ -9,6 +9,8 @@
 #include "../HexGrid/HexTile.h"
 #include "../Event/EnemyEventActor.h"
 #include "BattleComponent.h"
+#include "../Battle/BattleMap.h"
+#include "Kismet/GamePlayStatics.h"
 
 // Sets default values for this component's properties
 UBattleManagerComponent::UBattleManagerComponent()
@@ -27,9 +29,16 @@ void UBattleManagerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
-}
 
+	TArray<AActor*> OutArray;
+
+	UGameplayStatics::GetAllActorsOfClass(this, BattleMapClass, OutArray);
+
+	for (AActor* Actor : OutArray)
+	{
+		BattleMapArray.Add(Cast<ABattleMap>(Actor));
+	}
+}
 
 // Called every frame
 void UBattleManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -109,6 +118,8 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	}
 
 	DebugInfo();
+
+	SpawnEnemy();
 }
 
 bool UBattleManagerComponent::SetGameMode(AGameModeBase* NewGameMode)
@@ -120,10 +131,22 @@ bool UBattleManagerComponent::SetGameMode(AGameModeBase* NewGameMode)
 
 bool UBattleManagerComponent::SpawnEnemy()
 {
-	for (int i = SpawnEnemyIndex; i < EnemyClassArray.Num(); ++i)
+	// Todo : Set BattleMap
+
+	int32 SpawnEnemyCount = 0;
+
+	for (; SpawnEnemyCount < 3; ++SpawnEnemyCount)
 	{
-		GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[i]);
+		if (SpawnEnemyCount + SpawnEnemyIndex >= EnemyClassArray.Num())
+		{
+			SpawnEnemyIndex += SpawnEnemyCount;
+			return true;
+		}
+
+		FTransform EnemySpawnTransform = BattleMapArray[0]->GetEnemySpawnPosition()[SpawnEnemyCount]->GetActorTransform();
+		GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform);
 	}
 
+	SpawnEnemyIndex += SpawnEnemyCount + 1;
 	return true;
 }

@@ -17,3 +17,13 @@ void ABattleMap::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+const TArray<AActor*>& ABattleMap::GetEnemySpawnPosition() const
+{
+	return EnemySpawnPosition;
+}
+
+const TArray<AActor*>& ABattleMap::GetPlayerSpawnPosition() const
+{
+	return PlayerSpawnPosition;
+}

@@ -19,6 +19,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	// Getter / Setter
+	const TArray<AActor*>& GetEnemySpawnPosition() const;
+	const TArray<AActor*>& GetPlayerSpawnPosition() const;
+
 private:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AActor*> PlayerSpawnPosition;

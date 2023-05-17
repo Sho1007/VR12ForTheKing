@@ -10,12 +10,12 @@ AEnemyEventActor::AEnemyEventActor()
 
 const int32 AEnemyEventActor::GetEnemyNum() const
 {
-    return EnemyArray.Num();
+    return EventInfo.EnemyClassArray.Num();
 }
 
 const TArray<TSubclassOf<AMyCharacter>>& AEnemyEventActor::GetEnemyArray() const
 {
-    return EnemyArray;
+    return EventInfo.EnemyClassArray;
 }
 
 void AEnemyEventActor::StartBattle()

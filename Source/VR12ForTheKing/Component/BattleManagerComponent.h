@@ -8,6 +8,7 @@
 
 
 class AMyCharacter;
+class ABattleMap;
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UBattleManagerComponent : public UActorComponent
 {
@@ -35,7 +36,9 @@ public:
 	// Getter / Setter
 	bool SetGameMode(AGameModeBase* NewGameMode);
 private:
+	// Battle Process
 	bool SpawnEnemy();
+
 
 private:
 	// Battle Var
@@ -48,7 +51,13 @@ private:
 	TArray<AMyCharacter*> BattleTurnArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> UseBattleTurnArray;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	ABattleMap* BattleMap;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+	TArray<ABattleMap*> BattleMapArray;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<ABattleMap> BattleMapClass;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	int32 SpawnEnemyIndex;
 
 	AGameModeBase* GameMode;
