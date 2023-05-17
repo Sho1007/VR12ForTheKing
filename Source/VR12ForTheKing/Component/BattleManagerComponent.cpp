@@ -79,6 +79,7 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 {
 	// Clear Variable
 	PlayerCharacterArray.Empty();
+	EnemyCharacterArray.Empty();
 	EnemyClassArray.Empty();
 	SpawnEnemyIndex = 0;
 
@@ -92,6 +93,8 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	AEnemyEventActor* EnemyEventActor = Cast<AEnemyEventActor>(CurrentTile->GetTileEvent());
 	checkf(EnemyEventActor != nullptr, TEXT("UBattleManagerComponent::InitBattle : EnemyEventActor is invalid"));
 	
+	TArray<TSubclassOf<AMyCharacter>> CurrentEnemyClassArray;
+
 	TArray<AHexTile*> NeighborTileArray;
 
 	HexGridManager->FindNeighborTiles(NeighborTileArray, CurrentTile, 2);
@@ -110,7 +113,9 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 			}
 		}
 
-		TArray<TSubclassOf<AMyCharacter>> CurrentEnemyClassArray = EnemyEventActor->GetEnemyArray();
+		EnemyEventActor = Cast<AEnemyEventActor>(NeighborTile->GetTileEvent());
+		if (EnemyEventActor == nullptr) continue;
+		CurrentEnemyClassArray = EnemyEventActor->GetEnemyArray();
 		for (TSubclassOf<AMyCharacter> EnemyClass : CurrentEnemyClassArray)
 		{
 			AddEnemyClass(EnemyClass);
@@ -119,7 +124,10 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 
 	DebugInfo();
 
-	SpawnEnemy();
+	if (SpawnEnemy())
+	{
+		TeleportCharacter();
+	}
 }
 
 bool UBattleManagerComponent::SetGameMode(AGameModeBase* NewGameMode)
@@ -144,9 +152,22 @@ bool UBattleManagerComponent::SpawnEnemy()
 		}
 
 		FTransform EnemySpawnTransform = BattleMapArray[0]->GetEnemySpawnPosition()[SpawnEnemyCount]->GetActorTransform();
-		GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform);
+		AMyCharacter* EnemyCharacter = GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform);
+		checkf(EnemyCharacter != nullptr, TEXT("UBattleManagerComponent::SpawnEnemy : EnemyCharacter is not spawned"));
+		EnemyCharacterArray.Add(EnemyCharacter);
 	}
 
 	SpawnEnemyIndex += SpawnEnemyCount + 1;
+	return true;
+}
+
+bool UBattleManagerComponent::TeleportCharacter()
+{
+	for (int i = 0; i < PlayerCharacterArray.Num(); ++i)
+	{
+		FTransform CharacterSpawnTransform = BattleMapArray[0]->GetPlayerSpawnPosition()[i]->GetActorTransform();
+		PlayerCharacterArray[i]->SetActorTransform(CharacterSpawnTransform);
+	}
+
 	return true;
 }

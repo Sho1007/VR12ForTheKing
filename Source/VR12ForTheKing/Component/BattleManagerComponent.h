@@ -38,11 +38,14 @@ public:
 private:
 	// Battle Process
 	bool SpawnEnemy();
-
+	bool TeleportCharacter();
 
 private:
 	// Battle Var
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TArray<AMyCharacter*> EnemyCharacterArray;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> PlayerCharacterArray;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))

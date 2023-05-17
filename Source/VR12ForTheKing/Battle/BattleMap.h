@@ -30,4 +30,9 @@ private:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AActor*> EnemySpawnPosition;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+	AActor* PlayerSideCamera;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+	AActor* EnemySideCamera;
 };
