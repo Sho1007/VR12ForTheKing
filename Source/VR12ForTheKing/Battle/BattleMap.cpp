@@ -37,3 +37,8 @@ const AActor* ABattleMap::GetEnemySideCamera() const
 {
 	return EnemySideCamera;
 }
+
+const AActor* ABattleMap::GetNeutralSideCamera() const
+{
+	return NeutralSideCamera;
+}

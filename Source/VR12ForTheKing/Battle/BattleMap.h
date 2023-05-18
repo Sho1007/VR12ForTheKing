@@ -26,6 +26,7 @@ public:
 
 	const AActor* GetPlayerSideCamera() const;
 	const AActor* GetEnemySideCamera() const;
+	const AActor* GetNeutralSideCamera() const;
 
 private:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
@@ -36,6 +37,10 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	AActor* PlayerSideCamera;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+	AActor* NeutralSideCamera;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	AActor* EnemySideCamera;
 };

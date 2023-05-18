@@ -181,8 +181,8 @@ void UBattleManagerComponent::MoveCamera()
 {
 	APlayerController* LocalPlayerController = GEngine->GetFirstLocalPlayerController(GetWorld());
 	APawn* LocalPawn = LocalPlayerController->GetPawn();
-	LocalPawn->SetActorLocation(BattleMapArray[0]->GetPlayerSideCamera()->GetActorLocation());
-	LocalPawn->FindComponentByClass<UCameraComponent>()->SetWorldRotation(BattleMapArray[0]->GetPlayerSideCamera()->GetActorRotation());
+	LocalPawn->SetActorLocation(BattleMapArray[0]->GetNeutralSideCamera()->GetActorLocation());
+	LocalPawn->FindComponentByClass<UCameraComponent>()->SetWorldRotation(BattleMapArray[0]->GetNeutralSideCamera()->GetActorRotation());
 }
 
 void UBattleManagerComponent::CalculateTurn()
@@ -199,7 +199,8 @@ void UBattleManagerComponent::CalculateTurn()
 	BattleTurnArray.Sort([](const AMyCharacter& IP1, const AMyCharacter& IP2)
 		{
 			// Todo : Implement Calculateturn Logic
-			IP1.FindComponentByClass<UStatusComponent>();
-			return true;
+			return IP1.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().GetSpeed() > IP2.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().GetSpeed();
 		});
+
+	// Todo : Do Battle Widget
 }
