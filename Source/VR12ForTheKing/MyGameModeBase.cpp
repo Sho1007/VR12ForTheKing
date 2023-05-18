@@ -207,6 +207,7 @@ void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 	switch (NewEventActionType)
 	{
 	case ETileEventActionType::Battle:
+		MoveWidget->HideEventWidget();
 		BattleManager->InitBattle(NextTile);
 		break;
 	case ETileEventActionType::Retreat:

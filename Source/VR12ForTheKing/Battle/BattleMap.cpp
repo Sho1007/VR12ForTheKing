@@ -27,3 +27,13 @@ const TArray<AActor*>& ABattleMap::GetPlayerSpawnPosition() const
 {
 	return PlayerSpawnPosition;
 }
+
+const AActor* ABattleMap::GetPlayerSideCamera() const
+{
+	return PlayerSideCamera;
+}
+
+const AActor* ABattleMap::GetEnemySideCamera() const
+{
+	return EnemySideCamera;
+}

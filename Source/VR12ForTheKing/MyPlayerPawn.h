@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "MyPlayerPawn.generated.h"
 
+class UCameraComponent;
 UCLASS()
 class VR12FORTHEKING_API AMyPlayerPawn : public APawn
 {
@@ -26,4 +27,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UCameraComponent* CameraComponent;
 };

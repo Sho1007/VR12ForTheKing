@@ -39,6 +39,8 @@ private:
 	// Battle Process
 	bool SpawnEnemy();
 	bool TeleportCharacter();
+	void MoveCamera();
+	void CalculateTurn();
 
 private:
 	// Battle Var

@@ -4,13 +4,17 @@
 #include "../Component/BattleManagerComponent.h"
 
 #include "../Character/MyCharacter.h"
+#include "Kismet/GamePlayStatics.h"
+#include "Camera/CameraComponent.h"
+
 #include "../MyGameModeBase.h"
 #include "../HexGrid/HexGridManager.h"
 #include "../HexGrid/HexTile.h"
 #include "../Event/EnemyEventActor.h"
 #include "BattleComponent.h"
+#include "StatusComponent.h"
 #include "../Battle/BattleMap.h"
-#include "Kismet/GamePlayStatics.h"
+
 
 // Sets default values for this component's properties
 UBattleManagerComponent::UBattleManagerComponent()
@@ -33,6 +37,8 @@ void UBattleManagerComponent::BeginPlay()
 	TArray<AActor*> OutArray;
 
 	UGameplayStatics::GetAllActorsOfClass(this, BattleMapClass, OutArray);
+
+	///UE_LOG(LogTemp, Warning, TEXT("OutArray Length : %d"), OutArray.Num());
 
 	for (AActor* Actor : OutArray)
 	{
@@ -124,10 +130,9 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 
 	DebugInfo();
 
-	if (SpawnEnemy())
-	{
-		TeleportCharacter();
-	}
+	SpawnEnemy();
+	TeleportCharacter();
+	MoveCamera();
 }
 
 bool UBattleManagerComponent::SetGameMode(AGameModeBase* NewGameMode)
@@ -170,4 +175,31 @@ bool UBattleManagerComponent::TeleportCharacter()
 	}
 
 	return true;
+}
+
+void UBattleManagerComponent::MoveCamera()
+{
+	APlayerController* LocalPlayerController = GEngine->GetFirstLocalPlayerController(GetWorld());
+	APawn* LocalPawn = LocalPlayerController->GetPawn();
+	LocalPawn->SetActorLocation(BattleMapArray[0]->GetPlayerSideCamera()->GetActorLocation());
+	LocalPawn->FindComponentByClass<UCameraComponent>()->SetWorldRotation(BattleMapArray[0]->GetPlayerSideCamera()->GetActorRotation());
+}
+
+void UBattleManagerComponent::CalculateTurn()
+{
+	BattleTurnArray.Empty();
+	for (int i = 0; i < EnemyCharacterArray.Num(); ++i)
+	{
+		BattleTurnArray.Add(EnemyCharacterArray[i]);
+	}
+	for (int i = 0; i < PlayerCharacterArray.Num(); ++i)
+	{
+		BattleTurnArray.Add(PlayerCharacterArray[i]);
+	}
+	BattleTurnArray.Sort([](const AMyCharacter& IP1, const AMyCharacter& IP2)
+		{
+			// Todo : Implement Calculateturn Logic
+			IP1.FindComponentByClass<UStatusComponent>();
+			return true;
+		});
 }

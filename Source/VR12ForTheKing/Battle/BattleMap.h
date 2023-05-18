@@ -24,6 +24,9 @@ public:
 	const TArray<AActor*>& GetEnemySpawnPosition() const;
 	const TArray<AActor*>& GetPlayerSpawnPosition() const;
 
+	const AActor* GetPlayerSideCamera() const;
+	const AActor* GetEnemySideCamera() const;
+
 private:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AActor*> PlayerSpawnPosition;
