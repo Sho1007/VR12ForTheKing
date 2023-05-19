@@ -201,6 +201,6 @@ void UBattleManagerComponent::CalculateTurn()
 			// Todo : Implement Calculateturn Logic
 			return IP1.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().Speed > IP2.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().Speed;
 		});
-
 	// Todo : Do Battle Widget
+
 }
