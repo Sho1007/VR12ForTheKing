@@ -15,6 +15,7 @@
 #include "Event/TileEventMeshCapturor.h"
 #include "Event/EnemyEventActor.h"
 #include "Component/BattleManagerComponent.h"
+#include "Component/MoveManagerComponent.h"
 #include "Component/BattleComponent.h"
 
 AMyGameModeBase::AMyGameModeBase()
@@ -23,6 +24,10 @@ AMyGameModeBase::AMyGameModeBase()
 	BattleManager = CreateDefaultSubobject<UBattleManagerComponent>(TEXT("BattleManager"));
 	checkf(BattleManager != nullptr, TEXT("BattleManager is not spawned"));
 	BattleManager->SetGameMode(this);
+
+	// MoveManager
+	MoveManager = CreateDefaultSubobject<UMoveManagerComponent>(TEXT("MoveManager"));
+	check(MoveManager != nullptr);
 }
 
 void AMyGameModeBase::BeginPlay()
@@ -55,7 +60,7 @@ void AMyGameModeBase::BeginPlay()
 	TileEventManager = GetWorld()->SpawnActor<ATileEventManager>(TileEventManagerClass, FVector(0, 0, 0), FRotator(0,0,0));
 	checkf(TileEventManager != nullptr, TEXT("AMyGameModeBase::BeginPlay : Tile Event Manager is not spawned"));
 
-	CreateMoveWidget();
+	MoveManager->Init();
 
 	// TileEventMeshCapturor
 	checkf(TileEventMeshCapturorClass != nullptr, TEXT("AMyGameModeBase::BeginPlay : TileEventMeshCapturor Class is nullptr"));

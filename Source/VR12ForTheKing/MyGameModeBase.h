@@ -16,6 +16,7 @@ class AEventActor;
 class ATileEventManager;
 class ATileEventMeshCapturor;
 class UBattleManagerComponent;
+class UMoveManagerComponent;
 /**
  * 
  */
@@ -125,6 +126,9 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UBattleManagerComponent* BattleManager;
 
+	// MoveManager Var
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UMoveManagerComponent* MoveManager;
 
 	TArray<AMyPlayerController*> PlayerControllerArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

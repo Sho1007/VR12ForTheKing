@@ -36,8 +36,3 @@ const FCharacterStatus& UStatusComponent::GetCharacterStatus() const
 {
 	return CharacterStatus;
 }
-
-int32 FCharacterStatus::GetSpeed() const
-{
-	return Speed;
-}
