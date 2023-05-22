@@ -89,20 +89,6 @@ void AMyGameModeBase::SetEndTile(AHexTile* NewEndTile)
 	HexGridManager->SetEndTile(NewEndTile, CurrentMovableCount);
 }
 
-void AMyGameModeBase::CheckMoveCount()
-{
-	CurrentMovableCount = 2;
-	for (int i = 2; i < 5; ++i)
-	{
-		MoveJudgeArray[i] = UKismetMathLibrary::RandomBoolWithWeight(0.5f);
-		if (MoveJudgeArray[i])
-		{
-			CurrentMovableCount++;
-		}
-	}
-	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CurrentMovableCount : %d"), CurrentMovableCount));
-}
-
 void AMyGameModeBase::MoveCharacter()
 {
 	bIsMoved = true;
@@ -180,15 +166,6 @@ const bool AMyGameModeBase::GetIsMoved() const
 void AMyGameModeBase::FinishUpdateMoveWidget()
 {
 	bIsMoved = false;
-}
-
-void AMyGameModeBase::CreateMoveWidget()
-{
-	checkf(MoveWidgetClass != nullptr, TEXT("AMyGameModeBase::CreateMoveWidget : MoveWidgetClass is nullptr"));
-	MoveWidget = CreateWidget<UMoveWidget>(UGameplayStatics::GetPlayerController(this, 0), MoveWidgetClass);
-	MoveWidget->HideEventWidget();
-	MoveWidget->HideEventInfoWidget();
-	MoveWidget->AddToViewport();
 }
 
 void AMyGameModeBase::HideEventInfoWidget()
@@ -271,17 +248,6 @@ void AMyGameModeBase::DoNextTurn()
 	// 카메라 이동
 	// // 시작 바닥 설정
 	SetStartTile(CurrentCharacter->GetCurrentTile());
-	// 이동 확률 체크
-	CheckMoveCount();
-	// 이동 -> 이동은 Widget Animation 끝나고
-	if (MoveWidget)
-	{
-		MoveWidget->UpdateMoveJudge(MoveJudgeArray);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AMyGameModeBase:: MoveWidget is not valid"));
-	}
 }
 
 void AMyGameModeBase::SpawnEvent()

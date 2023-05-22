@@ -28,6 +28,9 @@ private:
 	void PrepareTurn();
 	void ExecuteTurn();
 	void FinishTurn();
+
+	void CheckMoveCount();
+
 public:
 	// Getter / Setter
 	const UMoveWidget* GetMoveWidget() const;
@@ -38,4 +41,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UMoveWidget> MoveWidgetClass;
 	UMoveWidget* MoveWidget;
+
+	int32 MovableCount;
+	TArray<bool> MoveJudgeArray;
 };

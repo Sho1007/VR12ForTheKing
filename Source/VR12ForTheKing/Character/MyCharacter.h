@@ -45,6 +45,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetCharacterImage();
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterImage(UTexture2D* NewCharacterImage);
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UBattleComponent* BattleComponent;
@@ -60,9 +62,6 @@ private:
 	USkeletalMeshComponent* SkeletalMeshComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
 	UCapsuleComponent* CapsuleComponent;
-
-
-
 
 	AMyGameModeBase* GameMode;
 	// Status
