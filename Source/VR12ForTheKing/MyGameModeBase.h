@@ -37,7 +37,6 @@ public:
 	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
 
-	void CheckMoveCount();
 	void MoveCharacter();
 
 	void ReachToTile();
@@ -47,9 +46,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishUpdateMoveWidget();
-
-	UFUNCTION(BlueprintCallable)
-	void CreateMoveWidget();
 
 	// Event Widget
 	UFUNCTION(BlueprintCallable)

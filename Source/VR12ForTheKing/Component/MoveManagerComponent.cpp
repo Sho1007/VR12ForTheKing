@@ -4,7 +4,7 @@
 #include "../Component/MoveManagerComponent.h"
 
 #include "../Widget/MoveWidget.h"
-#include "Kismet/GamePlayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UMoveManagerComponent::UMoveManagerComponent()
@@ -14,6 +14,8 @@ UMoveManagerComponent::UMoveManagerComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
+
+	MoveJudgeArray.Init(true, 5);
 }
 
 
@@ -45,6 +47,9 @@ void UMoveManagerComponent::PrepareTurn()
 	{
 		Day++;
 	}
+
+	CheckMoveCount();
+	MoveWidget->UpdateMoveJudge(MoveJudgeArray);
 }
 
 void UMoveManagerComponent::ExecuteTurn()
@@ -54,6 +59,19 @@ void UMoveManagerComponent::ExecuteTurn()
 
 void UMoveManagerComponent::FinishTurn()
 {
+}
+
+void UMoveManagerComponent::CheckMoveCount()
+{
+	MovableCount = 2;
+	for (int i = 2; i < 5; ++i)
+	{
+		MoveJudgeArray[i] = UKismetMathLibrary::RandomBoolWithWeight(0.5f);
+		if (MoveJudgeArray[i])
+		{
+			MovableCount++;
+		}
+	}
 }
 
 const UMoveWidget* UMoveManagerComponent::GetMoveWidget() const

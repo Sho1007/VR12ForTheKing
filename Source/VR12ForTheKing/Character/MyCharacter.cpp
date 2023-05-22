@@ -104,6 +104,11 @@ UTexture2D* AMyCharacter::GetCharacterImage()
 	return CharacterImage;
 }
 
+void AMyCharacter::SetCharacterImage(UTexture2D* NewCharacterImage)
+{
+	CharacterImage = NewCharacterImage;
+}
+
 int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)
 {
 	return 0.0f;
