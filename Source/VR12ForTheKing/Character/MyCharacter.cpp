@@ -69,8 +69,8 @@ void AMyCharacter::ReachToDestination_Implementation()
 
 void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
 {
-	// Todo : Å¸ÀÏÀ» ¶°³¯ ¶§ (Collision ³Ö°í, EndOverlap) Leave
-	// Å¸ÀÏ¿¡ µü ´ê¾ÒÀ» ¶§ (BeginOverlap) Arrive ½ÇÇàÇÏµµ·Ï º¯°æ
+	// Todo : Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (Collision ï¿½Ö°ï¿½, EndOverlap) Leave
+	// Å¸ï¿½Ï¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (BeginOverlap) Arrive ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (CurrentTile != nullptr)
 	{
 		CurrentTile->LeaveFromTile(this);
