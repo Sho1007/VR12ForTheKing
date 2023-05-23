@@ -4,6 +4,8 @@
 #include "../Event/TileEventManager.h"
 
 #include "Engine/DataTable.h"
+#include "../HexGrid/HexTile.h"
+#include "TileEventMeshCapturor.h"
 
 // Sets default values
 ATileEventManager::ATileEventManager()
@@ -19,6 +21,10 @@ void ATileEventManager::BeginPlay()
 	Super::BeginPlay();
 	
 	checkf(EventDataTable != nullptr, TEXT("ATileEventManager::BeginPlay : EventDataTable is nullptr"));
+
+	check(TileEventMeshCapturorClass != nullptr);
+	TileEventMeshCapturor = GetWorld()->SpawnActor<ATileEventMeshCapturor>(TileEventMeshCapturorClass, FVector(0,0,0), FRotator(0,0,0));
+	check(TileEventMeshCapturor != nullptr);
 }
 
 // Called every frame
@@ -36,5 +42,22 @@ UDataTable* ATileEventManager::GetDataTable()
 const float ATileEventManager::GetEventOccurChance() const
 {
 	return EventOccurChance;
+}
+
+AEventActor* ATileEventManager::SetTileEvent(AHexTile* NewHexTile)
+{
+	CurrentTileEvent = NewHexTile->GetTileEvent();
+
+	if (CurrentTileEvent != nullptr)
+	{
+		TileEventMeshCapturor->SetFocusTarget(CurrentTileEvent);
+	}
+
+	return CurrentTileEvent;
+}
+
+AEventActor* ATileEventManager::GetTileEvent() const
+{
+	return CurrentTileEvent;
 }
 

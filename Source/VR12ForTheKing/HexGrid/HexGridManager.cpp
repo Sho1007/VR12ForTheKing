@@ -6,13 +6,14 @@
 #include "../HexGrid/HexTile.h"
 
 // Sets default values
-AHexGridManager::AHexGridManager()
+UHexGridManager::UHexGridManager()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void AHexGridManager::InitGirdInfo(TSubclassOf<AHexTile> NewHexTileClass, int32 NewWidth, int32 NewHeight, float NewXOffset, float NewXStartOffset, float NewYOffset)
+void UHexGridManager::InitGirdInfo(TSubclassOf<AHexTile> NewHexTileClass, int32 NewWidth, int32 NewHeight, float NewXOffset, float NewXStartOffset, float NewYOffset)
 {
 	HexTileClass = NewHexTileClass;
 
@@ -26,19 +27,12 @@ void AHexGridManager::InitGirdInfo(TSubclassOf<AHexTile> NewHexTileClass, int32 
 }
 
 // Called when the game starts or when spawned
-void AHexGridManager::BeginPlay()
+void UHexGridManager::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-// Called every frame
-void AHexGridManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void AHexGridManager::CreateGrid()
+void UHexGridManager::CreateGrid()
 {
 	// ! Warning : X, Y is Y, X in Unreal Coordinate
 	FVector SpawnLocation;
@@ -50,8 +44,8 @@ void AHexGridManager::CreateGrid()
 		for (int j = 0; j < Width; ++j)
 		{
 			AHexTile* HexTile = GetWorld()->SpawnActor<AHexTile>(HexTileClass, SpawnLocation, SpawnRotation);
-			FAttachmentTransformRules AttachRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepWorld, false);
-			HexTile->AttachToActor(this, AttachRules);
+			//FAttachmentTransformRules AttachRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepWorld, false);
+			//HexTile->AttachToActor(this, AttachRules);
 			HexTile->SetPos(FIntPoint(j, i));
 			HexGrid[i].TileArray.Add(HexTile);
 			SpawnLocation.Y -= XOffset;
@@ -60,12 +54,12 @@ void AHexGridManager::CreateGrid()
 	}
 }
 
-TArray<AHexTile*> AHexGridManager::GetPath()
+TArray<AHexTile*> UHexGridManager::GetPath()
 {
 	return CurrentPath;
 }
 
-AHexTile* AHexGridManager::GetNextPath()
+AHexTile* UHexGridManager::GetNextPath()
 {
 	CurrentPathIndex++;
 	//UE_LOG(LogTemp, Error, TEXT("CurrentPathIndex : %d"), CurrentPathIndex);
@@ -77,12 +71,12 @@ AHexTile* AHexGridManager::GetNextPath()
 	return NULL;
 }
 
-AHexTile* AHexGridManager::GetTile(int X, int Y)
+AHexTile* UHexGridManager::GetTile(int X, int Y)
 {
 	return HexGrid[Y].TileArray[X];
 }
 
-void AHexGridManager::SetStartTile(AHexTile* NewStartTile)
+void UHexGridManager::SetStartTile(AHexTile* NewStartTile)
 {
 	CurrentPathIndex = -1;
 	//UE_LOG(LogTemp, Warning, TEXT("SetStartTile Called"));
@@ -90,7 +84,7 @@ void AHexGridManager::SetStartTile(AHexTile* NewStartTile)
 	StartTile->ClickTile();
 }
 
-void AHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
+void UHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
 {
 	if (StartTile == NewEndTile || EndTile == NewEndTile || !NewEndTile) return;
 	//UE_LOG(LogTemp, Warning, TEXT("SetEndTile Called"));
@@ -119,12 +113,12 @@ void AHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
 	}
 }
 
-void AHexGridManager::SpawnEnemy(FIntPoint Center)
+void UHexGridManager::SpawnEnemy(FIntPoint Center)
 {
 
 }
 
-void AHexGridManager::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, AHexTile* CurrentTile, int32 distance)
+void UHexGridManager::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray, AHexTile* CurrentTile, int32 distance)
 {
 	NewNeighborTileArray.Empty();
 	FIntPoint CenterPos = CurrentTile->GetPos();
@@ -142,7 +136,7 @@ void AHexGridManager::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray,
 	}
 }
 
-void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
+void UHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 {
 	TArray<FTileNode> Open;
 	TArray<bool> IsInOpen;
@@ -215,7 +209,7 @@ void AHexGridManager::FindPath(TArray<AHexTile*>& OutArray)
 	}
 }
 
-int AHexGridManager::GetIndex(FIntPoint Pos)
+int UHexGridManager::GetIndex(FIntPoint Pos)
 {
 	return Pos.Y * Width + Pos.X;
 }

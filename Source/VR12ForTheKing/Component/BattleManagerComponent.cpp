@@ -14,6 +14,7 @@
 #include "BattleComponent.h"
 #include "StatusComponent.h"
 #include "../Battle/BattleMap.h"
+#include "../Battle/BattleCharacterSpawnPosition.h"
 
 
 // Sets default values for this component's properties
@@ -89,8 +90,8 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	EnemyClassArray.Empty();
 	SpawnEnemyIndex = 0;
 
-
-	AHexGridManager* HexGridManager = Cast<AMyGameModeBase>(GameMode)->GetHexGridManager();
+	
+	UHexGridManager* HexGridManager = Cast<UHexGridManager>(GetOwner()->GetComponentByClass(UHexGridManager::StaticClass()));
 	checkf(HexGridManager != nullptr, TEXT("UBattleManagerComponent::InitBattle : HexGridManager is nullptr"));
 
 	AHexTile* CurrentTile = Cast<AHexTile>(BattleTile);

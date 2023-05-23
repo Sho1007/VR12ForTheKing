@@ -28,32 +28,17 @@ AMyGameModeBase::AMyGameModeBase()
 	// MoveManager
 	MoveManager = CreateDefaultSubobject<UMoveManagerComponent>(TEXT("MoveManager"));
 	check(MoveManager != nullptr);
+
+
+	// HexGridManager
+	HexGridManager = CreateDefaultSubobject<UHexGridManager>(TEXT("HexGridManager"));
+	check(HexGridManager != nullptr);
 }
 
 void AMyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	PrimaryActorTick.bCanEverTick = false;
-
-	// HexGridManager / Todo : Create instead Find in Outliner
-	TArray<AActor*> OutActors;
-	UGameplayStatics::GetAllActorsOfClass(this, HexGridManagerClass, OutActors);
-	if (OutActors.Num() > 0)
-	{
-		for (int i = 0; i < OutActors.Num(); ++i)
-		{
-			HexGridManager = CastChecked<AHexGridManager>(OutActors[i]);
-			if (HexGridManager)
-			{
-				break;
-			}
-		}
-	}
-	if (HexGridManager)
-	{
-		HexGridManager->CreateGrid();
-		CreatePlayer();
-	}
 
 	// TileEventManager
 	checkf(TileEventManagerClass != nullptr, TEXT("AMyGameModeBase::BeginPlay : Tile Event Manager Class is nullptr"));
@@ -67,20 +52,25 @@ void AMyGameModeBase::BeginPlay()
 	TileEventMeshCapturor = GetWorld()->SpawnActor<ATileEventMeshCapturor>(TileEventMeshCapturorClass, FVector(0, 0, 0), FRotator(0, 0, 0));
 	checkf(TileEventMeshCapturor != nullptr, TEXT("AMyGameModeBase::BeginPlay : TileEventMeshCapturor is not spawned"));
 
-	MoveJudgeArray.Init(true, 5);
+	HexGridManager->CreateGrid();
+	CreatePlayer();
+
 	NextTile = NULL;
 
-	DoNextTurn();
+	MoveManager->StartTurn();
 }
 
-AHexGridManager* AMyGameModeBase::GetHexGridManager() const
+void AMyGameModeBase::LeftClick(APlayerController* PlayerController)
 {
-	return HexGridManager;
+	if (!MoveManager->IsMoved() && MoveManager->GetCurrentController() == PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AMyGameModeBase::LeftClick : Called"));
+	}
 }
 
 void AMyGameModeBase::SetEndTile(AHexTile* NewEndTile)
 {
-	HexGridManager->SetEndTile(NewEndTile, CurrentMovableCount);
+	HexGridManager->SetEndTile(NewEndTile, MoveManager->GetMovableCount());
 }
 
 void AMyGameModeBase::MoveCharacter()
@@ -147,7 +137,7 @@ void AMyGameModeBase::ReachToTile()
 	MoveCharacter();
 }
 
-const AMyPlayerController* AMyGameModeBase::GetCurrentPlayer() const
+const APlayerController* AMyGameModeBase::GetCurrentPlayer() const
 {
 	return CurrentPlayer;
 }
@@ -214,6 +204,9 @@ void AMyGameModeBase::CreatePlayer()
 	{
 		PlayerControllerArray.Add(Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, i)));
 	}
+
+	MoveManager->SetPlayerCharacterArray(CharacterArray);
+	MoveManager->SetPlayerControllerArray(PlayerControllerArray);
 }
 
 void AMyGameModeBase::EndTurn()

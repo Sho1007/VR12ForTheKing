@@ -5,6 +5,11 @@
 
 #include "../Widget/MoveWidget.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "../MyGameModeBase.h"	// 추후 Component 통신 되면 지워야할수도
+#include "../HexGrid/HexGridManager.h"
+#include "../HexGrid/HexTile.h"
+#include "../Event/TileEventManager.h"
+#include "../Character/MyCharacter.h"
 
 // Sets default values for this component's properties
 UMoveManagerComponent::UMoveManagerComponent()
@@ -27,6 +32,10 @@ void UMoveManagerComponent::BeginPlay()
 	// ...
 	
 	Init();
+
+	HexGridManager = Cast<UHexGridManager>(GetOwner()->GetComponentByClass(UHexGridManager::StaticClass()));
+	check(HexGridManager != nullptr);
+	GetWorld()->GetTimerManager().SetTimer(SetTileEventManagerHandle, this, &UMoveManagerComponent::SetTileEventManager, 0.1f, true);
 }
 
 void UMoveManagerComponent::Init()
@@ -41,24 +50,33 @@ void UMoveManagerComponent::Init()
 
 void UMoveManagerComponent::PrepareTurn()
 {
+	check(PlayerCharacterArray.Num() > 0);
+
 	// Todo : Update Turn Widget;
 	Turn++;
-	if (Turn / 10 > Day)
+	if (Turn / 15 > Day)
 	{
 		Day++;
 	}
+	CurrentCharacter = PlayerCharacterArray[(Turn)-1 % PlayerCharacterArray.Num()];
+	CurrentController = PlayerControllerArray[(Turn - 1) % PlayerControllerArray.Num()];
 
-	CheckMoveCount();
-	MoveWidget->UpdateMoveJudge(MoveJudgeArray);
+	ExecuteTurn();
 }
 
 void UMoveManagerComponent::ExecuteTurn()
 {
-	
+	// SpawnEvent
+
+	CheckMoveCount();
+	MoveWidget->UpdateMoveJudge(MoveJudgeArray);
+
+	HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
 }
 
 void UMoveManagerComponent::FinishTurn()
 {
+	PrepareTurn();
 }
 
 void UMoveManagerComponent::CheckMoveCount()
@@ -74,14 +92,37 @@ void UMoveManagerComponent::CheckMoveCount()
 	}
 }
 
-int32 UMoveManagerComponent::GetMovableCount() const
+void UMoveManagerComponent::MoveCharacter()
 {
-	return MovableCount;
-}
+	bIsMoved = true;
 
-const UMoveWidget* UMoveManagerComponent::GetMoveWidget() const
-{
-	return MoveWidget;
+	// 현재는 HexGridManager 가 Component가 아니라서 하드코딩 -> 추후 컴포넌트로 바꾸고 컴포넌트끼리 통신하도록
+	AHexTile* NextTile = HexGridManager->GetNextPath();
+	if (NextTile)
+	{
+		if (TileEventManager->SetTileEvent(NextTile))
+		{
+			// Todo : Move Half Distance to Event Tile;
+			MoveWidget->InitEventWidget(TileEventManager->GetTileEvent());
+			MoveWidget->ShowEventWidget();
+		}
+		else
+		{
+			CurrentCharacter->SetDestination(NextTile->GetActorLocation());
+		}
+	}
+	else
+	{
+		if (MovableCount)
+		{
+			HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
+			bIsMoved = false;
+		}
+		else
+		{
+			FinishTurn();
+		}
+	}
 }
 
 void UMoveManagerComponent::CreateMoveWidget()
@@ -92,4 +133,53 @@ void UMoveManagerComponent::CreateMoveWidget()
 	MoveWidget->AddToPlayerScreen(0);
 	MoveWidget->HideEventInfoWidget();
 	MoveWidget->HideEventWidget();
+}
+
+int32 UMoveManagerComponent::GetMovableCount() const
+{
+	return MovableCount;
+}
+
+void UMoveManagerComponent::StartTurn()
+{
+	PrepareTurn();
+}
+
+const bool UMoveManagerComponent::IsMoved() const
+{
+	return bIsMoved;
+}
+
+const APlayerController* UMoveManagerComponent::GetCurrentController() const
+{
+	return CurrentController;
+}
+
+const UMoveWidget* UMoveManagerComponent::GetMoveWidget() const
+{
+	return MoveWidget;
+}
+
+void UMoveManagerComponent::SetPlayerCharacterArray(const TArray<AMyCharacter*>& NewPlayerCharacterArray)
+{
+	PlayerCharacterArray = NewPlayerCharacterArray;
+}
+
+void UMoveManagerComponent::SetPlayerControllerArray(const TArray<APlayerController*>& NewPlayerControllerArray)
+{
+	PlayerControllerArray = NewPlayerControllerArray;
+}
+
+void UMoveManagerComponent::SetTileEventManager()
+{
+	AMyGameModeBase* GameMode = Cast<AMyGameModeBase>(GetOwner());
+	if (GameMode != nullptr)
+	{
+		ATileEventManager* NewTileEventManager = GameMode->GetTileEventManager();
+		if (NewTileEventManager != nullptr)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(SetTileEventManagerHandle);
+			TileEventManager = NewTileEventManager;
+		}
+	}
 }

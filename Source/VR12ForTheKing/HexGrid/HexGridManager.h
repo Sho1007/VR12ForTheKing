@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 #include "HexGridManager.generated.h"
 
 class AHexTile;
@@ -35,23 +35,21 @@ struct FTileNode
 	float H;
 };
 
-UCLASS()
-class VR12FORTHEKING_API AHexGridManager : public AActor
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class VR12FORTHEKING_API UHexGridManager : public UActorComponent
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AHexGridManager();
+	UHexGridManager();
 
 	void InitGirdInfo(TSubclassOf<AHexTile> NewHexTileClass, int32 NewWidth, int32 NewHeight, float NewXOffset, float NewXStartOffset, float NewYOffset);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
 
 public:
 	UFUNCTION(BlueprintCallable, CallInEditor)

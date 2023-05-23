@@ -8,10 +8,11 @@
 #include "InputMappingContext.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
-
 #include "../MyGameModeBase.h"
+
 #include "../HexGrid/HexTile.h"
 #include "../Character/MyCharacter.h"
+#include "../Component/MoveManagerComponent.h"
 
 #include "../Event/EventActor.h"
 
@@ -75,10 +76,8 @@ const FText AMyPlayerController::GetPlayerName() const
 
 void AMyPlayerController::LeftClickPressed()
 {
-	if (!GameMode->GetIsMoved() && GameMode->GetCurrentPlayer() == this)
-	{
-		GameMode->MoveCharacter();
-	}
+	// Multi 로 바꾸면 꼭 손봐야함
+	GameMode->LeftClick(this);
 }
 
 void AMyPlayerController::CheckEndTile()

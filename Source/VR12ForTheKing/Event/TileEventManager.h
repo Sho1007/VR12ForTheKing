@@ -7,6 +7,9 @@
 #include "TileEventManager.generated.h"
 
 class UDataTable;
+class AEventActor;
+class AHexTile;
+class ATileEventMeshCapturor;
 UCLASS()
 class VR12FORTHEKING_API ATileEventManager : public AActor
 {
@@ -24,10 +27,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	// Getter / Stter
 	UDataTable* GetDataTable();
-
-
 	const float GetEventOccurChance() const;
+	AEventActor* SetTileEvent(AHexTile* NewHexTile);
+	AEventActor* GetTileEvent() const;
+
 
 private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -35,4 +41,10 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	float EventOccurChance = 0.2f;
+
+	AEventActor* CurrentTileEvent;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<ATileEventMeshCapturor> TileEventMeshCapturorClass;
+	ATileEventMeshCapturor* TileEventMeshCapturor;
 };

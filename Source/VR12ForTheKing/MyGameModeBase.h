@@ -6,7 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
-class AHexGridManager;
+class UHexGridManager;
 class AHexTile;
 class AMyCharacter;
 class AMyPlayerController;
@@ -30,9 +30,7 @@ public:
 	virtual void BeginPlay() override;
 
 public:
-	// Getter / Setter
-
-	AHexGridManager* GetHexGridManager() const;
+	void LeftClick(APlayerController* PlayerController);
 
 	void SetEndTile(AHexTile* NewEndTile);
 
@@ -40,7 +38,7 @@ public:
 
 	void ReachToTile();
 
-	const AMyPlayerController* GetCurrentPlayer() const;
+	const APlayerController* GetCurrentPlayer() const;
 	const bool GetIsMoved() const;
 
 	UFUNCTION(BlueprintCallable)
@@ -101,9 +99,8 @@ private:
 
 
 	// HexGridManager Var
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<AHexGridManager> HexGridManagerClass;
-	AHexGridManager* HexGridManager;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UHexGridManager* HexGridManager;
 
 	// EventManager Var
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
@@ -127,11 +124,11 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UMoveManagerComponent* MoveManager;
 
-	TArray<AMyPlayerController*> PlayerControllerArray;
+	TArray<APlayerController*> PlayerControllerArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> CharacterArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> EnemyArray;
-	AMyPlayerController* CurrentPlayer;
+	APlayerController* CurrentPlayer;
 	AMyCharacter* CurrentCharacter;
 };

@@ -104,7 +104,7 @@ const TArray<AMyCharacter*>& AHexTile::GetInTileCharacterArray() const
 	return InTileCharacterArray;
 }
 
-AEventActor* AHexTile::GetTileEvent()
+AEventActor* AHexTile::GetTileEvent() const
 {
 	return EventActor;
 }

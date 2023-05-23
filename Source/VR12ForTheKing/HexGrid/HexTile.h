@@ -47,7 +47,7 @@ public:
 	const TArray<AMyCharacter*>& GetInTileCharacterArray() const;
 
 	// Event Function
-	AEventActor* GetTileEvent();
+	AEventActor* GetTileEvent() const;
 	void SpawnEvent();
 
 protected:
