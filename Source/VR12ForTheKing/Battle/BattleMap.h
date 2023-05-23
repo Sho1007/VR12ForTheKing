@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BattleMap.generated.h"
 
+class ABattleCharacterSpawnPosition;
 USTRUCT(BlueprintType)
 struct FBattleSceneInfo
 {
@@ -18,19 +19,13 @@ struct FBattleSceneInfo
 	}
 	
 	UPROPERTY(BlueprintReadOnly, EditInstanceOnly)
-	TArray<AActor*> PlayerSpawnPosition;
+	TArray<ABattleCharacterSpawnPosition*> PlayerSpawnPosition;
 
 	UPROPERTY(BlueprintReadOnly, EditInstanceOnly)
-	TArray<AActor*> EnemySpawnPosition;
-
-	UPROPERTY(BlueprintReadOnly, EditInstanceOnly)
-	AActor* PlayerSideCamera;
+	TArray<ABattleCharacterSpawnPosition*> EnemySpawnPosition;
 
 	UPROPERTY(BlueprintReadOnly, EditInstanceOnly)
 	AActor* NeutralSideCamera;
-
-	UPROPERTY(BlueprintReadOnly, EditInstanceOnly)
-	AActor* EnemySideCamera;
 };
 
 UCLASS()
@@ -48,13 +43,9 @@ protected:
 
 public:
 	// Getter / Setter
-	const TArray<AActor*>& GetEnemySpawnPosition() const;
-	const TArray<AActor*>& GetPlayerSpawnPosition() const;
+	const TArray<ABattleCharacterSpawnPosition*>& GetEnemySpawnPosition() const;
+	const TArray<ABattleCharacterSpawnPosition*>& GetPlayerSpawnPosition() const;
 
-	UFUNCTION(BlueprintCallable)
-	const AActor* GetPlayerSideCamera() const;
-	UFUNCTION(BlueprintCallable)
-	const AActor* GetEnemySideCamera() const;
 	UFUNCTION(BlueprintCallable)
 	const AActor* GetNeutralSideCamera() const;
 	UFUNCTION(BlueprintCallable)

@@ -16,24 +16,14 @@ void ABattleMap::BeginPlay()
 	Super::BeginPlay();
 }
 
-const TArray<AActor*>& ABattleMap::GetEnemySpawnPosition() const
+const TArray<ABattleCharacterSpawnPosition*>& ABattleMap::GetEnemySpawnPosition() const
 {
 	return BattleSceneInfoArray[CurrentSceneIndex].EnemySpawnPosition;
 }
 
-const TArray<AActor*>& ABattleMap::GetPlayerSpawnPosition() const
+const TArray<ABattleCharacterSpawnPosition*>& ABattleMap::GetPlayerSpawnPosition() const
 {
 	return BattleSceneInfoArray[CurrentSceneIndex].PlayerSpawnPosition;
-}
-
-const AActor* ABattleMap::GetPlayerSideCamera() const
-{
-	return BattleSceneInfoArray[CurrentSceneIndex].PlayerSideCamera;
-}
-
-const AActor* ABattleMap::GetEnemySideCamera() const
-{
-	return BattleSceneInfoArray[CurrentSceneIndex].EnemySideCamera;
 }
 
 const AActor* ABattleMap::GetNeutralSideCamera() const
