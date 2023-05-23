@@ -74,6 +74,11 @@ void UMoveManagerComponent::CheckMoveCount()
 	}
 }
 
+int32 UMoveManagerComponent::GetMovableCount() const
+{
+	return MovableCount;
+}
+
 const UMoveWidget* UMoveManagerComponent::GetMoveWidget() const
 {
 	return MoveWidget;

@@ -34,7 +34,6 @@ public:
 
 	AHexGridManager* GetHexGridManager() const;
 
-	void SetStartTile(AHexTile* NewStartTile);
 	void SetEndTile(AHexTile* NewEndTile);
 
 	void MoveCharacter();
@@ -88,6 +87,8 @@ private:
 	AEventActor* CurrentTileEvent = nullptr;
 	TArray<AHexTile*> NeighborTileArray;
 	int32 MaxSpawnEventCountPerTurn = 3;
+
+
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<ATileEventMeshCapturor> TileEventMeshCapturorClass;
 	ATileEventMeshCapturor* TileEventMeshCapturor;

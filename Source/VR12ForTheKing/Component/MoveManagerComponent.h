@@ -30,6 +30,7 @@ private:
 	void FinishTurn();
 
 	void CheckMoveCount();
+	int32 GetMovableCount() const;
 
 public:
 	// Getter / Setter

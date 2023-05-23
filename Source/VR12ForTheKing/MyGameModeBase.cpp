@@ -78,12 +78,6 @@ AHexGridManager* AMyGameModeBase::GetHexGridManager() const
 	return HexGridManager;
 }
 
-void AMyGameModeBase::SetStartTile(AHexTile* NewStartTile)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Red, FString::Printf(TEXT("SetStartTile Called")));
-	HexGridManager->SetStartTile(NewStartTile);
-}
-
 void AMyGameModeBase::SetEndTile(AHexTile* NewEndTile)
 {
 	HexGridManager->SetEndTile(NewEndTile, CurrentMovableCount);
@@ -116,7 +110,7 @@ void AMyGameModeBase::MoveCharacter()
 		// NextTile == NULL 목적지에 도착함
 		if (CurrentMovableCount)
 		{
-			SetStartTile(CurrentCharacter->GetCurrentTile());
+			HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
 			bIsMoved = false;
 		}
 		else
@@ -247,7 +241,8 @@ void AMyGameModeBase::DoNextTurn()
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentCharacter : %s , CurrentPlayerController : %s"), *CurrentCharacter->GetName(), *CurrentPlayer->GetName());
 	// 카메라 이동
 	// // 시작 바닥 설정
-	SetStartTile(CurrentCharacter->GetCurrentTile());
+
+	HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
 }
 
 void AMyGameModeBase::SpawnEvent()
