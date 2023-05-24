@@ -49,7 +49,9 @@ void UBattleManagerComponent::BeginPlay()
 		BattleMapArray.Add(Cast<ABattleMap>(Actor));
 	}
 
-	checkf(BattleMapArray.Num() == 0, TEXT("No BattleMap in this level"));
+	//UE_LOG(LogTemp, Warning, TEXT("OutArrayNum : %d, BattleMapArrayNum : %d"), OutArray.Num(), BattleMapArray.Num());
+
+	//checkf(BattleMapArray.Num() == 0, TEXT("No BattleMap in this level"));
 }
 
 // Called every frame
@@ -133,15 +135,15 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("CharacterArrayNum : %d, EnemyArrayNum : %d"), PlayerCharacterArray.Num(), EnemyCharacterArray.Num());
-
-	return;
+	UE_LOG(LogTemp, Warning, TEXT("CharacterArrayNum : %d, EnemyArrayNum : %d"), PlayerCharacterArray.Num(), EnemyClassArray.Num());
 
 	DebugInfo();
 
 	SpawnEnemy();
 	TeleportCharacter();
 	MoveCamera();
+
+	return;
 }
 
 bool UBattleManagerComponent::SetGameMode(AGameModeBase* NewGameMode)
@@ -153,8 +155,6 @@ bool UBattleManagerComponent::SetGameMode(AGameModeBase* NewGameMode)
 
 bool UBattleManagerComponent::SpawnEnemy()
 {
-	// Todo : Set BattleMap
-
 	int32 SpawnEnemyCount = 0;
 
 	for (; SpawnEnemyCount < 3; ++SpawnEnemyCount)
