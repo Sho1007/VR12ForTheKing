@@ -45,11 +45,12 @@ public:
 	void LeaveFromTile(AMyCharacter* NewLeaver);
 
 	const TArray<AMyCharacter*>& GetInTileCharacterArray() const;
+	int32 GetInTileCharacterArrayLength() const;
 
 	// Event Function
 	AEventActor* GetTileEvent() const;
-	void SpawnEvent();
-
+	void SpawnEvent(AEventActor* NewEventActor);
+	bool CheckCanSpawnEvent() const;
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* StaticMeshComponent;

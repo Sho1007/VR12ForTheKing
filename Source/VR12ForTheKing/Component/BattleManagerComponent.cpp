@@ -15,6 +15,7 @@
 #include "StatusComponent.h"
 #include "../Battle/BattleMap.h"
 #include "../Battle/BattleCharacterSpawnPosition.h"
+#include "../Widget/BattleWidget.h"
 
 
 // Sets default values for this component's properties
@@ -35,6 +36,8 @@ void UBattleManagerComponent::BeginPlay()
 
 	// ...
 
+
+	// Battle Map Init
 	TArray<AActor*> OutArray;
 
 	UGameplayStatics::GetAllActorsOfClass(this, BattleMapClass, OutArray);
@@ -45,6 +48,8 @@ void UBattleManagerComponent::BeginPlay()
 	{
 		BattleMapArray.Add(Cast<ABattleMap>(Actor));
 	}
+
+	checkf(BattleMapArray.Num() == 0, TEXT("No BattleMap in this level"));
 }
 
 // Called every frame
@@ -89,7 +94,6 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	EnemyCharacterArray.Empty();
 	EnemyClassArray.Empty();
 	SpawnEnemyIndex = 0;
-
 	
 	UHexGridManager* HexGridManager = Cast<UHexGridManager>(GetOwner()->GetComponentByClass(UHexGridManager::StaticClass()));
 	checkf(HexGridManager != nullptr, TEXT("UBattleManagerComponent::InitBattle : HexGridManager is nullptr"));
@@ -128,6 +132,10 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 			AddEnemyClass(EnemyClass);
 		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CharacterArrayNum : %d, EnemyArrayNum : %d"), PlayerCharacterArray.Num(), EnemyCharacterArray.Num());
+
+	return;
 
 	DebugInfo();
 
@@ -204,4 +212,12 @@ void UBattleManagerComponent::CalculateTurn()
 		});
 	// Todo : Do Battle Widget
 
+}
+
+void UBattleManagerComponent::CreateBattleWidget()
+{
+	check(BattleWidgetClass != nullptr);
+	BattleWidget = CreateWidget<UBattleWidget>(GetWorld()->GetFirstPlayerController(), BattleWidgetClass);
+	check(BattleWidget != nullptr);
+	BattleWidget->AddToPlayerScreen(0);
 }

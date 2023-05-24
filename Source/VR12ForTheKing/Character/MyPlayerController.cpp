@@ -66,7 +66,7 @@ void AMyPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckEndTile();
+	CheckFocusActor();
 }
 
 const FText AMyPlayerController::GetPlayerName() const
@@ -80,40 +80,13 @@ void AMyPlayerController::LeftClickPressed()
 	GameMode->LeftClick(this);
 }
 
-void AMyPlayerController::CheckEndTile()
+void AMyPlayerController::CheckFocusActor()
 {
-	AActor* HitActor = CheckTile();
-
-	if (EventActor && HitActor != EventActor)
-	{
-		GameMode->HideEventInfoWidget();
-		EventActor = NULL;
-	}
-	if (HitActor == NULL) return;
-
-	if (!GameMode->GetIsMoved() && GameMode->GetCurrentPlayer() == this)
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CheckEndTile Called")));
-
-		AHexTile* HexTile = Cast<AHexTile>(HitActor);
-		if (HexTile)
-		{
-			GameMode->SetEndTile(HexTile);
-		}
-	}
-
-	AEventActor* NewEventActor = Cast<AEventActor>(HitActor);
-	if (NewEventActor && (EventActor == NULL || EventActor != NewEventActor))
-	{
-		EventActor = NewEventActor;
-		FVector2D ScreenLocation;
-		ProjectWorldLocationToScreen(EventActor->GetActorLocation(), ScreenLocation);
-		UE_LOG(LogTemp, Warning, TEXT("Event Actor : %s's Location : %s"), *EventActor->GetName(), *ScreenLocation.ToString());
-		GameMode->InitAndShowEventInfoWidget(EventActor, ScreenLocation);
-	}
+	AActor* HitActor = GetHitActor();
+	GameMode->CheckFocusActor(HitActor, this);
 }
 
-AActor* AMyPlayerController::CheckTile()
+AActor* AMyPlayerController::GetHitActor()
 {
 	FVector WorldLocation, WorldDirection;
 

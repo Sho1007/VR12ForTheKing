@@ -3,35 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 #include "TileEventManager.generated.h"
 
 class UDataTable;
 class AEventActor;
 class AHexTile;
 class ATileEventMeshCapturor;
-UCLASS()
-class VR12FORTHEKING_API ATileEventManager : public AActor
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class VR12FORTHEKING_API UTileEventManager : public UActorComponent
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ATileEventManager();
+	UTileEventManager();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+public:
+	void SpawnEvent(AHexTile* CenterTile);
+	void SetFocusTarget(AActor* NewActor);
 public:
 	// Getter / Stter
 	UDataTable* GetDataTable();
 	const float GetEventOccurChance() const;
-	AEventActor* SetTileEvent(AHexTile* NewHexTile);
+	AEventActor* SetCurrentTileEvent(AHexTile* NewHexTile);
 	AEventActor* GetTileEvent() const;
 
 
@@ -43,6 +42,8 @@ private:
 	float EventOccurChance = 0.2f;
 
 	AEventActor* CurrentTileEvent;
+
+	AEventActor* CurrentFocusEvent;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<ATileEventMeshCapturor> TileEventMeshCapturorClass;

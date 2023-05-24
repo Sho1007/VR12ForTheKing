@@ -10,6 +10,7 @@ class AMyCharacter;
 class UMoveWidget;
 class UHexGridManager;
 class ATileEventManager;
+class AHexTile;
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UMoveManagerComponent : public UActorComponent
 {
@@ -28,6 +29,10 @@ public:
 	int32 GetMovableCount() const;
 
 	void StartTurn();
+	void MoveCharacter();
+	void ReachToDestination();
+
+	AHexTile* GetNextTile() const;
 private:
 	void CreateMoveWidget();
 
@@ -36,21 +41,15 @@ private:
 	void FinishTurn();
 
 	void CheckMoveCount();
-	void MoveCharacter();
 public:
 	// Getter / Setter
 	const bool IsMoved() const;
 	const APlayerController* GetCurrentController() const;
-	const UMoveWidget* GetMoveWidget() const;
+	UMoveWidget* GetMoveWidget() const;
 	void SetPlayerCharacterArray(const TArray<AMyCharacter*>& NewPlayerCharacterArray);
 	void SetPlayerControllerArray(const TArray<APlayerController*>& NewPlayerControllerArray);
 private:
 	UHexGridManager* HexGridManager;
-	ATileEventManager* TileEventManager;
-
-	UFUNCTION()
-	void SetTileEventManager();
-	FTimerHandle SetTileEventManagerHandle;
 
 	int32 Turn;
 	int32 Day;
@@ -67,5 +66,7 @@ private:
 	int32 MovableCount;
 	TArray<bool> MoveJudgeArray;
 
-	bool bIsMoved = false;
+	AHexTile* NextTile;
+
+	bool bIsMoved = true;
 };

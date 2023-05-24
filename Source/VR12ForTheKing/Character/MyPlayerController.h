@@ -31,8 +31,8 @@ public:
 	const FText GetPlayerName() const;
 private:
 	void LeftClickPressed();
-	void CheckEndTile();
-	AActor* CheckTile();
+	void CheckFocusActor();
+	AActor* GetHitActor();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputMappingContext* IMC_Default;

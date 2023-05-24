@@ -90,7 +90,6 @@ void UHexGridManager::SetEndTile(AHexTile* NewEndTile, int32 MovableCount)
 	//UE_LOG(LogTemp, Warning, TEXT("SetEndTile Called"));
 
 	EndTile = NewEndTile;
-
 	
 	TArray<AHexTile*> NewPath;
 	FindPath(NewPath);

@@ -7,6 +7,7 @@
 #include "BattleManagerComponent.generated.h"
 
 
+class UBattleWidget;
 class AMyCharacter;
 class ABattleMap;
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -42,6 +43,8 @@ private:
 	void MoveCamera();
 	void CalculateTurn();
 
+	void CreateBattleWidget();
+
 private:
 	// Battle Var
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
@@ -64,6 +67,12 @@ private:
 	TSubclassOf<ABattleMap> BattleMapClass;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	int32 SpawnEnemyIndex;
+
+	// BattleWidget Var
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UBattleWidget> BattleWidgetClass;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UBattleWidget* BattleWidget;
 
 	AGameModeBase* GameMode;
 };

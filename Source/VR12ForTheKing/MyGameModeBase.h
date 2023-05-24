@@ -13,7 +13,7 @@ class AMyPlayerController;
 class UMoveWidget;
 class UBattleWidget;
 class AEventActor;
-class ATileEventManager;
+class UTileEventManager;
 class ATileEventMeshCapturor;
 class UBattleManagerComponent;
 class UMoveManagerComponent;
@@ -31,15 +31,13 @@ public:
 
 public:
 	void LeftClick(APlayerController* PlayerController);
+	void CheckEndTile(AActor* NewActor, APlayerController* TargetPlayerController);
+	void CheckFocusActor(AActor* NewActor, APlayerController* TargetPlayerController);
+	void CheckTileEvent(AActor* NewActor, APlayerController* TargetPlayerController);
 
 	void SetEndTile(AHexTile* NewEndTile);
 
-	void MoveCharacter();
-
 	void ReachToTile();
-
-	const APlayerController* GetCurrentPlayer() const;
-	const bool GetIsMoved() const;
 
 	UFUNCTION(BlueprintCallable)
 	void FinishUpdateMoveWidget();
@@ -52,18 +50,12 @@ public:
 	void InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVector2D WidgetPos);
 
 	UFUNCTION(BlueprintCallable)
-	ATileEventManager* GetTileEventManager();
+	UTileEventManager* GetTileEventManager();
 
 	// Event Button Function
 	void DoEventAction(ETileEventActionType NewEventActionType);
 private:
 	void CreatePlayer();
-
-	void EndTurn();
-	void DoNextTurn();
-
-	// Event Fucntion
-	void SpawnEvent();
 	// Battle Function
 	void CalculateTurn();
 private:
@@ -75,37 +67,18 @@ private:
 	int32 CurrentMovableCount;
 	TArray<bool> MoveJudgeArray;
 
-	// MoveWidget Var
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UMoveWidget> MoveWidgetClass;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	UMoveWidget* MoveWidget;
-
 	// Event Var
 	AEventActor* CurrentTileEvent = nullptr;
 	TArray<AHexTile*> NeighborTileArray;
 	int32 MaxSpawnEventCountPerTurn = 3;
-
-
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<ATileEventMeshCapturor> TileEventMeshCapturorClass;
-	ATileEventMeshCapturor* TileEventMeshCapturor;
-
-	// BattleWidget Var
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UBattleWidget> BattleWidgetClass;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	UBattleWidget* BattleWidget;
-
 
 	// HexGridManager Var
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UHexGridManager* HexGridManager;
 
 	// EventManager Var
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<ATileEventManager> TileEventManagerClass;
-	ATileEventManager* TileEventManager;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UTileEventManager* TileEventManager;
 
 	// Character Var
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))

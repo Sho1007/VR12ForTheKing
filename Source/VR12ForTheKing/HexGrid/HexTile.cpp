@@ -104,24 +104,23 @@ const TArray<AMyCharacter*>& AHexTile::GetInTileCharacterArray() const
 	return InTileCharacterArray;
 }
 
+int32 AHexTile::GetInTileCharacterArrayLength() const
+{
+	return InTileCharacterArray.Num();
+}
+
 AEventActor* AHexTile::GetTileEvent() const
 {
 	return EventActor;
 }
 
-void AHexTile::SpawnEvent()
+void AHexTile::SpawnEvent(AEventActor* NewEventActor)
 {
-	// Random Spawn Event But Now Static Enemy Event
-	//EventActor = GetWorld()->SpawnActor<AEventActor>();
+	Search();
+	EventActor = NewEventActor;
+}
 
-	AMyGameModeBase* GameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
-	checkf(GameMode != nullptr, TEXT("AHexTile::SpawnEvent : GameMode is not valid"));
-	UDataTable* EventDataTable = GameMode->GetTileEventManager()->GetDataTable();
-	TArray<FName> List = EventDataTable->GetRowNames();
-	FName RandomName = List[FMath::RandRange(0, List.Num() - 1)];
-	FEventInfo* EventInfo = EventDataTable->FindRow<FEventInfo>(RandomName, FString(""));
-
-	EventActor = GetWorld()->SpawnActor<AEventActor>(EventInfo->EventActorClass, GetActorLocation(), GetActorRotation());
-	checkf(EventActor != nullptr, TEXT("AHexTile::SpawnEvent : EventActor is not spawned"));
-	EventActor->SetEventInfo(*EventInfo);
+bool AHexTile::CheckCanSpawnEvent() const
+{
+	return !(bIsSearched || EventActor != nullptr || InTileCharacterArray.Num() > 0);
 }
