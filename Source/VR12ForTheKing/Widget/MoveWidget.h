@@ -22,10 +22,4 @@ public:
 	void UpdateMoveJudge(const TArray<bool>& SuccessArray);
 	UFUNCTION(BlueprintNativeEvent)
 	void HideMoveJudgeWidget();
-
-private:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UEventWidget* WBP_TileEvent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UEventInfoWidget* WBP_EventInfo;
 };
