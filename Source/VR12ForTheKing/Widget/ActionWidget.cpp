@@ -23,6 +23,7 @@ void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidg
 	Btn_Action->WidgetStyle.Normal.SetResourceObject(NewAction->Image);
 
 	Btn_Action->OnHovered.AddDynamic(this, &UActionWidget::ActionButtonOnHovered);
+	Btn_Action->OnClicked.AddDynamic(this, &UActionWidget::ActionButtonOnClicked);
 
 	ParentWidget = NewParentWidget;
 }
@@ -33,4 +34,12 @@ void UActionWidget::ActionButtonOnHovered()
 	UBattleWidget* BattleWidget = Cast<UBattleWidget>(ParentWidget);
 	checkf(BattleWidget != nullptr, TEXT("ParentWidget is not UBattleWidget"));
 	BattleWidget->InitActionDiscription(ActionName);
+
+	UE_LOG(LogTemp, Warning, TEXT("Button Hovered"));
+}
+
+void UActionWidget::ActionButtonOnClicked()
+{
+	// Test
+	UE_LOG(LogTemp, Warning, TEXT("Button Clicked"));
 }

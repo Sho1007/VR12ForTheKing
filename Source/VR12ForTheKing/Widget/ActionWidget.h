@@ -21,6 +21,8 @@ public:
 private:
 	UFUNCTION()
 	void ActionButtonOnHovered();
+	UFUNCTION()
+	void ActionButtonOnClicked();
 	FName ActionName;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UButton* Btn_Action;
