@@ -40,6 +40,10 @@ void UActionWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	}
 }
 
+void UActionWidget::UseFocusToken()
+{
+}
+
 void UActionWidget::ActionButtonOnHovered()
 {
 	bIsHovered = true;
