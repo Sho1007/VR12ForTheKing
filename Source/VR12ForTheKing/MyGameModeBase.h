@@ -42,13 +42,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FinishUpdateMoveWidget();
 
-	// Event Widget
-	UFUNCTION(BlueprintCallable)
-	void HideEventInfoWidget();
-	
-	UFUNCTION(BlueprintCallable)
-	void InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVector2D WidgetPos);
-
 	UFUNCTION(BlueprintCallable)
 	UTileEventManager* GetTileEventManager();
 

@@ -101,23 +101,12 @@ void AMyGameModeBase::FinishUpdateMoveWidget()
 	MoveManager->GetMoveWidget()->HideMoveJudgeWidget();
 }
 
-void AMyGameModeBase::HideEventInfoWidget()
-{
-	MoveManager->GetMoveWidget()->HideEventInfoWidget();
-}
-
-void AMyGameModeBase::InitAndShowEventInfoWidget(AEventActor* NewEventActor, FVector2D WidgetPos)
-{
-	MoveManager->GetMoveWidget()->InitEventInfoWidget(NewEventActor);
-	MoveManager->GetMoveWidget()->ShowEventInfoWidget(WidgetPos);
-}
-
 void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 {
 	switch (NewEventActionType)
 	{
 	case ETileEventActionType::Battle:
-		MoveManager->GetMoveWidget()->HideEventWidget();
+		TileEventManager->HideWidget();
 		BattleManager->InitBattle(MoveManager->GetNextTile());
 		break;
 	case ETileEventActionType::Retreat:
