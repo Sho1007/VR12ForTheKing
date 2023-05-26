@@ -9,7 +9,6 @@
 #include "../Component/BattleComponent.h"
 #include "BattleWidget.h"
 
-
 void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget)
 {
 	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
@@ -24,22 +23,40 @@ void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidg
 
 	Btn_Action->OnHovered.AddDynamic(this, &UActionWidget::ActionButtonOnHovered);
 	Btn_Action->OnClicked.AddDynamic(this, &UActionWidget::ActionButtonOnClicked);
+	Btn_Action->OnUnhovered.AddDynamic(this, &UActionWidget::ActionButtonOnUnhovered);
 
 	ParentWidget = NewParentWidget;
 }
 
+void UActionWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (bIsHovered)
+	{
+		if (GetWorld()->GetFirstPlayerController()->GetInputKeyTimeDown(EKeys::RightMouseButton))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s Button is RightClicked"), *this->GetName());
+		}
+	}
+}
+
 void UActionWidget::ActionButtonOnHovered()
 {
+	bIsHovered = true;
+
 	//UE_LOG(LogTemp, Warning, TEXT("WidgetParent : %s"), *ParentWidget->GetName());
 	UBattleWidget* BattleWidget = Cast<UBattleWidget>(ParentWidget);
 	checkf(BattleWidget != nullptr, TEXT("ParentWidget is not UBattleWidget"));
 	BattleWidget->InitActionDiscription(ActionName);
-
-	UE_LOG(LogTemp, Warning, TEXT("Button Hovered"));
 }
 
 void UActionWidget::ActionButtonOnClicked()
 {
 	// Test
 	UE_LOG(LogTemp, Warning, TEXT("Button Clicked"));
+}
+
+void UActionWidget::ActionButtonOnUnhovered()
+{
+	bIsHovered = false;
 }

@@ -13,8 +13,8 @@
 #include "../HexGrid/HexTile.h"
 #include "../Character/MyCharacter.h"
 #include "../Component/MoveManagerComponent.h"
-
 #include "../Event/EventActor.h"
+#include "../Widget/ActionWidget.h"
 
 AMyPlayerController::AMyPlayerController()
 {
@@ -47,14 +47,10 @@ void AMyPlayerController::BeginPlay()
 	if (EnhancedInputComponent)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *EnhancedInputComponent->GetName());
-		if (IA_LeftClick)
-		{
-			EnhancedInputComponent->BindAction(IA_LeftClick, ETriggerEvent::Started, this, &AMyPlayerController::LeftClickPressed);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("IA_LeftClick is not valid!"));
-		}
+		checkf(IA_LeftClick != nullptr, TEXT("IA_LeftClick is not valid!"));
+		EnhancedInputComponent->BindAction(IA_LeftClick, ETriggerEvent::Started, this, &AMyPlayerController::LeftClickPressed);
+		checkf(IA_RightClick != nullptr, TEXT("IA_LeftClick is not valid!"));
+		EnhancedInputComponent->BindAction(IA_RightClick, ETriggerEvent::Started, this, &AMyPlayerController::RightClickPressed);
 	}
 	else
 	{
@@ -78,6 +74,16 @@ void AMyPlayerController::LeftClickPressed()
 {
 	// Multi 로 바꾸면 꼭 손봐야함
 	GameMode->LeftClick(this);
+}
+
+void AMyPlayerController::RightClickPressed()
+{
+	//
+	if (HoveredActionWidget != nullptr)
+	{
+		HoveredActionWidget->UseFocusToken();
+		return;
+	}
 }
 
 void AMyPlayerController::CheckFocusActor()

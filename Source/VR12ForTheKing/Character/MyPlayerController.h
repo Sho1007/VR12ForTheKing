@@ -12,6 +12,7 @@ class AMyGameModeBase;
 class AHexTile;
 class AMyCharacter;
 class AEventActor;
+class UActionWidget;
 /**
  * 
  */
@@ -31,6 +32,7 @@ public:
 	const FText GetPlayerName() const;
 private:
 	void LeftClickPressed();
+	void RightClickPressed();
 	void CheckFocusActor();
 	AActor* GetHitActor();
 protected:
@@ -39,12 +41,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputAction* IA_LeftClick;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputAction* IA_RightClick;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float LineTraceDistance = 300.0f;
 
 	AHexTile* SelectTile;
 
 	// Event Var
 	AEventActor* EventActor;
+
+	UActionWidget* HoveredActionWidget;
 
 private:
 	AMyGameModeBase* GameMode;
