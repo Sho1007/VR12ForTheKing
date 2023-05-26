@@ -10,6 +10,7 @@ class UDataTable;
 class AEventActor;
 class AHexTile;
 class ATileEventMeshCapturor;
+class UTileEventWidget;
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VR12FORTHEKING_API UTileEventManager : public UActorComponent
 {
@@ -28,15 +29,23 @@ public:
 	void SetFocusTarget(AActor* NewActor);
 public:
 	// Getter / Stter
-	UDataTable* GetDataTable();
+	UDataTable* GetEventDataTable();
+	UDataTable* GetActionDataTable();
 	const float GetEventOccurChance() const;
 	AEventActor* SetCurrentTileEvent(AHexTile* NewHexTile);
 	AEventActor* GetTileEvent() const;
 
+	void HideWidget();
+
+private:
+	void InitAndShowEventDiscription();
+	void CreateTileEventWidget();
 
 private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UDataTable* EventDataTable;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UDataTable* ActionDataTable;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	float EventOccurChance = 0.2f;
@@ -48,4 +57,8 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<ATileEventMeshCapturor> TileEventMeshCapturorClass;
 	ATileEventMeshCapturor* TileEventMeshCapturor;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UTileEventWidget> TileEventWidgetClass;
+	UTileEventWidget* TileEventWidget;
 };

@@ -113,8 +113,6 @@ void UMoveManagerComponent::MoveCharacter()
 		if (TEM->SetCurrentTileEvent(NextTile))
 		{
 			// Todo : Move Half Distance to Event Tile;
-			MoveWidget->InitEventWidget(TEM->GetTileEvent());
-			MoveWidget->ShowEventWidget();
 		}
 		else
 		{
@@ -162,8 +160,6 @@ void UMoveManagerComponent::CreateMoveWidget()
 	MoveWidget = CreateWidget<UMoveWidget>(GEngine->GetFirstLocalPlayerController(GetWorld()), MoveWidgetClass);
 	check(MoveWidget != nullptr);
 	MoveWidget->AddToPlayerScreen(0);
-	MoveWidget->HideEventInfoWidget();
-	MoveWidget->HideEventWidget();
 }
 
 int32 UMoveManagerComponent::GetMovableCount() const

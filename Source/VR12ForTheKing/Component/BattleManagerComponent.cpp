@@ -49,6 +49,8 @@ void UBattleManagerComponent::BeginPlay()
 		BattleMapArray.Add(Cast<ABattleMap>(Actor));
 	}
 
+	CreateBattleWidget();
+
 	//UE_LOG(LogTemp, Warning, TEXT("OutArrayNum : %d, BattleMapArrayNum : %d"), OutArray.Num(), BattleMapArray.Num());
 
 	//checkf(BattleMapArray.Num() == 0, TEXT("No BattleMap in this level"));
@@ -143,6 +145,9 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	TeleportCharacter();
 	MoveCamera();
 
+	BattleWidget->InitWidget(PlayerCharacterArray[0]);
+	BattleWidget->ShowWidget();
+
 	return;
 }
 
@@ -220,4 +225,5 @@ void UBattleManagerComponent::CreateBattleWidget()
 	BattleWidget = CreateWidget<UBattleWidget>(GetWorld()->GetFirstPlayerController(), BattleWidgetClass);
 	check(BattleWidget != nullptr);
 	BattleWidget->AddToPlayerScreen(0);
+	BattleWidget->HideWidget();
 }

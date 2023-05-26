@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "../VR12ForTheKing.h"
 #include "Engine/DataTable.h"
+
+
 #include "BattleComponent.generated.h"
 
 // Check Chance
@@ -66,6 +68,7 @@ public:
 	void SetFactionType(EFactionType NewFactionType);
 	UFUNCTION(BlueprintCallable)
 	const EFactionType& GetFactionType() const;
+	const TArray<FName>& GetActionArray() const;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
