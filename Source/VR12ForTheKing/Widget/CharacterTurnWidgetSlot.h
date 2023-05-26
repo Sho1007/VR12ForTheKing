@@ -26,9 +26,9 @@ public:
 
 private:
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true))
-	float BaseSize;
+	float BaseSize = 50.0f;
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true))
-	float SizeModifier;
+	float SizeModifier = 1.3f;
 
 	//Widget Var
 	UPROPERTY(BluePrintReadWrite,EditAnyWhere, meta=(AllowPrivateAccess=true,BindWidget))

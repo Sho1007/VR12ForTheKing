@@ -9,33 +9,43 @@ bool UMoveTurnWidgetSlot::IsChaos() const
 	return bIsChaos;
 }
 
-void UMoveTurnWidgetSlot::InitWidgetIndex()
+void UMoveTurnWidgetSlot::InitWidgetIndex(int32 NewTurnIndex)
 {
-	ChaosIndex = (ChaosIndex + 1) % 16;
-	CurrentTurnIndex = (CurrentTurnIndex + 1) % 15;
-	
-	if (CurrentTurnIndex <= 9)
+	TurnIndex = NewTurnIndex;
+	if (TurnIndex % 16 <= 10)
 	{
 		TurnBorder->SetBrushColor(DayColor);
+		
 	}
 	else
 	{
 		TurnBorder->SetBrushColor(NightColor);
+	
 	}
 
-	 TurnOnChaos(ChaosIndex);
-}
-
-void UMoveTurnWidgetSlot::TurnOnChaos(int32 NewChaosIndex)
-{
-	if (NewChaosIndex % 8 == 0)
+	if (TurnIndex % 8 == 0)
 	{
-		ChaosImage->SetVisibility(ESlateVisibility::Visible);
-		bIsChaos = true;
+		TurnOnChaos();
 	}
 	else
 	{
-		ChaosImage->SetVisibility(ESlateVisibility::Collapsed);
-		bIsChaos = false;
+		TurnOffChaos();
 	}
+}
+
+int32 UMoveTurnWidgetSlot::GetTurnIndex() const
+{
+	return TurnIndex;
+}
+
+void UMoveTurnWidgetSlot::TurnOnChaos()
+{
+	bIsChaos = true;
+	ChaosImage->SetVisibility(ESlateVisibility::HitTestInvisible);
+}
+
+void UMoveTurnWidgetSlot::TurnOffChaos()
+{
+	bIsChaos = false;
+	ChaosImage->SetVisibility(ESlateVisibility::Collapsed);
 }

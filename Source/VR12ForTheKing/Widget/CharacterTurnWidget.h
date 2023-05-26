@@ -22,6 +22,8 @@ public:
 	bool IsEndDay();
 	UFUNCTION(BlueprintCallable)
 	bool UpdateWidget();
+	UFUNCTION(BlueprintCallable)
+	int32 GetDayCount()const;
 private:
 	UPROPERTY(BluePrintReadWrite,EditAnyWhere,meta=(AllowPrivateAccess = true))
 	int32 DayCount;

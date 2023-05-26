@@ -17,23 +17,24 @@ class VR12FORTHEKING_API UMoveTurnWidgetSlot : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	bool IsChaos() const;
-
-
+	
 	UFUNCTION(BlueprintCallable)
-	void InitWidgetIndex();
+	void InitWidgetIndex(int32 NewTurnIndex);
 
-	void TurnOnChaos(int32 NewChaosIndex);
+	bool IsChaos() const;
+	int32 GetTurnIndex() const;
 
+	void TurnOnChaos();
+	void TurnOffChaos();
 private:
 	UPROPERTY(BluePrintReadWrite,EditAnyWhere,meta =(AllowPrivateAccess = true))
 	bool bIsDay;
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess=true))
 	bool bIsChaos;
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true))
-	int32 CurrentTurnIndex;
+	int32 TurnIndex;
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true))
-	int32 NewChaosNum;
+	int32 ChaosNum;
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true))
 	int32 ChaosIndex;
 	UPROPERTY(BluePrintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))

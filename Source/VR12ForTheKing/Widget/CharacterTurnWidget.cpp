@@ -41,3 +41,8 @@ bool UCharacterTurnWidget::UpdateWidget()
 		return bIsNewDay;
 	}
 }
+
+int32 UCharacterTurnWidget::GetDayCount() const
+{
+	return DayCount;
+}
