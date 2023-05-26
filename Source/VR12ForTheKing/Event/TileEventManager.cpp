@@ -8,6 +8,7 @@
 #include "../Event/EventActor.h"
 #include "TileEventMeshCapturor.h"
 #include "../HexGrid/HexGridManager.h"
+#include "../Widget/TileEventWidget.h"
 
 // Sets default values
 UTileEventManager::UTileEventManager()
@@ -27,6 +28,8 @@ void UTileEventManager::BeginPlay()
 	check(TileEventMeshCapturorClass != nullptr);
 	TileEventMeshCapturor = GetWorld()->SpawnActor<ATileEventMeshCapturor>(TileEventMeshCapturorClass, FVector(0,0,0), FRotator(0,0,0));
 	check(TileEventMeshCapturor != nullptr);
+
+	CreateTileEventWidget();
 }
  
 void UTileEventManager::SpawnEvent(AHexTile* CenterTile)
@@ -74,9 +77,14 @@ void UTileEventManager::SetFocusTarget(AActor* NewActor)
 	}
 }
 
-UDataTable* UTileEventManager::GetDataTable()
+UDataTable* UTileEventManager::GetEventDataTable()
 {
 	return EventDataTable;
+}
+
+UDataTable* UTileEventManager::GetActionDataTable()
+{
+	return ActionDataTable;
 }
 
 const float UTileEventManager::GetEventOccurChance() const
@@ -91,6 +99,7 @@ AEventActor* UTileEventManager::SetCurrentTileEvent(AHexTile* NewHexTile)
 	if (CurrentTileEvent != nullptr)
 	{
 		TileEventMeshCapturor->SetFocusTarget(CurrentTileEvent);
+		InitAndShowEventDiscription();
 	}
 
 	return CurrentTileEvent;
@@ -101,3 +110,23 @@ AEventActor* UTileEventManager::GetTileEvent() const
 	return CurrentTileEvent;
 }
 
+void UTileEventManager::HideWidget()
+{
+	TileEventWidget->HideEventInfoWidget();
+	TileEventWidget->HideEventWidget();
+}
+
+void UTileEventManager::InitAndShowEventDiscription()
+{
+	TileEventWidget->InitEventWidget(CurrentTileEvent);
+	TileEventWidget->ShowEventWidget();
+}
+
+void UTileEventManager::CreateTileEventWidget()
+{
+	checkf(TileEventWidgetClass != nullptr, TEXT("TileEventWidgetClass is nullptr"));
+	TileEventWidget = CreateWidget<UTileEventWidget>(GetWorld()->GetFirstPlayerController(), TileEventWidgetClass);
+	checkf(TileEventWidget != nullptr, TEXT("TileEventWidget is not created"));
+	TileEventWidget->AddToPlayerScreen(0);
+	HideWidget();
+}

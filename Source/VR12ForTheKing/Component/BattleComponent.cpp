@@ -42,6 +42,11 @@ const EFactionType& UBattleComponent::GetFactionType() const
 	return FactionType;
 }
 
+const TArray<FName>& UBattleComponent::GetActionArray() const
+{
+	return ActionArray;
+}
+
 void UBattleComponent::BattleAction_Implementation()
 {
 }

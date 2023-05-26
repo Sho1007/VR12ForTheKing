@@ -22,22 +22,4 @@ public:
 	void UpdateMoveJudge(const TArray<bool>& SuccessArray);
 	UFUNCTION(BlueprintNativeEvent)
 	void HideMoveJudgeWidget();
-	UFUNCTION(BlueprintCallable)
-	void ShowEventWidget();
-	UFUNCTION(BlueprintCallable)
-	void InitEventWidget(const AEventActor* NewEventActor);
-	UFUNCTION(BlueprintCallable)
-	void HideEventWidget();
-	UFUNCTION(BlueprintCallable)
-	void ShowEventInfoWidget(FVector2D NewPos);
-	UFUNCTION(BlueprintCallable)
-	void HideEventInfoWidget();
-	UFUNCTION(BlueprintCallable)
-	void InitEventInfoWidget(const AEventActor* NewEventActor);
-
-private:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UEventWidget* WBP_TileEvent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UEventInfoWidget* WBP_EventInfo;
 };
