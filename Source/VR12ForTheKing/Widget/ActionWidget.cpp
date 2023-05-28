@@ -1,13 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "../Widget/ActionWidget.h"
+
 #include "Engine/DataTable.h"
 #include "GameFramework/GameModeBase.h"
 #include "Components/Button.h"
 
-#include "../Widget/ActionWidget.h"
 #include "../Event/TileEventManager.h"
 #include "../Component/BattleComponent.h"
 #include "BattleWidget.h"
+#include "../Character/MyPlayerController.h"
 
 void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget)
 {
@@ -20,10 +22,7 @@ void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidg
 	FAction* NewAction = ActionDataTable->FindRow<FAction>(ActionName, 0);
 	checkf(NewAction != nullptr, TEXT("Cannot find NewAction"));
 	Btn_Action->WidgetStyle.Normal.SetResourceObject(NewAction->Image);
-
-	Btn_Action->OnHovered.AddDynamic(this, &UActionWidget::ActionButtonOnHovered);
 	Btn_Action->OnClicked.AddDynamic(this, &UActionWidget::ActionButtonOnClicked);
-	Btn_Action->OnUnhovered.AddDynamic(this, &UActionWidget::ActionButtonOnUnhovered);
 
 	ParentWidget = NewParentWidget;
 }
@@ -31,36 +30,33 @@ void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidg
 void UActionWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	if (bIsHovered)
+}
+
+FReply UActionWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
-		if (GetWorld()->GetFirstPlayerController()->GetInputKeyTimeDown(EKeys::RightMouseButton))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s Button is RightClicked"), *this->GetName());
-		}
+		UE_LOG(LogTemp, Warning, TEXT("%s RightClicked"), *this->GetName());
+
+		return FReply::Handled();
 	}
+
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }
 
-void UActionWidget::UseFocusToken()
+void UActionWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-}
-
-void UActionWidget::ActionButtonOnHovered()
-{
-	bIsHovered = true;
-
-	//UE_LOG(LogTemp, Warning, TEXT("WidgetParent : %s"), *ParentWidget->GetName());
 	UBattleWidget* BattleWidget = Cast<UBattleWidget>(ParentWidget);
 	checkf(BattleWidget != nullptr, TEXT("ParentWidget is not UBattleWidget"));
 	BattleWidget->InitActionDiscription(ActionName);
 }
 
-void UActionWidget::ActionButtonOnClicked()
+void UActionWidget::UseFocusToken()
 {
-	// Test
-	UE_LOG(LogTemp, Warning, TEXT("Button Clicked"));
+	UE_LOG(LogTemp, Warning, TEXT("%s UseFocusToken"), *this->GetName());
 }
 
-void UActionWidget::ActionButtonOnUnhovered()
+void UActionWidget::ActionButtonOnClicked()
 {
-	bIsHovered = false;
+	UE_LOG(LogTemp, Warning, TEXT("%s LeftClicked"), *this->GetName());
 }

@@ -35,12 +35,10 @@ private:
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
 	UHorizontalBox* MoveTurnBox;
 
-
-
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true))
 	int32 ChaosCount;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		TSubclassOf<UMoveTurnWidgetSlot> MoveTurnWidgetSlotClass;
+	TSubclassOf<UMoveTurnWidgetSlot> MoveTurnWidgetSlotClass;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		UMoveTurnWidgetSlot* MoveTurnWidgetSlot;
+	UMoveTurnWidgetSlot* MoveTurnWidgetSlot;
 };

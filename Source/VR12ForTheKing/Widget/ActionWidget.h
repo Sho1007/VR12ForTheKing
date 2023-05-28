@@ -20,14 +20,14 @@ public:
 	void InitWidget(FName NewActionName, UBattleWidget* NewParentWidget);
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
 	void UseFocusToken();
 private:
 	UFUNCTION()
-	void ActionButtonOnHovered();
-	UFUNCTION()
 	void ActionButtonOnClicked();
-	UFUNCTION()
-	void ActionButtonOnUnhovered();
+
 	FName ActionName;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UButton* Btn_Action;

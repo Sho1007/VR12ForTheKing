@@ -49,8 +49,6 @@ void AMyPlayerController::BeginPlay()
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *EnhancedInputComponent->GetName());
 		checkf(IA_LeftClick != nullptr, TEXT("IA_LeftClick is not valid!"));
 		EnhancedInputComponent->BindAction(IA_LeftClick, ETriggerEvent::Started, this, &AMyPlayerController::LeftClickPressed);
-		checkf(IA_RightClick != nullptr, TEXT("IA_LeftClick is not valid!"));
-		EnhancedInputComponent->BindAction(IA_RightClick, ETriggerEvent::Started, this, &AMyPlayerController::RightClickPressed);
 	}
 	else
 	{
@@ -74,16 +72,6 @@ void AMyPlayerController::LeftClickPressed()
 {
 	// Multi 로 바꾸면 꼭 손봐야함
 	GameMode->LeftClick(this);
-}
-
-void AMyPlayerController::RightClickPressed()
-{
-	//
-	if (HoveredActionWidget != nullptr)
-	{
-		HoveredActionWidget->UseFocusToken();
-		return;
-	}
 }
 
 void AMyPlayerController::CheckFocusActor()

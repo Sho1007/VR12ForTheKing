@@ -48,6 +48,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChangetoMoveTurnWidget();
 
+	void InitWidget();
+
 	
 private:
 

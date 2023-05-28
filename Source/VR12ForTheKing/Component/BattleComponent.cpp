@@ -54,4 +54,3 @@ void UBattleComponent::BattleAction_Implementation()
 void UBattleComponent::Attack_Implementation()
 {
 }
-

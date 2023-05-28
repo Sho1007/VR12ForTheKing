@@ -32,7 +32,7 @@ public:
 	const FText GetPlayerName() const;
 private:
 	void LeftClickPressed();
-	void RightClickPressed();
+	
 	void CheckFocusActor();
 	AActor* GetHitActor();
 protected:

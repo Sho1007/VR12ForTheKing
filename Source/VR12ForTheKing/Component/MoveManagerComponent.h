@@ -32,6 +32,8 @@ public:
 	void MoveCharacter();
 	void ReachToDestination();
 
+	void HideWidget();
+
 	AHexTile* GetNextTile() const;
 private:
 	void CreateMoveWidget();

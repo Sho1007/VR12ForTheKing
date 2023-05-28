@@ -149,6 +149,11 @@ void UMoveManagerComponent::ReachToDestination()
 	MoveCharacter();
 }
 
+void UMoveManagerComponent::HideWidget()
+{
+	MoveWidget->SetVisibility(ESlateVisibility::Collapsed);
+}
+
 AHexTile* UMoveManagerComponent::GetNextTile() const
 {
 	return NextTile;

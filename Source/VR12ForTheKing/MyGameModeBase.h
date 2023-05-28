@@ -17,6 +17,7 @@ class UTileEventManager;
 class ATileEventMeshCapturor;
 class UBattleManagerComponent;
 class UMoveManagerComponent;
+class UTurnWidget;
 /**
  * 
  */
@@ -89,6 +90,10 @@ private:
 	// MoveManager Var
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UMoveManagerComponent* MoveManager;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UTurnWidget> TurnWidgetClass;
+	UTurnWidget* TurnWidget;
 
 	TArray<APlayerController*> PlayerControllerArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

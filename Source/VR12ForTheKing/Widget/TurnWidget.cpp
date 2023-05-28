@@ -72,3 +72,9 @@ void UTurnWidget::ChangetoMoveTurnWidget()
 	MoveBattleSwitcher->GetChildAt(0);
 	MoveBattleSwitcher->SetActiveWidgetIndex(0);
 }
+
+void UTurnWidget::InitWidget()
+{
+	WBP_MoveTurnWidget->InitTurnWidget();
+	//
+}

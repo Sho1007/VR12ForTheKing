@@ -17,6 +17,7 @@
 #include "Component/BattleManagerComponent.h"
 #include "Component/MoveManagerComponent.h"
 #include "Component/BattleComponent.h"
+#include "Widget/TurnWidget.h"
 
 AMyGameModeBase::AMyGameModeBase()
 {
@@ -51,6 +52,12 @@ void AMyGameModeBase::BeginPlay()
 	NextTile = NULL;
 
 	MoveManager->StartTurn();
+
+	checkf(TurnWidgetClass != nullptr, TEXT("TurnWidgetClass is nullptr"));
+	TurnWidget = CreateWidget<UTurnWidget>(GetWorld()->GetFirstPlayerController(), TurnWidgetClass);
+	checkf(TurnWidget != nullptr, TEXT("TurnWidget is not created"));
+	TurnWidget->AddToPlayerScreen(0);
+	TurnWidget->InitWidget();
 }
 
 void AMyGameModeBase::LeftClick(APlayerController* PlayerController)
@@ -107,7 +114,9 @@ void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 	{
 	case ETileEventActionType::Battle:
 		TileEventManager->HideWidget();
+		MoveManager->HideWidget();
 		BattleManager->InitBattle(MoveManager->GetNextTile());
+		TurnWidget->ChangetoBattleTurnWidget();
 		break;
 	case ETileEventActionType::Retreat:
 		break;

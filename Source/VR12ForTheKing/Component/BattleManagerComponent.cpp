@@ -51,7 +51,7 @@ void UBattleManagerComponent::BeginPlay()
 
 	CreateBattleWidget();
 
-	//UE_LOG(LogTemp, Warning, TEXT("OutArrayNum : %d, BattleMapArrayNum : %d"), OutArray.Num(), BattleMapArray.Num());
+	UE_LOG(LogTemp, Warning, TEXT("OutArrayNum : %d, BattleMapArrayNum : %d"), OutArray.Num(), BattleMapArray.Num());
 
 	//checkf(BattleMapArray.Num() == 0, TEXT("No BattleMap in this level"));
 }
