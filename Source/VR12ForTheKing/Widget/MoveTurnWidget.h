@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MoveTurnWidget.generated.h"
 
+
 /**
  * 
  */
@@ -22,6 +23,10 @@ public:
 	void MoveToNextDay(bool IsEndDay);
 	UFUNCTION(BlueprintCallable)
 	void InitTurnWidget(int32 StartTurnIndex = 1);
+	UFUNCTION(BlueprintCallable)
+	UCharacterTurnWidget* GetCharacterTurnWidget()const;
+	
+	int32 GetChaosCount()const;
 private:
 
 	//widget

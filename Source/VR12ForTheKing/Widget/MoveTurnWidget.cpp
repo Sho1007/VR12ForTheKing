@@ -4,7 +4,7 @@
 #include "../Widget/MoveTurnWidget.h"
 #include "Components/HorizontalBox.h"
 #include "MoveTurnWidgetSlot.h"
-
+#include "CharacterTurnWidget.h"
 // 
 void UMoveTurnWidget::MoveToNextDay(bool IsEndDay)
 {
@@ -64,3 +64,15 @@ void UMoveTurnWidget::InitTurnWidget(int32 StartTurnIndex)
 	MoveTurnBox->GetChildAt(14)->SetVisibility(ESlateVisibility::Collapsed);
 	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("%d"), MoveTurnBox->GetChildrenCount()));
 }
+
+UCharacterTurnWidget* UMoveTurnWidget::GetCharacterTurnWidget() const
+{
+	return WBP_CharacterTurnWidget;
+}
+
+int32 UMoveTurnWidget::GetChaosCount() const
+{
+	return ChaosCount;
+}
+
+

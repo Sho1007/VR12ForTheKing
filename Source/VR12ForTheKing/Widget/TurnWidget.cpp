@@ -4,18 +4,40 @@
 #include "../Widget/TurnWidget.h"
 #include "HeartSlot.h"
 #include "Components/HorizontalBox.h"
-class UCharacterTurnWidget;
-FText UTurnWidget::Get_Day_Text()
-{
-	
+#include "MoveTurnWidget.h"
+#include "CharacterTurnWidget.h"
+#include "Components/Image.h"
+#include "Components/WidgetSwitcher.h"
+#include "Components/TextBlock.h"
 
-	return FText();
+void UTurnWidget::Get_Day_Text()
+{
+	int32 DayCount = WBP_MoveTurnWidget->GetCharacterTurnWidget()->GetDayCount();
+	FString DayString;
+	DayString = FString::FromInt(DayCount);
+	FText DayText;
+	DayText = FText::FromString(DayString);
+
+	Day->SetText(DayText);
 }
 
 void UTurnWidget::ChaosCount()
 {
-}
+	int32 ChaosCount = WBP_MoveTurnWidget->GetChaosCount() - 1;
+	switch (ChaosCount)
+	{
+	case 0:
+		Chaos1->SetVisibility(ESlateVisibility::Visible);
+		break;
+	case 1:
+		Chaos2->SetVisibility(ESlateVisibility::Visible);
+		break;
+	case 2:
+		Chaos3->SetVisibility(ESlateVisibility::Visible);
+		break;
+	}
 
+}
 void UTurnWidget::AddHeartCount()
 {
 	UHeartSlot* NewHeartSlot = CreateWidget<UHeartSlot>(GetWorld()->GetFirstPlayerController(), HeartSlotClass);
@@ -39,8 +61,14 @@ void UTurnWidget::TurnOver()
 
 void UTurnWidget::ChangetoBattleTurnWidget()
 {
+	checkf(MoveBattleSwitcher->GetChildAt(1) != nullptr, TEXT("MoveBattleSwitcher doesn't have child"));
+	MoveBattleSwitcher->GetChildAt(1);
+	MoveBattleSwitcher->SetActiveWidgetIndex(1);
 }
 
 void UTurnWidget::ChangetoMoveTurnWidget()
 {
+	checkf(MoveBattleSwitcher->GetChildAt(0) != nullptr, TEXT("MoveBattleSwitcher doesn't have child"));
+	MoveBattleSwitcher->GetChildAt(0);
+	MoveBattleSwitcher->SetActiveWidgetIndex(0);
 }
