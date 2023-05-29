@@ -65,14 +65,14 @@ struct FItemInstance
 	GENERATED_BODY()
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FName ItemIndex;
+	FName ItemRow;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 CurrentStackCount;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 MaxStackCount;
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -89,8 +89,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void AddItem(const FName NewItemIndex, uint32 NewItemCount);
+	UFUNCTION(BlueprintCallable)
+	void AddItem(const FName NewItemRow, int32 NewItemCount);
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<FItemInstance> ItemArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UDataTable* ItemDataTable;
 };
