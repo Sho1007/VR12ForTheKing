@@ -121,6 +121,11 @@ void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 	}
 }
 
+UTurnWidget* AMyGameModeBase::GetTurnWidget() const
+{
+	return TurnWidget;
+}
+
 void AMyGameModeBase::CreatePlayer()
 {
 	check(CharacterClass != nullptr);

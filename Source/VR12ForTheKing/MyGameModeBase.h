@@ -49,6 +49,10 @@ public:
 
 	// Event Button Function
 	void DoEventAction(ETileEventActionType NewEventActionType);
+
+public:
+	// Getter / Setter
+	UTurnWidget* GetTurnWidget() const;
 private:
 	void CreatePlayer();
 	// Battle Function
