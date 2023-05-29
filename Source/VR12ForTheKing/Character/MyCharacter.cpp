@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "../Component/BattleComponent.h"
 #include "../Component/StatusComponent.h"
+#include "../Component/InventoryComponent.h"
 #include "../HexGrid/HexTile.h"
 #include "../MyGameModeBase.h"
 
@@ -23,6 +24,8 @@ AMyCharacter::AMyCharacter()
 
 	BattleComponent = CreateDefaultSubobject<UBattleComponent>(TEXT("NewBattleComponent"));
 	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
+	// Todo : It will have To Seperate to Player and Enemy
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 void AMyCharacter::Init(AMyGameModeBase* NewGameMode)

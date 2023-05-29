@@ -18,6 +18,7 @@
 #include "Component/MoveManagerComponent.h"
 #include "Component/BattleComponent.h"
 #include "Widget/TurnWidget.h"
+#include "Widget/StatusWidget.h"
 
 AMyGameModeBase::AMyGameModeBase()
 {
@@ -53,11 +54,8 @@ void AMyGameModeBase::BeginPlay()
 
 	MoveManager->StartTurn();
 
-	checkf(TurnWidgetClass != nullptr, TEXT("TurnWidgetClass is nullptr"));
-	TurnWidget = CreateWidget<UTurnWidget>(GetWorld()->GetFirstPlayerController(), TurnWidgetClass);
-	checkf(TurnWidget != nullptr, TEXT("TurnWidget is not created"));
-	TurnWidget->AddToPlayerScreen(0);
-	TurnWidget->InitWidget();
+	CreateTurnWidget();
+	CreateStatusWidget();
 }
 
 void AMyGameModeBase::LeftClick(APlayerController* PlayerController)
@@ -205,6 +203,26 @@ void AMyGameModeBase::CalculateTurn()
 	{
 		UseBattleTurnArray.Add(BattleTurnArray[i % BattleTurnArray.Num()]);
 	}
+}
+
+void AMyGameModeBase::CreateTurnWidget()
+{
+	checkf(TurnWidgetClass != nullptr, TEXT("TurnWidgetClass is nullptr"));
+	TurnWidget = CreateWidget<UTurnWidget>(GetWorld()->GetFirstPlayerController(), TurnWidgetClass);
+	checkf(TurnWidget != nullptr, TEXT("TurnWidget is not created"));
+	TurnWidget->AddToPlayerScreen(0);
+	TurnWidget->InitWidget();
+}
+
+void AMyGameModeBase::CreateStatusWidget()
+{
+	checkf(StatusWidgetClass != nullptr, TEXT("StatusWidgetClass is nullptr"));
+	StatusWidget = CreateWidget<UStatusWidget>(GetWorld()->GetFirstPlayerController(), StatusWidgetClass);
+	checkf(StatusWidget != nullptr, TEXT("StatusWidget is not created"));
+	StatusWidget->AddToPlayerScreen(0);
+
+	// Todo : Create InitWidget Function
+	//StatusWidget->InitWidget();
 }
 
 UTileEventManager* AMyGameModeBase::GetTileEventManager()

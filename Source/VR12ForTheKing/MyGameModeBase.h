@@ -18,6 +18,7 @@ class ATileEventMeshCapturor;
 class UBattleManagerComponent;
 class UMoveManagerComponent;
 class UTurnWidget;
+class UStatusWidget;
 /**
  * 
  */
@@ -52,6 +53,11 @@ private:
 	void CreatePlayer();
 	// Battle Function
 	void CalculateTurn();
+
+	// Widget
+	void CreateTurnWidget();
+	void CreateStatusWidget();
+
 private:
 	// Move Turn Var
 	int CurrentTurn = 0;
@@ -91,9 +97,14 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UMoveManagerComponent* MoveManager;
 
+	// Widget Var
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UTurnWidget> TurnWidgetClass;
 	UTurnWidget* TurnWidget;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UStatusWidget> StatusWidgetClass;
+	UStatusWidget* StatusWidget;
 
 	TArray<APlayerController*> PlayerControllerArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

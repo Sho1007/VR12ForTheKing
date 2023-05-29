@@ -11,6 +11,7 @@ class AHexTile;
 class AMyGameModeBase;
 class UBattleComponent;
 class UStatusComponent;
+class UInventoryComponent;
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -62,6 +63,8 @@ private:
 	USkeletalMeshComponent* SkeletalMeshComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
 	UCapsuleComponent* CapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
+	UInventoryComponent* InventoryComponent;
 
 	AMyGameModeBase* GameMode;
 	// Status
