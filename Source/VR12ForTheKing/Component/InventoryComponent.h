@@ -56,7 +56,7 @@ struct FItem : public FTableRowBase
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EEqiupmentType EqiupmentType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	uint32 MaxStackCount;
+	int32 MaxStackCount;
 };
 
 USTRUCT(BlueprintType)
@@ -67,9 +67,9 @@ struct FItemInstance
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FName ItemIndex;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	uint32 CurrentStackCount;
+	int32 CurrentStackCount;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	uint32 MaxStackCount;
+	int32 MaxStackCount;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
