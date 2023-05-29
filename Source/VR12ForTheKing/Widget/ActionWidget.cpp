@@ -56,6 +56,7 @@ void UActionWidget::UseFocusToken()
 	UE_LOG(LogTemp, Warning, TEXT("%s UseFocusToken"), *this->GetName());
 }
 
+//when BattleComponenet action activated call function action ended in battlemangetcomponent
 void UActionWidget::ActionButtonOnClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s LeftClicked"), *this->GetName());

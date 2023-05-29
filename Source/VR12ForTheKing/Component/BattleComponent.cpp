@@ -2,7 +2,9 @@
 
 
 #include "../Component/BattleComponent.h"
-
+#include "../Character/MyCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "StatusComponent.h"
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
 {
@@ -53,4 +55,52 @@ void UBattleComponent::BattleAction_Implementation()
 
 void UBattleComponent::Attack_Implementation()
 {
+}
+
+void UBattleComponent::MeleeAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget)
+{
+
+	Character->SetActorRotation(SetCharacterRotation(NewCharacter, NewUnitTarget), ETeleportType::None);
+	AMyCharacter* UnitTarget = NewUnitTarget;
+	checkf(UnitTarget != nullptr, TEXT("UnitTarget doesnt't exist"));
+	Character->SetDestination(UnitTarget->GetActorLocation(), 0.0, 5.0);
+}
+
+void UBattleComponent::RangetAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget)
+{
+	Character = NewCharacter;
+	Character->SetActorRotation(SetCharacterRotation(NewCharacter, NewUnitTarget), ETeleportType::None);
+	CalculateDamage(Character);
+	//SpawnActor(); have to spawn projectileclass actor
+
+}
+
+void UBattleComponent::BackToBattlePos(AMyCharacter* NewCharacter)
+{
+	Character = NewCharacter;
+	GoBack = false;
+	IsTurnEnd = true;
+	Character->SetActorRotation(BattlePosition.GetRotation(), ETeleportType::None);
+	// settimerby function name have to be here
+	// have to call function that put unit back to array
+
+}
+
+float UBattleComponent::CalculateDamage(AMyCharacter* NewCharacter)
+{
+	Character = NewCharacter;
+	//Character->GetComponentByClass(StatusComponentClass); have to get stauts component
+	return 0.0f;
+}
+
+FRotator UBattleComponent::SetCharacterRotation(AMyCharacter* NewCharacter,AMyCharacter* NewUnitTarget)
+{
+	Character = NewCharacter;
+	IsTurnEnd = false;
+	Character = Cast<AMyCharacter>(GetOwner());
+	checkf(Character != nullptr, TEXT("Character doesnt't exist"));
+	AMyCharacter* UnitTarget = NewUnitTarget;
+	checkf(UnitTarget != nullptr, TEXT("UnitTarget doesnt't exist"));
+	FRotator CharacterRot = UKismetMathLibrary::FindLookAtRotation(Character->GetActorLocation(), UnitTarget->GetActorLocation());
+	return CharacterRot;
 }

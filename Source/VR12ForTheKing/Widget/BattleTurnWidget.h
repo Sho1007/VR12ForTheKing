@@ -11,6 +11,9 @@
  */
 
 class AMyCharacter;
+class UBattleTurnWidgetSlot;
+class UTexture2D;
+class UHorizontalBox;
 UCLASS()
 class VR12FORTHEKING_API UBattleTurnWidget : public UUserWidget
 {
@@ -20,9 +23,24 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetTurnArray(const TArray<AMyCharacter*>& NewTurnArray);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void SetTurnImage();
+	UFUNCTION(BlueprintCallable)
+	void InitBattleTurnWidget();
+
+	UFUNCTION(BlueprintCallable)
+	void MoveToNextTurn(AMyCharacter* NewCharacter);
 private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> BasicTurnArray;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+		TSubclassOf<UBattleTurnWidgetSlot> BattleTurnWidgetSlotClass;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+		UBattleTurnWidgetSlot* BattleTurnWidgetSlot;
+	
+	
+
+
+	//widget
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
+	UHorizontalBox* TurnImageArray;
+	
 };

@@ -67,7 +67,8 @@ private:
 	TSubclassOf<ABattleMap> BattleMapClass;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 	int32 SpawnEnemyIndex;
-
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+	int32 NextTurnIndex;
 	// BattleWidget Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UBattleWidget> BattleWidgetClass;

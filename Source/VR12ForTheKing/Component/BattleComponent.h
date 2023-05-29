@@ -38,6 +38,7 @@ struct FAction : public FTableRowBase
 };
 
 class AMyCharacter;
+class UStatusComponent;
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
 {
@@ -65,7 +66,23 @@ public:
 	void Attack_Implementation();
 
 	UFUNCTION(BlueprintCallable)
+	void MeleeAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget);
+
+	UFUNCTION(BlueprintCallable)
+	void RangetAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget);
+
+	UFUNCTION(BlueprintCallable)
+	void BackToBattlePos(AMyCharacter* NewCharacter);
+
+	UFUNCTION(BlueprintCallable)
+	float CalculateDamage(AMyCharacter* NewCharacter);
+
+	UFUNCTION(BlueprintCallable)
+	FRotator SetCharacterRotation(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget);
+
+	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
+
 	UFUNCTION(BlueprintCallable)
 	const EFactionType& GetFactionType() const;
 	const TArray<FName>& GetActionArray() const;
@@ -77,4 +94,17 @@ protected:
 	TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AMyCharacter* ActionTarget;
+
+private:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	bool IsTurnEnd;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	bool GoBack;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	AMyCharacter* Character;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	FTransform BattlePosition;
+	/*UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UActorComponent> UStatusComponent;*/
 };

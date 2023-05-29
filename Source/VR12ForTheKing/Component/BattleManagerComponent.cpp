@@ -16,6 +16,8 @@
 #include "../Battle/BattleMap.h"
 #include "../Battle/BattleCharacterSpawnPosition.h"
 #include "../Widget/BattleWidget.h"
+#include "../Widget/TurnWidget.h"
+#include "../Widget/BattleTurnWidget.h"
 
 
 // Sets default values for this component's properties
@@ -144,7 +146,12 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	SpawnEnemy();
 	TeleportCharacter();
 	MoveCamera();
-
+	CalculateTurn();
+	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));
+	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->SetTurnArray(BattleTurnArray);
+	NextTurnIndex = 0;
+	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->MoveToNextTurn(BattleTurnArray[NextTurnIndex]);
 	BattleWidget->InitWidget(PlayerCharacterArray[0]);
 	BattleWidget->ShowWidget();
 

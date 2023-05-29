@@ -48,6 +48,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChangetoMoveTurnWidget();
 
+	UBattleTurnWidget* GetBattleTurnWidget()const;
+
 	void InitWidget();
 
 	
