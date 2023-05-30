@@ -64,6 +64,7 @@ void UBattleComponent::MeleeAttack(AMyCharacter* NewCharacter, AMyCharacter* New
 	AMyCharacter* UnitTarget = NewUnitTarget;
 	checkf(UnitTarget != nullptr, TEXT("UnitTarget doesnt't exist"));
 	Character->SetDestination(UnitTarget->GetActorLocation(), 0.0, 5.0);
+
 }
 
 void UBattleComponent::RangetAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget)
@@ -86,11 +87,16 @@ void UBattleComponent::BackToBattlePos(AMyCharacter* NewCharacter)
 
 }
 
-float UBattleComponent::CalculateDamage(AMyCharacter* NewCharacter)
+int32 UBattleComponent::CalculateDamage(AMyCharacter* NewCharacter)
 {
 	Character = NewCharacter;
-	//Character->GetComponentByClass(StatusComponentClass); have to get stauts component
+	UStatusComponent* StatusComponent = Cast<UStatusComponent>(Character->GetComponentByClass(UStatusComponent::StaticClass()));
+	int32 Damage = StatusComponent->GetCharacterStatus().AttackPower + 0;// have to put LevelDamage at place of 0
 	return 0.0f;
+}
+
+void UBattleComponent::ReachToDestination()
+{
 }
 
 FRotator UBattleComponent::SetCharacterRotation(AMyCharacter* NewCharacter,AMyCharacter* NewUnitTarget)

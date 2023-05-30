@@ -75,8 +75,10 @@ public:
 	void BackToBattlePos(AMyCharacter* NewCharacter);
 
 	UFUNCTION(BlueprintCallable)
-	float CalculateDamage(AMyCharacter* NewCharacter);
+	int32 CalculateDamage(AMyCharacter* NewCharacter);
 
+	UFUNCTION(BlueprintCallable)
+	void ReachToDestination();
 	UFUNCTION(BlueprintCallable)
 	FRotator SetCharacterRotation(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget);
 
