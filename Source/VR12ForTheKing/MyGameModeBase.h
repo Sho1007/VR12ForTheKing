@@ -17,8 +17,10 @@ class UTileEventManager;
 class ATileEventMeshCapturor;
 class UBattleManagerComponent;
 class UMoveManagerComponent;
+
 class UTurnWidget;
 class UStatusWidget;
+class UInventoryWidget;
 /**
  * 
  */
@@ -61,6 +63,7 @@ private:
 	// Widget
 	void CreateTurnWidget();
 	void CreateStatusWidget();
+	void CreateInventoryWidget();
 
 private:
 	// Move Turn Var
@@ -109,6 +112,12 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UStatusWidget> StatusWidgetClass;
 	UStatusWidget* StatusWidget;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+	UInventoryWidget* InventoryWidget;
+
+
 
 	TArray<APlayerController*> PlayerControllerArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

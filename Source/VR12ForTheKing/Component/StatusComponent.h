@@ -43,6 +43,10 @@ public:
 	int32 CurrentMP;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 MaxMP;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 AttackPower;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsMagicalAttackPower;
 };
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

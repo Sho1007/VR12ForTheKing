@@ -19,6 +19,7 @@
 #include "Component/BattleComponent.h"
 #include "Widget/TurnWidget.h"
 #include "Widget/StatusWidget.h"
+#include "Widget/InventoryWidget.h"
 
 AMyGameModeBase::AMyGameModeBase()
 {
@@ -228,6 +229,15 @@ void AMyGameModeBase::CreateStatusWidget()
 
 	// Todo : Create InitWidget Function
 	//StatusWidget->InitWidget();
+}
+
+void AMyGameModeBase::CreateInventoryWidget()
+{
+	checkf(InventoryWidgetClass != nullptr, TEXT("InventoryWidgetClass is not valid"));
+	InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld()->GetFirstPlayerController(), InventoryWidgetClass);
+	checkf(InventoryWidget != nullptr, TEXT("InventoryWidget is not created"));
+	InventoryWidget->AddToPlayerScreen(0);
+	//InventoryWidget->HideWidget();
 }
 
 UTileEventManager* AMyGameModeBase::GetTileEventManager()
