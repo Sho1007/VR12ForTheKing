@@ -66,21 +66,25 @@ public:
 	void Attack_Implementation();
 
 	UFUNCTION(BlueprintCallable)
-	void MeleeAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget);
+	void MeleeAttack();
 
 	UFUNCTION(BlueprintCallable)
-	void RangetAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget);
+	void RangetAttack();
 
 	UFUNCTION(BlueprintCallable)
-	void BackToBattlePos(AMyCharacter* NewCharacter);
+	void WeakHeal();
+	UFUNCTION(BlueprintCallable)
+	void BackToBattlePos();
 
 	UFUNCTION(BlueprintCallable)
-	int32 CalculateDamage(AMyCharacter* NewCharacter);
+	int32 CalculateDamage();
 
+	UFUNCTION(BlueprintCallable)
+		void DoAction(FName NewActionName);
 	UFUNCTION(BlueprintCallable)
 	void ReachToDestination();
 	UFUNCTION(BlueprintCallable)
-	FRotator SetCharacterRotation(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget);
+	FRotator SetCharacterRotation();
 
 	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
@@ -89,6 +93,7 @@ public:
 	const EFactionType& GetFactionType() const;
 	const TArray<FName>& GetActionArray() const;
 
+	void SetActionTarget(AMyCharacter* NewActionTarget);
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EFactionType FactionType;

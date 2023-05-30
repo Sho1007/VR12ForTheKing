@@ -11,11 +11,11 @@
 #include "BattleWidget.h"
 #include "../Character/MyPlayerController.h"
 
-void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget)
+void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget, UBattleComponent* NewBattleComponent)
 {
 	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
 	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
-
+	TargetBattleComponent = NewBattleComponent;
 	UDataTable* ActionDataTable = TileEventMangaer->GetActionDataTable();
 	checkf(ActionDataTable != nullptr, TEXT("ActionDataTable is not valid"));
 	ActionName = NewActionName;
@@ -59,5 +59,7 @@ void UActionWidget::UseFocusToken()
 //when BattleComponenet action activated call function action ended in battlemangetcomponent
 void UActionWidget::ActionButtonOnClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s LeftClicked"), *this->GetName());
+	this->SetVisibility(ESlateVisibility::Collapsed);
+	TargetBattleComponent->DoAction(ActionName);
+	
 }

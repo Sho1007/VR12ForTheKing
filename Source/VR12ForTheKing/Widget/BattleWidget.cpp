@@ -33,7 +33,7 @@ void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	{
 		UActionWidget* ActionWidget = CreateWidget<UActionWidget>(GetWorld()->GetFirstPlayerController(), ActionWidgetClass);
 		checkf(ActionWidget != nullptr, TEXT("ActionWidget is not created"));
-		ActionWidget->InitWidget(ActionArray[i], this);
+		ActionWidget->InitWidget(ActionArray[i], this, BattleComponent);
 		HB_Action->AddChildToHorizontalBox(ActionWidget);
 	}
 }

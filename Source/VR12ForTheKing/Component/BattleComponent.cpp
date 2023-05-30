@@ -49,6 +49,11 @@ const TArray<FName>& UBattleComponent::GetActionArray() const
 	return ActionArray;
 }
 
+void UBattleComponent::SetActionTarget(AMyCharacter* NewActionTarget)
+{
+	ActionTarget = NewActionTarget;
+}
+
 void UBattleComponent::BattleAction_Implementation()
 {
 }
@@ -57,56 +62,74 @@ void UBattleComponent::Attack_Implementation()
 {
 }
 
-void UBattleComponent::MeleeAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget)
+void UBattleComponent::MeleeAttack()
 {
 
-	Character->SetActorRotation(SetCharacterRotation(NewCharacter, NewUnitTarget), ETeleportType::None);
-	AMyCharacter* UnitTarget = NewUnitTarget;
-	checkf(UnitTarget != nullptr, TEXT("UnitTarget doesnt't exist"));
-	Character->SetDestination(UnitTarget->GetActorLocation(), 0.0, 5.0);
+	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
+	Character->SetActorRotation(SetCharacterRotation(), ETeleportType::None);
+	Character->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
 
 }
 
-void UBattleComponent::RangetAttack(AMyCharacter* NewCharacter, AMyCharacter* NewUnitTarget)
+void UBattleComponent::RangetAttack()
 {
-	Character = NewCharacter;
-	Character->SetActorRotation(SetCharacterRotation(NewCharacter, NewUnitTarget), ETeleportType::None);
-	CalculateDamage(Character);
+	
+	GetOwner()->SetActorRotation(SetCharacterRotation(), ETeleportType::None);
+	CalculateDamage();
 	//SpawnActor(); have to spawn projectileclass actor
 
 }
 
-void UBattleComponent::BackToBattlePos(AMyCharacter* NewCharacter)
+void UBattleComponent::WeakHeal()
 {
-	Character = NewCharacter;
+}
+
+void UBattleComponent::BackToBattlePos()
+{
+	
 	GoBack = false;
 	IsTurnEnd = true;
-	Character->SetActorRotation(BattlePosition.GetRotation(), ETeleportType::None);
+	GetOwner()->SetActorRotation(BattlePosition.GetRotation(), ETeleportType::None);
 	// settimerby function name have to be here
 	// have to call function that put unit back to array
 
 }
 
-int32 UBattleComponent::CalculateDamage(AMyCharacter* NewCharacter)
+int32 UBattleComponent::CalculateDamage()
 {
-	Character = NewCharacter;
-	UStatusComponent* StatusComponent = Cast<UStatusComponent>(Character->GetComponentByClass(UStatusComponent::StaticClass()));
+	
+	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
 	int32 Damage = StatusComponent->GetCharacterStatus().AttackPower + 0;// have to put LevelDamage at place of 0
 	return 0.0f;
+}
+
+void UBattleComponent::DoAction(FName NewActionName)
+{
+	if(NewActionName == "NormalAttack")
+	{
+		MeleeAttack();
+	}
+	else if(NewActionName == "WeakHeal")
+	{
+		WeakHeal();
+	}
+	else if (NewActionName == "RangeAttack")
+	{
+		RangetAttack();
+	}
 }
 
 void UBattleComponent::ReachToDestination()
 {
 }
 
-FRotator UBattleComponent::SetCharacterRotation(AMyCharacter* NewCharacter,AMyCharacter* NewUnitTarget)
+
+
+FRotator UBattleComponent::SetCharacterRotation()
 {
-	Character = NewCharacter;
+	
 	IsTurnEnd = false;
-	Character = Cast<AMyCharacter>(GetOwner());
-	checkf(Character != nullptr, TEXT("Character doesnt't exist"));
-	AMyCharacter* UnitTarget = NewUnitTarget;
-	checkf(UnitTarget != nullptr, TEXT("UnitTarget doesnt't exist"));
-	FRotator CharacterRot = UKismetMathLibrary::FindLookAtRotation(Character->GetActorLocation(), UnitTarget->GetActorLocation());
+	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
+	FRotator CharacterRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), ActionTarget->GetActorLocation());
 	return CharacterRot;
 }

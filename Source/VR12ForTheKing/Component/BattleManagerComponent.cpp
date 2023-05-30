@@ -165,6 +165,11 @@ bool UBattleManagerComponent::SetGameMode(AGameModeBase* NewGameMode)
 	return true;
 }
 
+bool UBattleManagerComponent::IsBattle()
+{
+	return bIsBattle;
+}
+
 bool UBattleManagerComponent::SpawnEnemy()
 {
 	int32 SpawnEnemyCount = 0;

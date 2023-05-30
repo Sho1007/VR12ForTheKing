@@ -36,13 +36,14 @@ public:
 public:
 	// Getter / Setter
 	bool SetGameMode(AGameModeBase* NewGameMode);
+	bool IsBattle();
 private:
 	// Battle Process
 	bool SpawnEnemy();
 	bool TeleportCharacter();
 	void MoveCamera();
 	void CalculateTurn();
-
+	
 	void CreateBattleWidget();
 
 private:
@@ -76,4 +77,9 @@ private:
 	UBattleWidget* BattleWidget;
 
 	AGameModeBase* GameMode;
+
+	bool bIsBattle;
+	//function
+	
+	
 };
