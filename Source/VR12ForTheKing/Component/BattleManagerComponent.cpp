@@ -100,7 +100,7 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	EnemyCharacterArray.Empty();
 	EnemyClassArray.Empty();
 	SpawnEnemyIndex = 0;
-	
+	bIsBattle = true;
 	UHexGridManager* HexGridManager = Cast<UHexGridManager>(GetOwner()->GetComponentByClass(UHexGridManager::StaticClass()));
 	checkf(HexGridManager != nullptr, TEXT("UBattleManagerComponent::InitBattle : HexGridManager is nullptr"));
 
