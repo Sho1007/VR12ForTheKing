@@ -28,8 +28,10 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+
 	checkf(ItemDataTable != nullptr, TEXT("ItemDataTable is not valid"));
 	ItemArray.Init(FItemInstance(), 10);
+	EquipmentSlot.Init(-1, (int32)EEquipmentType::SIZE);
 }
 
 
@@ -46,6 +48,10 @@ void UInventoryComponent::AddItem(const FName NewItemRow, int32 NewItemCount)
 	// Todo : Change ReturnType to int32? present remain item count 
 	for (int i = 0; i < ItemArray.Num(); ++i)
 	{
+		if (NewItemCount == 0)
+		{
+			return;
+		}
 		if (ItemArray[i].ItemRow == NewItemRow)
 		{
 			int32 EmptySpace = ItemArray[i].MaxStackCount - ItemArray[i].CurrentStackCount;
@@ -55,10 +61,7 @@ void UInventoryComponent::AddItem(const FName NewItemRow, int32 NewItemCount)
 				// Todo : Add Effect
 				ItemArray[i].CurrentStackCount += AddItemCount;
 				NewItemCount -= AddItemCount;
-				if (NewItemCount == 0)
-				{
-					return;
-				}
+				
 			}
 		}
 		else if (ItemArray[i].ItemRow == FName(TEXT("None")))
@@ -74,10 +77,6 @@ void UInventoryComponent::AddItem(const FName NewItemRow, int32 NewItemCount)
 			ItemArray[i].CurrentStackCount = AddItemCount;
 			ItemArray[i].MaxStackCount = ItemRow->MaxStackCount;
 			NewItemCount -= AddItemCount;
-			if (NewItemCount == 0)
-			{
-				return;
-			}
 		}
 	}
 
@@ -85,4 +84,67 @@ void UInventoryComponent::AddItem(const FName NewItemRow, int32 NewItemCount)
 	{
 		// Todo : If Item Remain because Inventory is full
 	}
+}
+
+int32 UInventoryComponent::GetCurrentGold() const
+{
+	return Gold;
+}
+
+bool UInventoryComponent::EquipItem(int ItemIndex)
+{
+	if (ItemIndex < 0 || ItemIndex >= ItemArray.Num())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid ItemIndex"));
+		return false;
+	}
+	FItemInstance& TargetItemInstance = ItemArray[ItemIndex];
+	if (TargetItemInstance.ItemRow == FName("None"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target InventorySlot is Empty"));
+		return false;
+	}
+	FItem* TargetItemInfo = ItemDataTable->FindRow<FItem>(TargetItemInstance.ItemRow, FString(""));
+	if (TargetItemInfo == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can not find Item at ItemRow"));
+		return false;
+	}
+	if (TargetItemInstance.bIsEquiped)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target Item is already Equiped"));
+		return false;
+	}
+	if (TargetItemInfo->ItemType != EItemType::EQUIPMENT)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target Item Type is not Equipment"));
+		return false;
+	}
+	EEquipmentType TargetEquipmentType = TargetItemInfo->EquipmentType;
+
+	UnEquipItem(TargetEquipmentType);
+
+	TargetItemInstance.bIsEquiped = true;
+	EquipmentSlot[(int32)TargetEquipmentType] = ItemIndex;
+	// Todo : Apply Item Effects
+
+	// Todo : Update Inventory Widget;
+
+	return true;
+}
+
+bool UInventoryComponent::UnEquipItem(EEquipmentType TargetSlot)
+{
+	int32 WornedEquipmentIndex = EquipmentSlot[(int32)TargetSlot];
+	if (WornedEquipmentIndex == -1)
+	{
+		// Alreay Empty Slot
+		return true;
+	}
+
+	ItemArray[WornedEquipmentIndex].bIsEquiped = false;
+	// Todo : Disapply Item Effects
+	EquipmentSlot[(int32)TargetSlot] = -1;
+	
+	return true;
 }
