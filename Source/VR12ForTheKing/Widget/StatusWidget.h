@@ -21,7 +21,9 @@ class VR12FORTHEKING_API UStatusWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	bool UpdateStatusBoard(int BoardIndex, UStatusComponent* StatusComponent);
-
+	void HideWidget();
+	void OpenInventory(AMyCharacter* TargetCharacter);
+	void OpenStatus(AMyCharacter* TargetCharacter);
 public:
 	// Getter / Setter
 	void SetParentToChild();

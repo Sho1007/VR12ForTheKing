@@ -38,6 +38,8 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorTickEnabled(false);
+
+	TestRandomizeStatus();
 }
 
 // Called every frame
@@ -119,6 +121,23 @@ void AMyCharacter::SetCharacterImage(UTexture2D* NewCharacterImage)
 FText AMyCharacter::GetCharacterName() const
 {
 	return CharacterName;
+}
+
+void AMyCharacter::TestRandomizeStatus()
+{
+	FCharacterStatus& CharacterStatus = StatusComponent->GetCharacterStatus();
+
+	CharacterStatus.Armor = FMath::RandRange(0, 10);
+	CharacterStatus.Cognition = FMath::RandRange(0, 10);
+	CharacterStatus.Evasion = FMath::RandRange(0, 10);
+	CharacterStatus.Focus = FMath::RandRange(0, 10);
+	CharacterStatus.Intelligence = FMath::RandRange(0, 10);
+	CharacterStatus.Luck = FMath::RandRange(0, 10);
+	CharacterStatus.Resistance = FMath::RandRange(0, 10);
+	CharacterStatus.Speed = FMath::RandRange(0, 10);
+	CharacterStatus.Strength = FMath::RandRange(0, 10);
+	CharacterStatus.Talent = FMath::RandRange(0, 10);
+	CharacterStatus.Vitality = FMath::RandRange(0, 10);
 }
 
 int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)

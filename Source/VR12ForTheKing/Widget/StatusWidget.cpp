@@ -18,6 +18,43 @@ bool UStatusWidget::UpdateStatusBoard(int BoardIndex, UStatusComponent* StatusCo
 	return true;
 }
 
+void UStatusWidget::HideWidget()
+{
+	WBP_StatusLayout->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UStatusWidget::OpenInventory(AMyCharacter* TargetCharacter)
+{
+	if (WBP_StatusLayout->GetVisibility() == ESlateVisibility::Visible &&
+		WBP_StatusLayout->GetTargetCharacter() == TargetCharacter &&
+		WBP_StatusLayout->GetActiveWidgetIndex() == 1)
+	{
+		WBP_StatusLayout->SetVisibility(ESlateVisibility::Collapsed);
+		return;
+	}
+
+	WBP_StatusLayout->InitWidget(TargetCharacter);
+
+	WBP_StatusLayout->SwitchToInventory();
+	WBP_StatusLayout->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UStatusWidget::OpenStatus(AMyCharacter* TargetCharacter)
+{
+	if (WBP_StatusLayout->GetVisibility() == ESlateVisibility::Visible &&
+		WBP_StatusLayout->GetTargetCharacter() == TargetCharacter &&
+		WBP_StatusLayout->GetActiveWidgetIndex() == 0)
+	{
+		WBP_StatusLayout->SetVisibility(ESlateVisibility::Collapsed);
+		return;
+	}
+
+	WBP_StatusLayout->InitWidget(TargetCharacter);
+
+	WBP_StatusLayout->SwitchToStatus();
+	WBP_StatusLayout->SetVisibility(ESlateVisibility::Visible);
+}
+
 void UStatusWidget::SetParentToChild()
 {
 	WBP_StatusBoard1->SetParent(this);

@@ -53,7 +53,7 @@ UENUM(BlueprintType)
 enum class EStatusType : uint8
 {
 	Armor,
-	Awareness,
+	Cognition,
 	Evasion,
 	Focus,
 	Intelligence,

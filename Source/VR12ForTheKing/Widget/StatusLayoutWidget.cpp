@@ -4,6 +4,7 @@
 #include "../Widget/StatusLayoutWidget.h"
 
 #include "Components/TextBlock.h"
+#include "Components/WidgetSwitcher.h"
 
 #include "../Character/MyCharacter.h"
 #include "../Component/StatusComponent.h"
@@ -19,6 +20,8 @@ void UStatusLayoutWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	checkf(StatusComponent != nullptr, TEXT("Character has not StatusComponent"));
 	FCharacterStatus CharacterStatus = StatusComponent->GetCharacterStatus();
 
+	TB_PlayerName->SetText(TargetCharacter->GetCharacterName());
+
 	TB_Strength->SetText(FText::FromString(FString::FromInt(CharacterStatus.Strength)));
 	TB_Vitality->SetText(FText::FromString(FString::FromInt(CharacterStatus.Vitality)));
 	TB_Intelligence->SetText(FText::FromString(FString::FromInt(CharacterStatus.Intelligence)));
@@ -30,7 +33,27 @@ void UStatusLayoutWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	this->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UStatusLayoutWidget::SwitchToStatus()
+{
+	WS_Layout->SetActiveWidgetIndex(0);
+}
+
+void UStatusLayoutWidget::SwitchToInventory()
+{
+	WS_Layout->SetActiveWidgetIndex(1);
+}
+
 void UStatusLayoutWidget::SetParent(UStatusWidget* NewParentWidget)
 {
 	ParentWidget = NewParentWidget;
+}
+
+AMyCharacter* UStatusLayoutWidget::GetTargetCharacter() const
+{
+	return TargetCharacter;
+}
+
+int32 UStatusLayoutWidget::GetActiveWidgetIndex() const
+{
+	return WS_Layout->GetActiveWidgetIndex();
 }

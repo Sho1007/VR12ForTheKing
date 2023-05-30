@@ -177,6 +177,7 @@ void AMyGameModeBase::CreateStatusWidget()
 	StatusWidget->AddToPlayerScreen(0);
 	StatusWidget->SetParentToChild();
 	StatusWidget->SetOwnerCharacter(CharacterArray);
+	StatusWidget->HideWidget();
 
 	// Todo : Create InitWidget Function
 	//StatusWidget->InitWidget();

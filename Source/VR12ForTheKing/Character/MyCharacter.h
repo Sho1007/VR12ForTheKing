@@ -53,6 +53,9 @@ public:
 	void SetCharacterImage(UTexture2D* NewCharacterImage);
 
 	FText GetCharacterName() const;
+
+private:
+	void TestRandomizeStatus();
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UBattleComponent* BattleComponent;

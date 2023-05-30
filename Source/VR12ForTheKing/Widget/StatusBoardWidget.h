@@ -12,12 +12,15 @@
 class UStatusComponent;
 class AMyCharacter;
 class UStatusWidget;
+class UButton;
 UCLASS()
 class VR12FORTHEKING_API UStatusBoardWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateStatus(UStatusComponent* StatusComponent);
 
@@ -26,6 +29,16 @@ public:
 	void SetOwnerCharacter(AMyCharacter* NewOwnerCharacter);
 	void SetParent(UStatusWidget* NewParentWidget);
 private:
+	UFUNCTION()
+	void InventoryButtonOnClicked();
+	UFUNCTION()
+	void StatusButtonOnClicked();
+private:
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UButton* Btn_Inventory;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UButton* Btn_Status;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true), Category = "Status")
 	int32 PlayerMaxHP;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true), Category = "Status")
