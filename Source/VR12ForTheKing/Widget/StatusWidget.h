@@ -9,9 +9,10 @@
 /**
  * 
  */
-class UStatusDetailWidget;
+class UStatusLayoutWidget;
 class UStatusBoardWidget;
 class UStatusComponent;
+class AMyCharacter;
 UCLASS()
 class VR12FORTHEKING_API UStatusWidget : public UUserWidget
 {
@@ -20,14 +21,20 @@ class VR12FORTHEKING_API UStatusWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	bool UpdateStatusBoard(int BoardIndex, UStatusComponent* StatusComponent);
+
+public:
+	// Getter / Setter
+	void SetParentToChild();
+
+	void SetOwnerCharacter(const TArray<AMyCharacter*>& NewCharacterArray);
 	
 private:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
-	UStatusDetailWidget* WBP_StatusDetail;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UStatusBoardWidget* WBP_StatusBoard1;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UStatusBoardWidget* WBP_StatusBoard2;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UStatusBoardWidget* WBP_StatusBoard3;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
+	UStatusLayoutWidget* WBP_StatusLayout;
 };

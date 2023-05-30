@@ -68,6 +68,10 @@ void AMyCharacter::ReachToDestination_Implementation()
 		GameMode->ReachToTile();
 		return;
 	}
+	else
+	{
+		//BattleComponent->ReachToDestination();
+	}
 }
 
 void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
@@ -110,6 +114,11 @@ UTexture2D* AMyCharacter::GetCharacterImage()
 void AMyCharacter::SetCharacterImage(UTexture2D* NewCharacterImage)
 {
 	CharacterImage = NewCharacterImage;
+}
+
+FText AMyCharacter::GetCharacterName() const
+{
+	return CharacterName;
 }
 
 int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)

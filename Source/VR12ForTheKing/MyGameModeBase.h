@@ -57,8 +57,6 @@ public:
 	UTurnWidget* GetTurnWidget() const;
 private:
 	void CreatePlayer();
-	// Battle Function
-	void CalculateTurn();
 
 	// Widget
 	void CreateTurnWidget();
@@ -119,7 +117,7 @@ private:
 
 
 
-	TArray<APlayerController*> PlayerControllerArray;
+	TArray<AMyPlayerController*> PlayerControllerArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> CharacterArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

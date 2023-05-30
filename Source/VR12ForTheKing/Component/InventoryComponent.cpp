@@ -4,8 +4,9 @@
 #include "../Component/InventoryComponent.h"
 
 #include "Engine/DataTable.h"
-
 #include "Components/Image.h"
+
+#include "../Component/StatusComponent.h"
 
 
 // Sets default values for this component's properties
@@ -16,9 +17,6 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
-
-	
-
 }
 
 
@@ -91,6 +89,48 @@ int32 UInventoryComponent::GetCurrentGold() const
 	return Gold;
 }
 
+void UInventoryComponent::AttachItemOption(EEquipmentType TargetEuipmentType)
+{
+	// Todo : Apply Item Effects
+
+	FItem* Item = ItemDataTable->FindRow<FItem>(ItemArray[EquipmentSlot[(int32)TargetEuipmentType]].ItemRow, FString(""));
+	checkf(Item != nullptr, TEXT("Cannot Find Item"));
+	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
+	checkf(Item != nullptr, TEXT("Character has not StatusComponent"));
+	FCharacterStatus& CharacterStatus = StatusComponent->GetCharacterStatus();
+	CharacterStatus.Armor		+= Item->BonusArmor;
+	CharacterStatus.Cognition	+= Item->BonusCognition;
+	CharacterStatus.Evasion		+= Item->BonusEvasion;
+	CharacterStatus.Focus		+= Item->BonusFocus;
+	CharacterStatus.Intelligence+= Item->BonusIntelligence;
+	CharacterStatus.Luck		+= Item->BonusLuck;
+	CharacterStatus.Resistance	+= Item->BonusResistance;
+	CharacterStatus.Speed		+= Item->BonusSpeed;
+	CharacterStatus.Strength	+= Item->BonusStrength;
+	CharacterStatus.Talent		+= Item->BonusTalent;
+	CharacterStatus.Vitality	+= Item->BonusVitality;
+}
+
+void UInventoryComponent::DetachItemOption(EEquipmentType TargetEuipmentType)
+{
+	FItem* Item = ItemDataTable->FindRow<FItem>(ItemArray[EquipmentSlot[(int32)TargetEuipmentType]].ItemRow, FString(""));
+	checkf(Item != nullptr, TEXT("Cannot Find Item"));
+	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
+	checkf(Item != nullptr, TEXT("Character has not StatusComponent"));
+	FCharacterStatus& CharacterStatus = StatusComponent->GetCharacterStatus();
+	CharacterStatus.Armor			-= Item->BonusArmor;
+	CharacterStatus.Cognition		-= Item->BonusCognition;
+	CharacterStatus.Evasion			-= Item->BonusEvasion;
+	CharacterStatus.Focus			-= Item->BonusFocus;
+	CharacterStatus.Intelligence	-= Item->BonusIntelligence;
+	CharacterStatus.Luck			-= Item->BonusLuck;
+	CharacterStatus.Resistance		-= Item->BonusResistance;
+	CharacterStatus.Speed			-= Item->BonusSpeed;
+	CharacterStatus.Strength		-= Item->BonusStrength;
+	CharacterStatus.Talent			-= Item->BonusTalent;
+	CharacterStatus.Vitality		-= Item->BonusVitality;
+}
+
 bool UInventoryComponent::EquipItem(int ItemIndex)
 {
 	if (ItemIndex < 0 || ItemIndex >= ItemArray.Num())
@@ -126,8 +166,8 @@ bool UInventoryComponent::EquipItem(int ItemIndex)
 
 	TargetItemInstance.bIsEquiped = true;
 	EquipmentSlot[(int32)TargetEquipmentType] = ItemIndex;
-	// Todo : Apply Item Effects
 
+	AttachItemOption(TargetEquipmentType);
 	// Todo : Update Inventory Widget;
 
 	return true;
@@ -141,6 +181,8 @@ bool UInventoryComponent::UnEquipItem(EEquipmentType TargetSlot)
 		// Alreay Empty Slot
 		return true;
 	}
+
+	DetachItemOption(TargetSlot);
 
 	ItemArray[WornedEquipmentIndex].bIsEquiped = false;
 	// Todo : Disapply Item Effects

@@ -182,7 +182,7 @@ const bool UMoveManagerComponent::IsMoved() const
 	return bIsMoved;
 }
 
-const APlayerController* UMoveManagerComponent::GetCurrentController() const
+const AMyPlayerController* UMoveManagerComponent::GetCurrentController() const
 {
 	return CurrentController;
 }
@@ -197,7 +197,7 @@ void UMoveManagerComponent::SetPlayerCharacterArray(const TArray<AMyCharacter*>&
 	PlayerCharacterArray = NewPlayerCharacterArray;
 }
 
-void UMoveManagerComponent::SetPlayerControllerArray(const TArray<APlayerController*>& NewPlayerControllerArray)
+void UMoveManagerComponent::SetPlayerControllerArray(const TArray<AMyPlayerController*>& NewPlayerControllerArray)
 {
 	PlayerControllerArray = NewPlayerControllerArray;
 }

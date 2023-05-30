@@ -5,6 +5,7 @@
 
 #include "../Component/StatusComponent.h"
 #include "StatusBoardWidget.h"
+#include "StatusLayoutWidget.h"
 
 bool UStatusWidget::UpdateStatusBoard(int BoardIndex, UStatusComponent* StatusComponent)
 {
@@ -15,4 +16,40 @@ bool UStatusWidget::UpdateStatusBoard(int BoardIndex, UStatusComponent* StatusCo
 		break;
 	}
 	return true;
+}
+
+void UStatusWidget::SetParentToChild()
+{
+	WBP_StatusBoard1->SetParent(this);
+	WBP_StatusBoard2->SetParent(this);
+	WBP_StatusBoard3->SetParent(this);
+	WBP_StatusLayout->SetParent(this);
+}
+
+void UStatusWidget::SetOwnerCharacter(const TArray<AMyCharacter*>& NewCharacterArray)
+{
+	if (NewCharacterArray.Num() > 0)
+	{
+		WBP_StatusBoard1->SetOwnerCharacter(NewCharacterArray[0]);
+	}
+	else
+	{
+		WBP_StatusBoard1->SetVisibility(ESlateVisibility::Hidden);
+	}
+	if (NewCharacterArray.Num() > 1)
+	{
+		WBP_StatusBoard2->SetOwnerCharacter(NewCharacterArray[1]);
+	}
+	else
+	{
+		WBP_StatusBoard2->SetVisibility(ESlateVisibility::Hidden);
+	}
+	if (NewCharacterArray.Num() > 2)
+	{
+		WBP_StatusBoard3->SetOwnerCharacter(NewCharacterArray[2]);
+	}
+	else
+	{
+		WBP_StatusBoard3->SetVisibility(ESlateVisibility::Hidden);
+	}
 }

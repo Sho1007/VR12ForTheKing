@@ -16,7 +16,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Armor;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Awareness;
+	int32 Cognition;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Evasion;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -47,6 +47,8 @@ public:
 	int32 AttackPower;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsMagicalAttackPower;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Level;
 };
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -66,7 +68,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	const FCharacterStatus& GetCharacterStatus() const;
+	FCharacterStatus& GetCharacterStatus();
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess =  true))
 	FCharacterStatus CharacterStatus;

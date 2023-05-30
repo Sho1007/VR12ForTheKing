@@ -11,6 +11,7 @@
  */
 class UStatusComponent;
 class AMyCharacter;
+class UStatusWidget;
 UCLASS()
 class VR12FORTHEKING_API UStatusBoardWidget : public UUserWidget
 {
@@ -19,12 +20,18 @@ class VR12FORTHEKING_API UStatusBoardWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateStatus(UStatusComponent* StatusComponent);
+
+public:
+	// Getter / Setter
 	void SetOwnerCharacter(AMyCharacter* NewOwnerCharacter);
+	void SetParent(UStatusWidget* NewParentWidget);
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true), Category = "Status")
 	int32 PlayerMaxHP;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true), Category = "Status")
 	AMyCharacter* OwnerCharacter;
+
+	UStatusWidget* ParentWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true), Category = "Status")
 	int32 Armor;

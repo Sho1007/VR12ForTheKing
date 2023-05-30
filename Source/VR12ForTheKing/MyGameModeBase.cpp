@@ -131,12 +131,13 @@ void AMyGameModeBase::CreatePlayer()
 {
 	check(CharacterClass != nullptr);
 
-	FVector SpawnLocation(0, 0, 100);
+	FVector SpawnLocation = HexGridManager->GetTile(2,8)->GetActorLocation();
+	SpawnLocation.Z += 100;
 	for (int i = 0; i < 3; ++i)
 	{
 		AMyCharacter* MyCharacter = GetWorld()->SpawnActor<AMyCharacter>(CharacterClass, SpawnLocation, FRotator(0, 0, 0));
 		MyCharacter->Init(this);
-		MyCharacter->SetCurrentTile(HexGridManager->GetTile(0, 0));
+		MyCharacter->SetCurrentTile(HexGridManager->GetTile(2, 8));
 		CharacterArray.Add(MyCharacter);
 		//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Yellow, FString::Printf(TEXT("CharacterArray Num : %d"), CharacterArray.Num()));
 		if (MyCharacter->GetCurrentTile() == nullptr)
@@ -149,66 +150,14 @@ void AMyGameModeBase::CreatePlayer()
 	for (int i = 0; i < PlayerNum; ++i)
 	{
 		PlayerControllerArray.Add(Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, i)));
+		if (CharacterArray.Num() > i)
+		{
+			PlayerControllerArray[i]->AddPlayerCharacter(CharacterArray[i]);
+		}
 	}
 
 	MoveManager->SetPlayerCharacterArray(CharacterArray);
 	MoveManager->SetPlayerControllerArray(PlayerControllerArray);
-}
-
-void AMyGameModeBase::CalculateTurn()
-{
-	BattleTurnArray.Empty();
-	UseBattleTurnArray.Empty();
-
-
-	for (int32 i = 0; i < CharacterArray.Num(); ++i)
-	{
-		int32 CurrentTurnSpeed = CharacterArray[i]->GetTurnSpeed(CurrentBattleRound);
-
-		bool bFindPos = false;
-		for (int32 j = 0; j < BattleTurnArray.Num(); ++j)
-		{
-			if (BattleTurnArray[j]->GetTurnSpeed(CurrentBattleRound) >= CurrentTurnSpeed)
-			{
-				bFindPos = true;
-				BattleTurnArray.Insert(CharacterArray[i], j);
-				break;
-			}
-		}
-		if (!bFindPos)
-		{
-			BattleTurnArray.Add(CharacterArray[i]);
-		}
-	}
-
-	for (int32 i = 0; i < EnemyArray.Num(); ++i)
-	{
-
-		int32 CurrentTurnSpeed = EnemyArray[i]->GetTurnSpeed(CurrentBattleRound);
-
-		bool bFindPos = false;
-		for (int32 j = 0; j < BattleTurnArray.Num(); ++j)
-		{
-			if (BattleTurnArray[j]->GetTurnSpeed(CurrentBattleRound) >= CurrentTurnSpeed)
-			{
-				bFindPos = true;
-				BattleTurnArray.Insert(EnemyArray[i], j);
-				break;
-			}
-		}
-		if (!bFindPos)
-		{
-			BattleTurnArray.Add(EnemyArray[i]);
-		}
-	}
-
-	//BattleWidget->SetTurnArray(BattleTurnArray);
-
-	// Make Use Array
-	for (int i = 0; i < BattleTurnArray.Num() * 2; ++i)
-	{
-		UseBattleTurnArray.Add(BattleTurnArray[i % BattleTurnArray.Num()]);
-	}
 }
 
 void AMyGameModeBase::CreateTurnWidget()
@@ -226,6 +175,8 @@ void AMyGameModeBase::CreateStatusWidget()
 	StatusWidget = CreateWidget<UStatusWidget>(GetWorld()->GetFirstPlayerController(), StatusWidgetClass);
 	checkf(StatusWidget != nullptr, TEXT("StatusWidget is not created"));
 	StatusWidget->AddToPlayerScreen(0);
+	StatusWidget->SetParentToChild();
+	StatusWidget->SetOwnerCharacter(CharacterArray);
 
 	// Todo : Create InitWidget Function
 	//StatusWidget->InitWidget();

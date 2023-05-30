@@ -64,3 +64,38 @@ enum class EStatusType : uint8
 	Talent,
 	Vitality,
 };
+
+UENUM(BlueprintType)
+enum class EItemRarity : uint8
+{
+	NONE,
+	COMMON,
+	UNCOMMON,
+	RARE,
+	ARTIFACT,
+	SIZE,
+};
+
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	NONE,
+	CONSUMABLE,
+	EQUIPMENT,
+	SIZE,
+};
+
+UENUM(BlueprintType)
+enum class EEquipmentType : uint8
+{
+	NONE,
+	WEAPON,
+	SHIELD,
+	HEADGEAR,
+	ARMOR,
+	FOOTWEAR,
+	NECKLACE,
+	TRINKET,
+	PIPE,
+	SIZE,
+};

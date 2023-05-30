@@ -2,12 +2,16 @@
 
 
 #include "../Widget/StatusBoardWidget.h"
+
 #include "../Character/MyCharacter.h"
 #include "../Component/StatusComponent.h"
+#include "../Widget/StatusWidget.h"
+
+#include "Kismet/GameplayStatics.h"
 
 void UStatusBoardWidget::UpdateStatus(UStatusComponent* StatusComponent)
 {
-	//PlayerMaxHP = StatusComponent->GetMaxHP();
+	FCharacterStatus CharacterStatus = StatusComponent->GetCharacterStatus();
 }
 
 void UStatusBoardWidget::SetOwnerCharacter(AMyCharacter* NewOwnerCharacter)
@@ -18,4 +22,10 @@ void UStatusBoardWidget::SetOwnerCharacter(AMyCharacter* NewOwnerCharacter)
 	checkf(StatusComponent != nullptr, TEXT("StatusComponent is not valid"));
 
 	UpdateStatus(StatusComponent);
+}
+
+void UStatusBoardWidget::SetParent(UStatusWidget* NewParentWidget)
+{
+	checkf(NewParentWidget != nullptr, TEXT("NewParentWidget is not valid"));
+	ParentWidget = NewParentWidget;
 }
