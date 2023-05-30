@@ -9,7 +9,6 @@
 /**
  * 
  */
-class UInventoryWidget;
 class UStatusDetailWidget;
 class UStatusBoardWidget;
 class UStatusComponent;
@@ -23,8 +22,6 @@ public:
 	bool UpdateStatusBoard(int BoardIndex, UStatusComponent* StatusComponent);
 	
 private:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
-	UInventoryWidget* WBP_Inventory;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UStatusDetailWidget* WBP_StatusDetail;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
