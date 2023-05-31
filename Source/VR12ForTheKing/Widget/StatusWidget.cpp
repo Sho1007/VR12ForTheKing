@@ -7,12 +7,12 @@
 #include "StatusBoardWidget.h"
 #include "StatusLayoutWidget.h"
 
-bool UStatusWidget::UpdateStatusBoard(int BoardIndex, UStatusComponent* StatusComponent)
+bool UStatusWidget::UpdateStatusBoard(int BoardIndex)
 {
 	switch (BoardIndex)
 	{
 	case 1:
-		WBP_StatusBoard1->UpdateStatus(StatusComponent);
+		WBP_StatusBoard1->UpdateStatus();
 		break;
 	}
 	return true;

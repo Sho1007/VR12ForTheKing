@@ -9,9 +9,19 @@
 /**
  * 
  */
+class AMyCharacter;
+class UVerticalBox;
 UCLASS()
 class VR12FORTHEKING_API UInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	void InitWidget(AMyCharacter* NewTargetCharacter);
+
+private:
+	AMyCharacter* TargetCharacter;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UVerticalBox* VB_ItemList;
 };

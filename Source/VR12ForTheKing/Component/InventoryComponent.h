@@ -105,6 +105,7 @@ public:
 public:
 	// Getter / Setter
 	int32 GetCurrentGold() const;
+	TArray<FItemInstance>& GetItemArray();
 private:
 	void AttachItemOption(EEquipmentType TargetEuipmentType);
 	void DetachItemOption(EEquipmentType TargetEuipmentType);

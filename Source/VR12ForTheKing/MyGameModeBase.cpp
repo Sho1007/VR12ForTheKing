@@ -114,8 +114,12 @@ void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 	case ETileEventActionType::Battle:
 		TileEventManager->HideWidget();
 		MoveManager->HideWidget();
-		BattleManager->InitBattle(MoveManager->GetNextTile());
 		TurnWidget->ChangetoBattleTurnWidget();
+		for (int i = 0; i < CharacterArray.Num(); ++i)
+		{
+			CharacterArray[i]->SetMoveMode(false);
+		}
+		BattleManager->InitBattle(MoveManager->GetNextTile());
 		break;
 	case ETileEventActionType::Retreat:
 		break;

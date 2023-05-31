@@ -35,6 +35,7 @@ public:
 	int32 Talent;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Vitality;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 CurrentHP;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -43,12 +44,16 @@ public:
 	int32 CurrentMP;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 MaxMP;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 AttackPower;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsMagicalAttackPower;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Level;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Gold;
 };
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

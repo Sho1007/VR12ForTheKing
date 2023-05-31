@@ -14,6 +14,8 @@ class UTextBlock;
 class UStatusWidget;
 class UWidgetSwitcher;
 class UButton;
+class UStatusDetailWidget;
+class UInventoryWidget;
 UCLASS()
 class VR12FORTHEKING_API UStatusLayoutWidget : public UUserWidget
 {
@@ -43,6 +45,10 @@ private:
 	UTextBlock* TB_PlayerName;
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
 	UWidgetSwitcher* WS_Layout;
+	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
+	UStatusDetailWidget* WBP_StatusDetail;
+	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, Category = "Widget", meta = (AllowPrivateAccess = true, BindWidget))
+	UInventoryWidget* WBP_Inventory;
 	
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, Category = "Status", meta = (AllowPrivateAccess = true, BindWidget))
 	UTextBlock* TB_Strength;

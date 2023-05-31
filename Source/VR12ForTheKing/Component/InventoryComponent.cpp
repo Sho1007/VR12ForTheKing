@@ -89,6 +89,11 @@ int32 UInventoryComponent::GetCurrentGold() const
 	return Gold;
 }
 
+TArray<FItemInstance>& UInventoryComponent::GetItemArray()
+{
+	return ItemArray;
+}
+
 void UInventoryComponent::AttachItemOption(EEquipmentType TargetEuipmentType)
 {
 	// Todo : Apply Item Effects

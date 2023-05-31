@@ -38,6 +38,7 @@ public:
 
 public:
 	// Getter / Setter
+	void SetMoveMode(bool NewMoveMode);
 	void SetCurrentTile(AHexTile* NewCurrentTile);
 
 	UFUNCTION(BlueprintCallable)

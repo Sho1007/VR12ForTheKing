@@ -72,8 +72,13 @@ void AMyCharacter::ReachToDestination_Implementation()
 	}
 	else
 	{
-		//BattleComponent->ReachToDestination();
+		BattleComponent->ReachToDestination();
 	}
+}
+
+void AMyCharacter::SetMoveMode(bool NewMoveMode)
+{
+	bIsMoveMode = NewMoveMode;
 }
 
 void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)

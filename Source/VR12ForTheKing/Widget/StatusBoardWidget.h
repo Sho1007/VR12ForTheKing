@@ -20,12 +20,14 @@ class VR12FORTHEKING_API UStatusBoardWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
+
+protected:
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+public:
 	UFUNCTION(BlueprintCallable)
-	void UpdateStatus(UStatusComponent* StatusComponent);
-
+	void UpdateStatus();
 public:
 	// Getter / Setter
 	void SetOwnerCharacter(AMyCharacter* NewOwnerCharacter);
