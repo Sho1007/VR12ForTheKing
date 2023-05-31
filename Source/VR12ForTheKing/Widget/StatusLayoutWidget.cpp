@@ -5,10 +5,16 @@
 
 #include "Components/TextBlock.h"
 #include "Components/WidgetSwitcher.h"
+#include "Components/Button.h"
 
 #include "../Character/MyCharacter.h"
 #include "../Component/StatusComponent.h"
 #include "../Widget/StatusWidget.h"
+
+void UStatusLayoutWidget::NativeConstruct()
+{
+	Btn_Close->OnClicked.AddDynamic(this, &UStatusLayoutWidget::CloseButtonOnClicked);
+}
 
 void UStatusLayoutWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 {
@@ -56,4 +62,9 @@ AMyCharacter* UStatusLayoutWidget::GetTargetCharacter() const
 int32 UStatusLayoutWidget::GetActiveWidgetIndex() const
 {
 	return WS_Layout->GetActiveWidgetIndex();
+}
+
+void UStatusLayoutWidget::CloseButtonOnClicked()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
 }

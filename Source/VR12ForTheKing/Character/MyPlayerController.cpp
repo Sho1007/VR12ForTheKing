@@ -94,13 +94,12 @@ void AMyPlayerController::LeftClickPressed()
 	if (BattleManagerComponent->IsBattle())
 	{
 		AMyCharacter* Target = Cast<AMyCharacter>(GetHitActor());
-		checkf(Target != nullptr, TEXT("Target is not AMyCharacter Type"));
-		UBattleComponent* BattleComponent = Cast<UBattleComponent>(this->GetPlayerCharacter()->GetComponentByClass(UBattleComponent::StaticClass()));
-		checkf(BattleComponent != nullptr, TEXT("Character has not BattleComponent"));
-
-		UE_LOG(LogTemp, Warning, TEXT("%s Character Set Target To %s"), *GetPlayerCharacter()->GetName(), *Target->GetName());
-
-		BattleComponent->SetActionTarget(Target);
+		if (Target != nullptr)
+		{
+			UBattleComponent* BattleComponent = Cast<UBattleComponent>(this->GetPlayerCharacter()->GetComponentByClass(UBattleComponent::StaticClass()));
+			checkf(BattleComponent != nullptr, TEXT("Character has not BattleComponent"));
+			BattleComponent->SetActionTarget(Target);
+		}
 	}
 
 	GameMode->LeftClick(this);
