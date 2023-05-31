@@ -84,7 +84,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ReachToDestination();
 	UFUNCTION(BlueprintCallable)
-	FRotator SetCharacterRotation();
+	void SetCharacterRotation();
 
 	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
@@ -107,11 +107,12 @@ private:
 	bool IsTurnEnd;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	bool GoBack;
-	
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	AMyCharacter* Character;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	FTransform BattlePosition;
-	/*UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UActorComponent> UStatusComponent;*/
+	
+
+	FRotator CharacterRot;
 };

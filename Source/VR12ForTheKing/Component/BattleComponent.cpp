@@ -64,17 +64,18 @@ void UBattleComponent::Attack_Implementation()
 
 void UBattleComponent::MeleeAttack()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("MeleeTarget  %s"), *ActionTarget->GetName());
 	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
-	Character->SetActorRotation(SetCharacterRotation(), ETeleportType::None);
-	Character->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
+	SetCharacterRotation();
+	Character->SetActorRotation(CharacterRot, ETeleportType::None);
+	//Character->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
 
 }
 
 void UBattleComponent::RangetAttack()
 {
 	
-	GetOwner()->SetActorRotation(SetCharacterRotation(), ETeleportType::None);
+	//GetOwner()->SetActorRotation(, ETeleportType::None);
 	CalculateDamage();
 	//SpawnActor(); have to spawn projectileclass actor
 
@@ -105,8 +106,10 @@ int32 UBattleComponent::CalculateDamage()
 
 void UBattleComponent::DoAction(FName NewActionName)
 {
+	
 	if(NewActionName == "NormalAttack")
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ActionTarget  %s"), *ActionTarget->GetName());
 		MeleeAttack();
 	}
 	else if(NewActionName == "WeakHeal")
@@ -125,11 +128,11 @@ void UBattleComponent::ReachToDestination()
 
 
 
-FRotator UBattleComponent::SetCharacterRotation()
+void UBattleComponent::SetCharacterRotation()
 {
 	
 	IsTurnEnd = false;
 	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
-	FRotator CharacterRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), ActionTarget->GetActorLocation());
-	return CharacterRot;
+	CharacterRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), ActionTarget->GetActorLocation());
+	
 }
