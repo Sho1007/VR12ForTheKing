@@ -35,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ReachToDestination();
 
+
+public:
+	// Getter / Setter
 	void SetCurrentTile(AHexTile* NewCurrentTile);
 
 	UFUNCTION(BlueprintCallable)
@@ -48,15 +51,22 @@ public:
 	UTexture2D* GetCharacterImage();
 	UFUNCTION(BlueprintCallable)
 	void SetCharacterImage(UTexture2D* NewCharacterImage);
+
+	FText GetCharacterName() const;
+
+private:
+	void TestRandomizeStatus();
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UBattleComponent* BattleComponent;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UStatusComponent* StatusComponent;
 private:
-	//
+	// PlayerInfo
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UTexture2D* CharacterImage;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	FText CharacterName;
 
 	// Component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))

@@ -2,46 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../VR12ForTheKing.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "../Event/TileEventManager.h"
 #include "InventoryComponent.generated.h"
-
-UENUM(BlueprintType)
-enum class EItemRarity : uint8
-{
-	NONE,
-	COMMON,
-	UNCOMMON,
-	RARE,
-	ARTIFACT,
-	SIZE,
-};
-
-UENUM(BlueprintType)
-enum class EItemType : uint8
-{
-	NONE,
-	CONSUMABLE,
-	EQUIPMENT,
-	SIZE,
-};
-
-UENUM(BlueprintType)
-enum class EEquipmentType : uint8
-{
-	NONE,
-	WEAPON,
-	SHIELD,
-	HEADGEAR,
-	ARMOR,
-	FOOTWEAR,
-	NECKLACE,
-	TRINKET,
-	PIPE,
-	SIZE,
-};
 
 class UTexture2D;
 USTRUCT(BlueprintType)
@@ -71,6 +36,30 @@ struct FItem : public FTableRowBase
 	TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsTwoHand;
+
+	// Option
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusArmor;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusCognition;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusEvasion;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusFocus;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusIntelligence;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusLuck;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusResistance;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusSpeed;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusStrength;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusTalent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BonusVitality;
 };
 
 USTRUCT(BlueprintType)
@@ -116,6 +105,9 @@ public:
 public:
 	// Getter / Setter
 	int32 GetCurrentGold() const;
+private:
+	void AttachItemOption(EEquipmentType TargetEuipmentType);
+	void DetachItemOption(EEquipmentType TargetEuipmentType);
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<FItemInstance> ItemArray;

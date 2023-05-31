@@ -53,7 +53,7 @@ UENUM(BlueprintType)
 enum class EStatusType : uint8
 {
 	Armor,
-	Awareness,
+	Cognition,
 	Evasion,
 	Focus,
 	Intelligence,
@@ -63,4 +63,39 @@ enum class EStatusType : uint8
 	Strength,
 	Talent,
 	Vitality,
+};
+
+UENUM(BlueprintType)
+enum class EItemRarity : uint8
+{
+	NONE,
+	COMMON,
+	UNCOMMON,
+	RARE,
+	ARTIFACT,
+	SIZE,
+};
+
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	NONE,
+	CONSUMABLE,
+	EQUIPMENT,
+	SIZE,
+};
+
+UENUM(BlueprintType)
+enum class EEquipmentType : uint8
+{
+	NONE,
+	WEAPON,
+	SHIELD,
+	HEADGEAR,
+	ARMOR,
+	FOOTWEAR,
+	NECKLACE,
+	TRINKET,
+	PIPE,
+	SIZE,
 };

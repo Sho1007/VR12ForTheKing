@@ -10,6 +10,7 @@ class AMyCharacter;
 class UMoveWidget;
 class UHexGridManager;
 class ATileEventManager;
+class AMyPlayerController;
 class AHexTile;
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UMoveManagerComponent : public UActorComponent
@@ -46,10 +47,10 @@ private:
 public:
 	// Getter / Setter
 	const bool IsMoved() const;
-	const APlayerController* GetCurrentController() const;
+	const AMyPlayerController* GetCurrentController() const;
 	UMoveWidget* GetMoveWidget() const;
 	void SetPlayerCharacterArray(const TArray<AMyCharacter*>& NewPlayerCharacterArray);
-	void SetPlayerControllerArray(const TArray<APlayerController*>& NewPlayerControllerArray);
+	void SetPlayerControllerArray(const TArray<AMyPlayerController*>& NewPlayerControllerArray);
 private:
 	UHexGridManager* HexGridManager;
 
@@ -57,9 +58,9 @@ private:
 	int32 Day;
 
 	AMyCharacter* CurrentCharacter;
-	APlayerController* CurrentController;
+	AMyPlayerController* CurrentController;
 	TArray<AMyCharacter*> PlayerCharacterArray;
-	TArray<APlayerController*> PlayerControllerArray;
+	TArray<AMyPlayerController*> PlayerControllerArray;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UMoveWidget> MoveWidgetClass;

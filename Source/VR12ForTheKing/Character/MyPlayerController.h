@@ -30,6 +30,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	const FText GetPlayerName() const;
+
+public:
+	// Getter / Setter
+	void AddPlayerCharacter(AMyCharacter* NewPlayerCharacter);
+	void MoveToNextCharacterIndex();
+	AMyCharacter* GetPlayerCharacter();
 private:
 	void LeftClickPressed();
 	
@@ -53,6 +59,9 @@ protected:
 	UActionWidget* HoveredActionWidget;
 
 private:
+	TArray<AMyCharacter*> PlayerCharacterArray;
+	int32 CurrentCharacterIndex;
+
 	AMyGameModeBase* GameMode;
 	FText PlayerName = FText::FromString(FString("Player"));
 };

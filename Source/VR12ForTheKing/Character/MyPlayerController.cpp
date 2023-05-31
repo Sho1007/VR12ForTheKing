@@ -13,6 +13,8 @@
 #include "../HexGrid/HexTile.h"
 #include "../Character/MyCharacter.h"
 #include "../Component/MoveManagerComponent.h"
+#include "../Component/BattleManagerComponent.h"
+#include "../Component/BattleComponent.h"
 #include "../Event/EventActor.h"
 #include "../Widget/ActionWidget.h"
 
@@ -68,9 +70,39 @@ const FText AMyPlayerController::GetPlayerName() const
 	return PlayerName;
 }
 
+void AMyPlayerController::AddPlayerCharacter(AMyCharacter* NewPlayerCharacter)
+{
+	checkf(NewPlayerCharacter != nullptr, TEXT("NewPlayerCharacter is nullptr"));
+	PlayerCharacterArray.Add(NewPlayerCharacter);
+}
+
+void AMyPlayerController::MoveToNextCharacterIndex()
+{
+	CurrentCharacterIndex = (CurrentCharacterIndex + 1) % PlayerCharacterArray.Num();
+}
+
+AMyCharacter* AMyPlayerController::GetPlayerCharacter()
+{
+	return PlayerCharacterArray[CurrentCharacterIndex];
+}
+
 void AMyPlayerController::LeftClickPressed()
 {
 	// Multi 로 바꾸면 꼭 손봐야함
+	UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(GameMode->GetComponentByClass(UBattleManagerComponent::StaticClass()));
+	checkf(BattleManagerComponent != nullptr, TEXT("GameMode has not BattleManagerComponent"));
+	if (BattleManagerComponent->IsBattle())
+	{
+		AMyCharacter* Target = Cast<AMyCharacter>(GetHitActor());
+		checkf(Target != nullptr, TEXT("Target is not AMyCharacter Type"));
+		UBattleComponent* BattleComponent = Cast<UBattleComponent>(this->GetPlayerCharacter()->GetComponentByClass(UBattleComponent::StaticClass()));
+		checkf(BattleComponent != nullptr, TEXT("Character has not BattleComponent"));
+
+		UE_LOG(LogTemp, Warning, TEXT("%s Character Set Target To %s"), *GetPlayerCharacter()->GetName(), *Target->GetName());
+
+		BattleComponent->SetActionTarget(Target);
+	}
+
 	GameMode->LeftClick(this);
 }
 

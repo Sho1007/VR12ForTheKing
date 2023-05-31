@@ -32,7 +32,7 @@ void UStatusComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-const FCharacterStatus& UStatusComponent::GetCharacterStatus() const
+FCharacterStatus& UStatusComponent::GetCharacterStatus()
 {
 	return CharacterStatus;
 }
