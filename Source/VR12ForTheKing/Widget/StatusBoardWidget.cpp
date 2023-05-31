@@ -4,6 +4,8 @@
 #include "../Widget/StatusBoardWidget.h"
 
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 
 #include "../Character/MyCharacter.h"
 #include "../Component/StatusComponent.h"
@@ -20,6 +22,28 @@ void UStatusBoardWidget::NativeConstruct()
 void UStatusBoardWidget::UpdateStatus(UStatusComponent* StatusComponent)
 {
 	FCharacterStatus CharacterStatus = StatusComponent->GetCharacterStatus();
+
+
+	TB_PlayerName->SetText(OwnerCharacter->GetCharacterName());
+	//TB_Gold->SetText();
+	TB_CurrentHP;
+
+	PB_HP;
+	PB_EXP;
+
+	TB_AttackPower;
+	TB_Evasion;
+	TB_Resistance;
+	TB_Armor;
+	TB_Level;
+
+	TB_Strength;
+	TB_Vitality;
+	TB_Intelligence;
+	TB_Cognition;
+	TB_Talent;
+	TB_Speed;
+	TB_Luck;
 }
 
 void UStatusBoardWidget::SetOwnerCharacter(AMyCharacter* NewOwnerCharacter)
