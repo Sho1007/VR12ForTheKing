@@ -96,9 +96,13 @@ void AMyPlayerController::LeftClickPressed()
 		AMyCharacter* Target = Cast<AMyCharacter>(GetHitActor());
 		if (Target != nullptr)
 		{
-			UBattleComponent* BattleComponent = Cast<UBattleComponent>(this->GetPlayerCharacter()->GetComponentByClass(UBattleComponent::StaticClass()));
-			checkf(BattleComponent != nullptr, TEXT("Character has not BattleComponent"));
-			BattleComponent->SetActionTarget(Target);
+			UE_LOG(LogTemp, Warning, TEXT("CharacterArrayNum : %d"), PlayerCharacterArray.Num());
+			for (int i = 0; i < PlayerCharacterArray.Num(); ++i)
+			{
+				UBattleComponent* BattleComponent = Cast<UBattleComponent>(PlayerCharacterArray[i]->GetComponentByClass(UBattleComponent::StaticClass()));
+				checkf(BattleComponent != nullptr, TEXT("Character has not BattleComponent"));
+				BattleComponent->SetActionTarget(Target);
+			}
 		}
 	}
 

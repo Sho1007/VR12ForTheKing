@@ -59,6 +59,7 @@ protected:
 	UActionWidget* HoveredActionWidget;
 
 private:
+	UPROPERTY(BlueprintReadOnly, EditInstanceOnly, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> PlayerCharacterArray;
 	int32 CurrentCharacterIndex;
 

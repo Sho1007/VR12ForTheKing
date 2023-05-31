@@ -150,11 +150,14 @@ void AMyGameModeBase::CreatePlayer()
 	for (int i = 0; i < PlayerNum; ++i)
 	{
 		PlayerControllerArray.Add(Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, i)));
-		if (CharacterArray.Num() > i)
-		{
-			PlayerControllerArray[i]->AddPlayerCharacter(CharacterArray[i]);
-		}
 	}
+	int32 CurrentPos = 0;
+	for (int i = 0; i < CharacterArray.Num(); ++i)
+	{
+		PlayerControllerArray[CurrentPos]->AddPlayerCharacter(CharacterArray[i]);
+		CurrentPos = (CurrentPos + 1) % PlayerNum;
+	}
+
 
 	MoveManager->SetPlayerCharacterArray(CharacterArray);
 	MoveManager->SetPlayerControllerArray(PlayerControllerArray);
