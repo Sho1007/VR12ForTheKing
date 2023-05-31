@@ -5,6 +5,7 @@
 #include "../Character/MyCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "StatusComponent.h"
+
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
 {
@@ -39,6 +40,11 @@ void UBattleComponent::SetFactionType(EFactionType NewFactionType)
 	FactionType = NewFactionType;
 }
 
+void UBattleComponent::SetBaseTransform(FTransform NewBaseTransform)
+{
+	BaseTransform = NewBaseTransform;
+}
+
 const EFactionType& UBattleComponent::GetFactionType() const
 {
 	return FactionType;
@@ -62,20 +68,30 @@ void UBattleComponent::Attack_Implementation()
 {
 }
 
-void UBattleComponent::MeleeAttack()
+bool UBattleComponent::MeleeAttack()
 {
+	/*GoBack = true;
+	if (ActionTarget == nullptr)
+	{
+		return false;
+	}
 	UE_LOG(LogTemp, Warning, TEXT("MeleeTarget  %s"), *ActionTarget->GetName());
-	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
 	SetCharacterRotation();
-	Character->SetActorRotation(CharacterRot, ETeleportType::None);
-	//Character->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
+	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
+	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
+	*/
 
+	bGoToTarget = true;
+	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
+	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
+	
+	return true;
 }
 
 void UBattleComponent::RangetAttack()
 {
-	
-	//GetOwner()->SetActorRotation(, ETeleportType::None);
+	SetCharacterRotation();
+	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
 	CalculateDamage();
 	//SpawnActor(); have to spawn projectileclass actor
 
@@ -87,12 +103,10 @@ void UBattleComponent::WeakHeal()
 
 void UBattleComponent::BackToBattlePos()
 {
-	
-	GoBack = false;
-	IsTurnEnd = true;
-	GetOwner()->SetActorRotation(BattlePosition.GetRotation(), ETeleportType::None);
-	// settimerby function name have to be here
-	// have to call function that put unit back to array
+	bIsTurnEnd = true;
+	FQuat GoBackQuat(0.0f, 0.0f, 1.0f, 0.0f);// use to change character rotation
+	GetOwner()->SetActorRotation(BaseTransform.GetRotation(), ETeleportType::None);
+
 
 }
 
@@ -109,7 +123,6 @@ void UBattleComponent::DoAction(FName NewActionName)
 	
 	if(NewActionName == "NormalAttack")
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ActionTarget  %s"), *ActionTarget->GetName());
 		MeleeAttack();
 	}
 	else if(NewActionName == "WeakHeal")
@@ -124,15 +137,38 @@ void UBattleComponent::DoAction(FName NewActionName)
 
 void UBattleComponent::ReachToDestination()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ReachToDestination"));
+	if (bGoToTarget)
+	{
+		// Reached to Target
+		// Todo : Play Animation
+		// Todo : Apply Damage
+		// DoAttack();
+		bGoToTarget = false;
+		AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
+		FQuat GoBackQuat(0.0f, 0.0f, 1.0f, 0.0f);// use to change character rotation
+		GetOwner()->SetActorRotation(BaseTransform.GetRotation()* GoBackQuat, ETeleportType::None);
+		NewCharacter->SetDestination(BaseTransform.GetLocation(), 0.0, 1.0);
+	}
+	else
+	{
+		// Return To BaseTransform
+		BackToBattlePos();
+
+	}
 }
+
+
 
 
 
 void UBattleComponent::SetCharacterRotation()
 {
-	
-	IsTurnEnd = false;
+	UE_LOG(LogTemp, Warning, TEXT("Run SetCharacterRotation"));
+	bIsTurnEnd = false;
 	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
 	CharacterRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), ActionTarget->GetActorLocation());
-	
+	FString CharacterRotString = CharacterRot.ToString();
+	UE_LOG(LogTemp, Warning, TEXT("CharacterRotation %s"), *CharacterRotString);
+	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
 }

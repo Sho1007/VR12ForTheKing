@@ -88,7 +88,7 @@ AMyCharacter* AMyPlayerController::GetPlayerCharacter()
 
 void AMyPlayerController::LeftClickPressed()
 {
-	// Multi ·Î ¹Ù²Ù¸é ²À ¼ÕºÁ¾ßÇÔ
+	// Multi ï¿½ï¿½ ï¿½Ù²Ù¸ï¿½ ï¿½ï¿½ ï¿½Õºï¿½ï¿½ï¿½ï¿½ï¿½
 	UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(GameMode->GetComponentByClass(UBattleManagerComponent::StaticClass()));
 	checkf(BattleManagerComponent != nullptr, TEXT("GameMode has not BattleManagerComponent"));
 	if (BattleManagerComponent->IsBattle())

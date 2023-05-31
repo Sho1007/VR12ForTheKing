@@ -19,6 +19,8 @@ public:
 	// Sets default values for this component's properties
 	UBattleManagerComponent();
 
+
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -43,7 +45,7 @@ private:
 	bool TeleportCharacter();
 	void MoveCamera();
 	void CalculateTurn();
-	
+	void MoveToNextUnitTurn();
 	void CreateBattleWidget();
 
 private:

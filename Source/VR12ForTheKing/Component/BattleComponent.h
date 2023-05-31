@@ -66,7 +66,7 @@ public:
 	void Attack_Implementation();
 
 	UFUNCTION(BlueprintCallable)
-	void MeleeAttack();
+	bool MeleeAttack();
 
 	UFUNCTION(BlueprintCallable)
 	void RangetAttack();
@@ -83,11 +83,17 @@ public:
 		void DoAction(FName NewActionName);
 	UFUNCTION(BlueprintCallable)
 	void ReachToDestination();
+
+	
+
+	//Setter Getter
 	UFUNCTION(BlueprintCallable)
 	void SetCharacterRotation();
 
 	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
+
+	void SetBaseTransform(FTransform NewBaseTransform);
 
 	UFUNCTION(BlueprintCallable)
 	const EFactionType& GetFactionType() const;
@@ -104,14 +110,18 @@ protected:
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	bool IsTurnEnd;
+	bool bIsTurnEnd;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	bool GoBack;
+	
+	// Reference
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	bool bGoToTarget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	AMyCharacter* Character;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	FTransform BattlePosition;
+	FTransform BaseTransform;
 	
 
 	FRotator CharacterRot;

@@ -92,7 +92,7 @@ void UBattleManagerComponent::DebugInfo()
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *Iter->GetName());
 	}
 }
-
+ 
 void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 {
 	// Clear Variable
@@ -184,6 +184,9 @@ bool UBattleManagerComponent::SpawnEnemy()
 
 		FTransform EnemySpawnTransform = BattleMapArray[0]->GetEnemySpawnPosition()[SpawnEnemyCount]->GetActorTransform();
 		AMyCharacter* EnemyCharacter = GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform);
+		UBattleComponent* BattleComponent = Cast<UBattleComponent>(EnemyCharacter->GetComponentByClass(UBattleComponent::StaticClass()));
+		checkf(BattleComponent != nullptr, TEXT("EnemyCharacter has not BattleComponent"));
+		BattleComponent->SetBaseTransform(EnemySpawnTransform);
 		checkf(EnemyCharacter != nullptr, TEXT("UBattleManagerComponent::SpawnEnemy : EnemyCharacter is not spawned"));
 		EnemyCharacterArray.Add(EnemyCharacter);
 	}
@@ -198,6 +201,9 @@ bool UBattleManagerComponent::TeleportCharacter()
 	{
 		FTransform CharacterSpawnTransform = BattleMapArray[0]->GetPlayerSpawnPosition()[i]->GetActorTransform();
 		PlayerCharacterArray[i]->SetActorTransform(CharacterSpawnTransform);
+		UBattleComponent* BattleComponent = Cast<UBattleComponent>(PlayerCharacterArray[i]->GetComponentByClass(UBattleComponent::StaticClass()));
+		checkf(BattleComponent != nullptr, TEXT("PlayerCharacter has not BattleComponent"));
+		BattleComponent->SetBaseTransform(CharacterSpawnTransform);
 	}
 
 	return true;
@@ -227,9 +233,23 @@ void UBattleManagerComponent::CalculateTurn()
 			// Todo : Implement Calculateturn Logic
 			return IP1.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().Speed > IP2.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().Speed;
 		});
+
+	UseBattleTurnArray = BattleTurnArray;
+	for (int i = 0; i < BattleTurnArray.Num(); ++i)
+	{
+		UseBattleTurnArray.Add(BattleTurnArray[i]);
+	}
 	// Todo : Do Battle Widget
 
 }
+
+void UBattleManagerComponent::MoveToNextUnitTurn()
+{
+	UseBattleTurnArray.Add(UseBattleTurnArray[0]);
+	UseBattleTurnArray.RemoveAt(0);
+}
+
+
 
 void UBattleManagerComponent::CreateBattleWidget()
 {
