@@ -247,7 +247,16 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 {
 	UseBattleTurnArray.Add(UseBattleTurnArray[0]);
 	UseBattleTurnArray.RemoveAt(0);
-	//if(UseBattleTurnArray[0]==)
+	UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]);
+	if (NewBattleComponent->GetFactionType() == EFactionType::Player)
+	{
+		BattleWidget->InitWidget(PlayerCharacterArray[0]);
+		BattleWidget->ShowWidget();
+	}
+	else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RandomEnemyAttack"));
+	}
 }
 
 

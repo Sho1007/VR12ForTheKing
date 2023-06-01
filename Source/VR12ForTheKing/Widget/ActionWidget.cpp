@@ -23,7 +23,7 @@ void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidg
 	checkf(NewAction != nullptr, TEXT("Cannot find NewAction"));
 	Btn_Action->WidgetStyle.Normal.SetResourceObject(NewAction->Image);
 	Btn_Action->OnClicked.AddDynamic(this, &UActionWidget::ActionButtonOnClicked);
-
+	this->SetVisibility(ESlateVisibility::Visible);
 	ParentWidget = NewParentWidget;
 }
 

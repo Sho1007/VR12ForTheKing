@@ -5,6 +5,8 @@
 #include "../Character/MyCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "StatusComponent.h"
+#include "../MyGameModeBase.h"
+#include "BattleManagerComponent.h"
 
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
@@ -154,6 +156,9 @@ void UBattleComponent::ReachToDestination()
 	{
 		// Return To BaseTransform
 		BackToBattlePos();
+		AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+		/*UBattleManagerComponent* NewBattleManagerComponent =
+			Cast<UBattleManagerComponent>(GameModeBase->GetComponentByClass(UBattleManagerComponent));*/
 
 	}
 }
