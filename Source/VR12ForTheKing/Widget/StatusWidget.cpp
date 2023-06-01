@@ -55,6 +55,76 @@ void UStatusWidget::OpenStatus(AMyCharacter* TargetCharacter)
 	WBP_StatusLayout->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UStatusWidget::UpdateStrength(UStatusBoardWidget* TargetBoard, int32 Strength)
+{
+	if (TargetBoard->GetOwnerCharacter() != WBP_StatusLayout->GetTargetCharacter() || WBP_StatusLayout->GetVisibility() != ESlateVisibility::Visible)
+	{
+		return;
+	}
+
+	WBP_StatusLayout->SetStrengthText(Strength);
+}
+
+void UStatusWidget::UpdateVitality(UStatusBoardWidget* TargetBoard, int32 Vitality)
+{
+	if (TargetBoard->GetOwnerCharacter() != WBP_StatusLayout->GetTargetCharacter() || WBP_StatusLayout->GetVisibility() != ESlateVisibility::Visible)
+	{
+		return;
+	}
+
+	WBP_StatusLayout->SetVitalityText(Vitality);
+}
+
+void UStatusWidget::UpdateIntelligence(UStatusBoardWidget* TargetBoard, int32 Intelligence)
+{
+	if (TargetBoard->GetOwnerCharacter() != WBP_StatusLayout->GetTargetCharacter() || WBP_StatusLayout->GetVisibility() != ESlateVisibility::Visible)
+	{
+		return;
+	}
+
+	WBP_StatusLayout->SetIntelligenceText(Intelligence);
+}
+
+void UStatusWidget::UpdateCognition(UStatusBoardWidget* TargetBoard, int32 Cognition)
+{
+	if (TargetBoard->GetOwnerCharacter() != WBP_StatusLayout->GetTargetCharacter() || WBP_StatusLayout->GetVisibility() != ESlateVisibility::Visible)
+	{
+		return;
+	}
+
+	WBP_StatusLayout->SetCognitionText(Cognition);
+}
+
+void UStatusWidget::UpdateTalent(UStatusBoardWidget* TargetBoard, int32 Talent)
+{
+	if (TargetBoard->GetOwnerCharacter() != WBP_StatusLayout->GetTargetCharacter() || WBP_StatusLayout->GetVisibility() != ESlateVisibility::Visible)
+	{
+		return;
+	}
+
+	WBP_StatusLayout->SetTalentText(Talent);
+}
+
+void UStatusWidget::UpdateSpeed(UStatusBoardWidget* TargetBoard, int32 Speed)
+{
+	if (TargetBoard->GetOwnerCharacter() != WBP_StatusLayout->GetTargetCharacter() || WBP_StatusLayout->GetVisibility() != ESlateVisibility::Visible)
+	{
+		return;
+	}
+
+	WBP_StatusLayout->SetSpeedText(Speed);
+}
+
+void UStatusWidget::UpdateLuck(UStatusBoardWidget* TargetBoard, int32 Luck)
+{
+	if (TargetBoard->GetOwnerCharacter() != WBP_StatusLayout->GetTargetCharacter() || WBP_StatusLayout->GetVisibility() != ESlateVisibility::Visible)
+	{
+		return;
+	}
+
+	WBP_StatusLayout->SetLuckText(Luck);
+}
+
 void UStatusWidget::SetParentToChild()
 {
 	WBP_StatusBoard1->SetParent(this);

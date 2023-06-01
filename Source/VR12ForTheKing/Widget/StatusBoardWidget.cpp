@@ -85,6 +85,11 @@ void UStatusBoardWidget::SetOwnerCharacter(AMyCharacter* NewOwnerCharacter)
 	UpdateStatus();
 }
 
+AMyCharacter* UStatusBoardWidget::GetOwnerCharacter() const
+{
+	return OwnerCharacter;
+}
+
 void UStatusBoardWidget::SetParent(UStatusWidget* NewParentWidget)
 {
 	checkf(NewParentWidget != nullptr, TEXT("NewParentWidget is not valid"));
@@ -136,34 +141,41 @@ void UStatusBoardWidget::UpdateLevel(int32 Level)
 void UStatusBoardWidget::UpdateStrength(int32 Strength)
 {
 	TB_Strength->SetText(FText::FromString(FString::FromInt(Strength)));
+	ParentWidget->UpdateStrength(this, Strength);
 }
 
 void UStatusBoardWidget::UpdateVitality(int32 Vitality)
 {
 	TB_Vitality->SetText(FText::FromString(FString::FromInt(Vitality)));
+	ParentWidget->UpdateVitality(this, Vitality);
 }
 
 void UStatusBoardWidget::UpdateIntelligence(int32 Intelligence)
 {
 	TB_Intelligence->SetText(FText::FromString(FString::FromInt(Intelligence)));
+	ParentWidget->UpdateIntelligence(this, Intelligence);
 }
 
 void UStatusBoardWidget::UpdateCognition(int32 Cognition)
 {
 	TB_Cognition->SetText(FText::FromString(FString::FromInt(Cognition)));
+	ParentWidget->UpdateCognition(this, Cognition);
 }
 
 void UStatusBoardWidget::UpdateTalent(int32 Talent)
 {
 	TB_Talent->SetText(FText::FromString(FString::FromInt(Talent)));
+	ParentWidget->UpdateTalent(this, Talent);
 }
 
 void UStatusBoardWidget::UpdateSpeed(int32 Speed)
 {
 	TB_Speed->SetText(FText::FromString(FString::FromInt(Speed)));
+	ParentWidget->UpdateSpeed(this, Speed);
 }
 
 void UStatusBoardWidget::UpdateLuck(int32 Luck)
 {
 	TB_Luck->SetText(FText::FromString(FString::FromInt(Luck)));
+	ParentWidget->UpdateLuck(this, Luck);
 }

@@ -32,10 +32,6 @@ public:
 	void SetParent(UStatusWidget* NewParentWidget);
 	AMyCharacter* GetTargetCharacter() const;
 	int32 GetActiveWidgetIndex() const;
-private:
-	UFUNCTION()
-	void CloseButtonOnClicked();
-
 	UFUNCTION()
 	void SetStrengthText(int32 NewStrength);
 	UFUNCTION()
@@ -50,6 +46,10 @@ private:
 	void SetSpeedText(int32 NewSpeed);
 	UFUNCTION()
 	void SetLuckText(int32 NewLuck);
+private:
+	UFUNCTION()
+	void CloseButtonOnClicked();
+	
 private:
 	AMyCharacter* TargetCharacter;
 	UStatusWidget* ParentWidget;

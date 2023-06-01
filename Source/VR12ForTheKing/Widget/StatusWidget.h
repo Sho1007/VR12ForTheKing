@@ -24,6 +24,23 @@ public:
 	void HideWidget();
 	void OpenInventory(AMyCharacter* TargetCharacter);
 	void OpenStatus(AMyCharacter* TargetCharacter);
+
+public:
+	UFUNCTION()
+	void UpdateStrength(UStatusBoardWidget* TargetBoard, int32 Strength);
+	UFUNCTION()
+	void UpdateVitality(UStatusBoardWidget* TargetBoard, int32 Vitality);
+	UFUNCTION()
+	void UpdateIntelligence(UStatusBoardWidget* TargetBoard, int32 Intelligence);
+	UFUNCTION()
+	void UpdateCognition(UStatusBoardWidget* TargetBoard, int32 Cognition);
+	UFUNCTION()
+	void UpdateTalent(UStatusBoardWidget* TargetBoard, int32 Talent);
+	UFUNCTION()
+	void UpdateSpeed(UStatusBoardWidget* TargetBoard, int32 Speed);
+	UFUNCTION()
+	void UpdateLuck(UStatusBoardWidget* TargetBoard, int32 Luck);
+
 public:
 	// Getter / Setter
 	void SetParentToChild();

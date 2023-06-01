@@ -31,6 +31,7 @@ public:
 public:
 	// Getter / Setter
 	void SetOwnerCharacter(AMyCharacter* NewOwnerCharacter);
+	AMyCharacter* GetOwnerCharacter() const;
 	void SetParent(UStatusWidget* NewParentWidget);
 private:
 	UFUNCTION()
