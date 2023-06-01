@@ -23,6 +23,9 @@ void UBattleWidget::ShowWidget()
 
 void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 {
+	UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *NewTargetCharacter->GetName());
+	HB_Action->ClearChildren();
+
 	TargetCharacter = NewTargetCharacter;
 	UBattleComponent* BattleComponent = Cast<UBattleComponent>(NewTargetCharacter->GetComponentByClass(UBattleComponent::StaticClass()));
 	checkf(BattleComponent != nullptr, TEXT("Character has no Battle Component"));

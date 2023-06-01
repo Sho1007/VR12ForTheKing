@@ -245,13 +245,17 @@ void UBattleManagerComponent::CalculateTurn()
 
 void UBattleManagerComponent::MoveToNextUnitTurn()
 {
-	UseBattleTurnArray.Add(UseBattleTurnArray[0]);
+	AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
+	UseBattleTurnArray.Add(FirstIndexCharacter);
 	UseBattleTurnArray.RemoveAt(0);
-	UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]);
+	UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]->FindComponentByClass(UBattleComponent::StaticClass()));
 	if (NewBattleComponent->GetFactionType() == EFactionType::Player)
 	{
-		BattleWidget->InitWidget(PlayerCharacterArray[0]);
+		checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
+		BattleWidget->InitWidget(UseBattleTurnArray[0]);
+		//UE_LOG(LogTemp, Warning, TEXT("BattleWidgetName %s"), *BattleWidget->GetName());
 		BattleWidget->ShowWidget();
+		UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *UseBattleTurnArray[0]->GetName());
 	}
 	else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
 	{

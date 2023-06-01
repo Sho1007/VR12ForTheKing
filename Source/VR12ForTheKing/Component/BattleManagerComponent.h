@@ -39,13 +39,14 @@ public:
 	// Getter / Setter
 	bool SetGameMode(AGameModeBase* NewGameMode);
 	bool IsBattle();
+	void MoveToNextUnitTurn();
 private:
 	// Battle Process
 	bool SpawnEnemy();
 	bool TeleportCharacter();
 	void MoveCamera();
 	void CalculateTurn();
-	void MoveToNextUnitTurn();
+	
 	void CreateBattleWidget();
 
 private:

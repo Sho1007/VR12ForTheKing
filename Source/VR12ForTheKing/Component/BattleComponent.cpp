@@ -139,7 +139,7 @@ void UBattleComponent::DoAction(FName NewActionName)
 
 void UBattleComponent::ReachToDestination()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ReachToDestination"));
+	//UE_LOG(LogTemp, Warning, TEXT("ReachToDestination"));
 	if (bGoToTarget)
 	{
 		// Reached to Target
@@ -157,8 +157,9 @@ void UBattleComponent::ReachToDestination()
 		// Return To BaseTransform
 		BackToBattlePos();
 		AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-		/*UBattleManagerComponent* NewBattleManagerComponent =
-			Cast<UBattleManagerComponent>(GameModeBase->GetComponentByClass(UBattleManagerComponent));*/
+		UBattleManagerComponent* NewBattleManagerComponent =
+			Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+		NewBattleManagerComponent->MoveToNextUnitTurn();
 
 	}
 }

@@ -60,7 +60,7 @@ void UActionWidget::UseFocusToken()
 void UActionWidget::ActionButtonOnClicked()
 {
 	ParentWidget->HideWidget();
-	this->SetVisibility(ESlateVisibility::Collapsed);
+	//this->SetVisibility(ESlateVisibility::Collapsed);
 	TargetBattleComponent->DoAction(ActionName);
 	
 }
