@@ -114,7 +114,7 @@ int32 UBattleComponent::CalculateDamage()
 {
 	
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
-	int32 Damage = StatusComponent->GetCharacterStatus().AttackPower + 0;// have to put LevelDamage at place of 0
+	int32 Damage = StatusComponent->GetAttackPower() + 0;// have to put LevelDamage at place of 0
 	return 0.0f;
 }
 

@@ -231,7 +231,7 @@ void UBattleManagerComponent::CalculateTurn()
 	BattleTurnArray.Sort([](const AMyCharacter& IP1, const AMyCharacter& IP2)
 		{
 			// Todo : Implement Calculateturn Logic
-			return IP1.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().Speed > IP2.FindComponentByClass<UStatusComponent>()->GetCharacterStatus().Speed;
+			return IP1.FindComponentByClass<UStatusComponent>()->GetSpeed() > IP2.FindComponentByClass<UStatusComponent>()->GetSpeed();
 		});
 
 	UseBattleTurnArray = BattleTurnArray;
@@ -247,6 +247,7 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 {
 	UseBattleTurnArray.Add(UseBattleTurnArray[0]);
 	UseBattleTurnArray.RemoveAt(0);
+	//if(UseBattleTurnArray[0]==)
 }
 
 
