@@ -37,6 +37,35 @@ private:
 	void InventoryButtonOnClicked();
 	UFUNCTION()
 	void StatusButtonOnClicked();
+
+	UFUNCTION()
+	void UpdateCurrentHP(int32 CurrentHP);
+	UFUNCTION()
+	void UpdateAttackPower(int32 AttackPower);
+	UFUNCTION()
+	void UpdateEvasion(int32 Evasion);
+	UFUNCTION()
+	void UpdateResistance(int32 Resistance);
+	UFUNCTION()
+	void UpdateArmor(int32 Armor);
+	UFUNCTION()
+	void UpdateLevel(int32 Level);
+	
+	UFUNCTION()
+	void UpdateStrength(int32 Strength);
+	UFUNCTION()
+	void UpdateVitality(int32 Vitality);
+	UFUNCTION()
+	void UpdateIntelligence(int32 Intelligence);
+	UFUNCTION()
+	void UpdateCognition(int32 Cognition);
+	UFUNCTION()
+	void UpdateTalent(int32 Talent);
+	UFUNCTION()
+	void UpdateSpeed(int32 Speed);
+	UFUNCTION()
+	void UpdateLuck(int32 Luck);
+
 private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UButton* Btn_Inventory;
