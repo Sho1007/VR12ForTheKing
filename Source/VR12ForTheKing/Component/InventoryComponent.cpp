@@ -94,6 +94,16 @@ TArray<FItemInstance>& UInventoryComponent::GetItemArray()
 	return ItemArray;
 }
 
+FItem* UInventoryComponent::GetItemInfo(FName NewItemRow)
+{
+	return ItemDataTable->FindRow<FItem>(NewItemRow, FString(""));
+}
+
+TArray<int32>& UInventoryComponent::GetEquipmentSlot()
+{
+	return EquipmentSlot;
+}
+
 void UInventoryComponent::AttachItemOption(EEquipmentType TargetEuipmentType)
 {
 	// Todo : Apply Item Effects
@@ -101,19 +111,20 @@ void UInventoryComponent::AttachItemOption(EEquipmentType TargetEuipmentType)
 	FItem* Item = ItemDataTable->FindRow<FItem>(ItemArray[EquipmentSlot[(int32)TargetEuipmentType]].ItemRow, FString(""));
 	checkf(Item != nullptr, TEXT("Cannot Find Item"));
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
-	checkf(Item != nullptr, TEXT("Character has not StatusComponent"));
-	FCharacterStatus& CharacterStatus = StatusComponent->GetCharacterStatus();
-	CharacterStatus.Armor		+= Item->BonusArmor;
-	CharacterStatus.Cognition	+= Item->BonusCognition;
-	CharacterStatus.Evasion		+= Item->BonusEvasion;
-	CharacterStatus.Focus		+= Item->BonusFocus;
-	CharacterStatus.Intelligence+= Item->BonusIntelligence;
-	CharacterStatus.Luck		+= Item->BonusLuck;
-	CharacterStatus.Resistance	+= Item->BonusResistance;
-	CharacterStatus.Speed		+= Item->BonusSpeed;
-	CharacterStatus.Strength	+= Item->BonusStrength;
-	CharacterStatus.Talent		+= Item->BonusTalent;
-	CharacterStatus.Vitality	+= Item->BonusVitality;
+	checkf(StatusComponent != nullptr, TEXT("Character has not StatusComponent"));
+
+	// Todo : Update What is Changed Not All
+	StatusComponent->SetArmor(StatusComponent->GetArmor() + Item->BonusArmor);
+	StatusComponent->SetCognition(StatusComponent->GetCognition() + Item->BonusCognition);
+	StatusComponent->SetEvasion(StatusComponent->GetEvasion() + Item->BonusEvasion);
+	StatusComponent->SetMaxFocus(StatusComponent->GetMaxFocus() + Item->BonusFocus);
+	StatusComponent->SetIntelligence(StatusComponent->GetIntelligence() + Item->BonusIntelligence);
+	StatusComponent->SetLuck(StatusComponent->GetLuck() + Item->BonusLuck);
+	StatusComponent->SetResistance(StatusComponent->GetResistance() + Item->BonusResistance);
+	StatusComponent->SetSpeed(StatusComponent->GetSpeed() + Item->BonusSpeed);
+	StatusComponent->SetStrength(StatusComponent->GetStrength() + Item->BonusStrength);
+	StatusComponent->SetTalent(StatusComponent->GetTalent() + Item->BonusTalent);
+	StatusComponent->SetVitality(StatusComponent->GetVitality() + Item->BonusVitality);
 }
 
 void UInventoryComponent::DetachItemOption(EEquipmentType TargetEuipmentType)
@@ -121,19 +132,20 @@ void UInventoryComponent::DetachItemOption(EEquipmentType TargetEuipmentType)
 	FItem* Item = ItemDataTable->FindRow<FItem>(ItemArray[EquipmentSlot[(int32)TargetEuipmentType]].ItemRow, FString(""));
 	checkf(Item != nullptr, TEXT("Cannot Find Item"));
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
-	checkf(Item != nullptr, TEXT("Character has not StatusComponent"));
-	FCharacterStatus& CharacterStatus = StatusComponent->GetCharacterStatus();
-	CharacterStatus.Armor			-= Item->BonusArmor;
-	CharacterStatus.Cognition		-= Item->BonusCognition;
-	CharacterStatus.Evasion			-= Item->BonusEvasion;
-	CharacterStatus.Focus			-= Item->BonusFocus;
-	CharacterStatus.Intelligence	-= Item->BonusIntelligence;
-	CharacterStatus.Luck			-= Item->BonusLuck;
-	CharacterStatus.Resistance		-= Item->BonusResistance;
-	CharacterStatus.Speed			-= Item->BonusSpeed;
-	CharacterStatus.Strength		-= Item->BonusStrength;
-	CharacterStatus.Talent			-= Item->BonusTalent;
-	CharacterStatus.Vitality		-= Item->BonusVitality;
+	checkf(StatusComponent != nullptr, TEXT("Character has not StatusComponent"));
+
+	// Todo : Update What is Changed Not All
+	StatusComponent->SetArmor(StatusComponent->GetArmor() - Item->BonusArmor);
+	StatusComponent->SetCognition(StatusComponent->GetCognition() - Item->BonusCognition);
+	StatusComponent->SetEvasion(StatusComponent->GetEvasion() - Item->BonusEvasion);
+	StatusComponent->SetMaxFocus(StatusComponent->GetMaxFocus() - Item->BonusFocus);
+	StatusComponent->SetIntelligence(StatusComponent->GetIntelligence() - Item->BonusIntelligence);
+	StatusComponent->SetLuck(StatusComponent->GetLuck() - Item->BonusLuck);
+	StatusComponent->SetResistance(StatusComponent->GetResistance() - Item->BonusResistance);
+	StatusComponent->SetSpeed(StatusComponent->GetSpeed() - Item->BonusSpeed);
+	StatusComponent->SetStrength(StatusComponent->GetStrength() - Item->BonusStrength);
+	StatusComponent->SetTalent(StatusComponent->GetTalent() - Item->BonusTalent);
+	StatusComponent->SetVitality(StatusComponent->GetVitality() - Item->BonusVitality);
 }
 
 bool UInventoryComponent::EquipItem(int ItemIndex)

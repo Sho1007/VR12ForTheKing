@@ -130,19 +130,18 @@ FText AMyCharacter::GetCharacterName() const
 
 void AMyCharacter::TestRandomizeStatus()
 {
-	FCharacterStatus& CharacterStatus = StatusComponent->GetCharacterStatus();
-
-	CharacterStatus.Armor = FMath::RandRange(0, 10);
-	CharacterStatus.Cognition = FMath::RandRange(0, 10);
-	CharacterStatus.Evasion = FMath::RandRange(0, 10);
-	CharacterStatus.Focus = FMath::RandRange(0, 10);
-	CharacterStatus.Intelligence = FMath::RandRange(0, 10);
-	CharacterStatus.Luck = FMath::RandRange(0, 10);
-	CharacterStatus.Resistance = FMath::RandRange(0, 10);
-	CharacterStatus.Speed = FMath::RandRange(0, 10);
-	CharacterStatus.Strength = FMath::RandRange(0, 10);
-	CharacterStatus.Talent = FMath::RandRange(0, 10);
-	CharacterStatus.Vitality = FMath::RandRange(0, 10);
+	StatusComponent->SetArmor(FMath::RandRange(0, 10));
+	StatusComponent->SetCognition(FMath::RandRange(0, 10));
+	StatusComponent->SetEvasion(FMath::RandRange(0, 10));
+	StatusComponent->SetMaxFocus(FMath::RandRange(0, 10));
+	StatusComponent->SetCurrentFocus(FMath::RandRange(0, StatusComponent->GetMaxFocus()));
+	StatusComponent->SetIntelligence(FMath::RandRange(0, 10));
+	StatusComponent->SetLuck(FMath::RandRange(0, 10));
+	StatusComponent->SetResistance(FMath::RandRange(0, 10));
+	StatusComponent->SetSpeed(FMath::RandRange(0, 10));
+	StatusComponent->SetStrength(FMath::RandRange(0, 10));
+	StatusComponent->SetTalent(FMath::RandRange(0, 10));
+	StatusComponent->SetVitality(FMath::RandRange(0, 10));
 }
 
 int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)

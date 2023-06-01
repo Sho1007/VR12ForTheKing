@@ -106,6 +106,8 @@ public:
 	// Getter / Setter
 	int32 GetCurrentGold() const;
 	TArray<FItemInstance>& GetItemArray();
+	FItem* GetItemInfo(FName NewItemRow);
+	TArray<int32>& GetEquipmentSlot();
 private:
 	void AttachItemOption(EEquipmentType TargetEuipmentType);
 	void DetachItemOption(EEquipmentType TargetEuipmentType);

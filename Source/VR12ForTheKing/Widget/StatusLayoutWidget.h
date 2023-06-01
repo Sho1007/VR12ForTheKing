@@ -35,6 +35,21 @@ public:
 private:
 	UFUNCTION()
 	void CloseButtonOnClicked();
+
+	UFUNCTION()
+	void SetStrengthText(int32 NewStrength);
+	UFUNCTION()
+	void SetVitalityText(int32 NewVitality);
+	UFUNCTION()
+	void SetIntelligenceText(int32 NewIntelligence);
+	UFUNCTION()
+	void SetCognitionText(int32 NewCognition);
+	UFUNCTION()
+	void SetTalentText(int32 NewTalent);
+	UFUNCTION()
+	void SetSpeedText(int32 NewSpeed);
+	UFUNCTION()
+	void SetLuckText(int32 NewLuck);
 private:
 	AMyCharacter* TargetCharacter;
 	UStatusWidget* ParentWidget;
