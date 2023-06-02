@@ -12,6 +12,7 @@
 class UButton;
 class UBattleWidget;
 class UBattleComponent;
+
 UCLASS()
 class VR12FORTHEKING_API UActionWidget : public UUserWidget
 {
@@ -28,7 +29,6 @@ public:
 private:
 	UFUNCTION()
 	void ActionButtonOnClicked();
-
 	UBattleComponent* TargetBattleComponent;
 	FName ActionName;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))

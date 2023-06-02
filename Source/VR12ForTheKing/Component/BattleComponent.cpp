@@ -59,7 +59,27 @@ const TArray<FName>& UBattleComponent::GetActionArray() const
 
 void UBattleComponent::SetActionTarget(AMyCharacter* NewActionTarget)
 {
+
 	ActionTarget = NewActionTarget;
+}
+
+void UBattleComponent::EndTurn()
+{
+	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	UBattleManagerComponent* NewBattleManagerComponent =
+		Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+	NewBattleManagerComponent->MoveToNextUnitTurn();
+
+}
+
+void UBattleComponent::RandomEnemyAction()
+{
+	int32 ActionNum = FMath::RandRange(0, ActionArray.Num() - 1);
+	FString ActionName = ActionArray[ActionNum].ToString();
+	UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *ActionName);
+
+	DoAction(ActionArray[ActionNum]);
+	
 }
 
 void UBattleComponent::BattleAction_Implementation()
@@ -72,16 +92,14 @@ void UBattleComponent::Attack_Implementation()
 
 bool UBattleComponent::MeleeAttack()
 {
-	/*GoBack = true;
+	
 	if (ActionTarget == nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
 		return false;
+
 	}
-	UE_LOG(LogTemp, Warning, TEXT("MeleeTarget  %s"), *ActionTarget->GetName());
-	SetCharacterRotation();
-	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
-	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
-	*/
+		
 
 	bGoToTarget = true;
 	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
@@ -95,12 +113,14 @@ void UBattleComponent::RangetAttack()
 	SetCharacterRotation();
 	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
 	CalculateDamage();
+	EndTurn();
 	//SpawnActor(); have to spawn projectileclass actor
 
 }
 
 void UBattleComponent::WeakHeal()
 {
+	EndTurn();
 }
 
 void UBattleComponent::BackToBattlePos()
@@ -115,9 +135,9 @@ void UBattleComponent::BackToBattlePos()
 int32 UBattleComponent::CalculateDamage()
 {
 	
-	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
+	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
 	int32 Damage = StatusComponent->GetAttackPower() + 0;// have to put LevelDamage at place of 0
-	return 0.0f;
+	return Damage;
 }
 
 void UBattleComponent::DoAction(FName NewActionName)
@@ -142,11 +162,21 @@ void UBattleComponent::ReachToDestination()
 	//UE_LOG(LogTemp, Warning, TEXT("ReachToDestination"));
 	if (bGoToTarget)
 	{
-		// Reached to Target
-		// Todo : Play Animation
-		// Todo : Apply Damage
-		// DoAttack();
+		
 		bGoToTarget = false;
+
+		//give damage to actiontarget
+		CalculateDamage();
+		UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(ActionTarget->FindComponentByClass(UStatusComponent::StaticClass()));
+		int32 DamagedHP = TargetStatusComponent->GetCurrentHP() - CalculateDamage();
+		if (DamagedHP <= 0)
+		{
+			DamagedHP = 0;
+		}
+		
+		UE_LOG(LogTemp, Warning, TEXT("Current Health %d  Damge %d DamagedHP %d"),(TargetStatusComponent->GetCurrentHP()),(CalculateDamage()),DamagedHP);
+		//go back to BaseTransform position after give damage
+
 		AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
 		FQuat GoBackQuat(0.0f, 0.0f, 1.0f, 0.0f);// use to change character rotation
 		GetOwner()->SetActorRotation(BaseTransform.GetRotation()* GoBackQuat, ETeleportType::None);
@@ -156,11 +186,8 @@ void UBattleComponent::ReachToDestination()
 	{
 		// Return To BaseTransform
 		BackToBattlePos();
-		AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-		UBattleManagerComponent* NewBattleManagerComponent =
-			Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-		NewBattleManagerComponent->MoveToNextUnitTurn();
-
+		
+		EndTurn();
 	}
 }
 

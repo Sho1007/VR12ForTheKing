@@ -100,6 +100,11 @@ public:
 	const TArray<FName>& GetActionArray() const;
 
 	void SetActionTarget(AMyCharacter* NewActionTarget);
+
+	void EndTurn();
+
+	void RandomEnemyAction();
+
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EFactionType FactionType;

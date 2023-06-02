@@ -11,6 +11,7 @@
 #include "BattleWidget.h"
 #include "../Character/MyPlayerController.h"
 
+
 void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget, UBattleComponent* NewBattleComponent)
 {
 	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));

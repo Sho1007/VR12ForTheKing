@@ -23,7 +23,7 @@ void UBattleWidget::ShowWidget()
 
 void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *NewTargetCharacter->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *NewTargetCharacter->GetName());
 	HB_Action->ClearChildren();
 
 	TargetCharacter = NewTargetCharacter;

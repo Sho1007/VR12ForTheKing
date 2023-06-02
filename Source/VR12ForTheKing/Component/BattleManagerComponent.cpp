@@ -152,9 +152,15 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->SetTurnArray(BattleTurnArray);
 	NextTurnIndex = 0;
 	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->MoveToNextTurn(BattleTurnArray[NextTurnIndex]);
-	BattleWidget->InitWidget(PlayerCharacterArray[0]);
-	BattleWidget->ShowWidget();
+	InitUnitTurn();// check whether first index of BattleTurnIndex is Enemy or not and StartUnitTurn;
 
+	for (int i = 0; i < BattleTurnArray.Num(); ++i)
+	{
+		FString CharacterName = BattleTurnArray[i]->GetName();
+		UStatusComponent* StatusComponent = Cast<UStatusComponent>(BattleTurnArray[i]->FindComponentByClass(UStatusComponent::StaticClass()));
+
+		UE_LOG(LogTemp, Warning, TEXT("%s  MaxHP%d  CurrentHP%d"), *CharacterName, StatusComponent->GetMaxHP(), StatusComponent->GetCurrentHP());
+	}
 	return;
 }
 
@@ -243,6 +249,27 @@ void UBattleManagerComponent::CalculateTurn()
 
 }
 
+void UBattleManagerComponent::InitUnitTurn()
+{
+	AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
+	UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]->FindComponentByClass(UBattleComponent::StaticClass()));
+	if (NewBattleComponent->GetFactionType() == EFactionType::Player)
+	{
+		checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
+		BattleWidget->InitWidget(UseBattleTurnArray[0]);
+		//UE_LOG(LogTemp, Warning, TEXT("BattleWidgetName %s"), *BattleWidget->GetName());
+		BattleWidget->ShowWidget();
+		UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *UseBattleTurnArray[0]->GetName());
+	}
+	else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RandomEnemyAttack"));
+		int32 TargerCharacterNum = FMath::RandRange(0, PlayerCharacterArray.Num() - 1);
+		NewBattleComponent->SetActionTarget(PlayerCharacterArray[TargerCharacterNum]);
+		NewBattleComponent->RandomEnemyAction();
+	}
+}
+
 void UBattleManagerComponent::MoveToNextUnitTurn()
 {
 	AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
@@ -260,9 +287,11 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 	else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("RandomEnemyAttack"));
+		int32 TargerCharacterNum = FMath::RandRange(0, PlayerCharacterArray.Num() - 1);
+		NewBattleComponent->SetActionTarget(PlayerCharacterArray[TargerCharacterNum]);
+		NewBattleComponent->RandomEnemyAction();
 	}
 }
-
 
 
 void UBattleManagerComponent::CreateBattleWidget()
