@@ -150,7 +150,7 @@ void AMyGameModeBase::CreatePlayer()
 		}
 	}
 
-	int32 PlayerNum = UGameplayStatics::GetNumPlayerControllers(this);
+	int32 PlayerNum = GetWorld()->GetNumPlayerControllers();
 	for (int i = 0; i < PlayerNum; ++i)
 	{
 		PlayerControllerArray.Add(Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, i)));

@@ -180,6 +180,8 @@ int32 UStatusComponent::GetCurrentHP() const
 
 void UStatusComponent::SetCurrentHP(int32 NewCurrentHP)
 {
+	NewCurrentHP = NewCurrentHP > GetMaxHP() ? GetMaxHP() : NewCurrentHP;
+
 	CharacterStatus.CurrentHP = NewCurrentHP;
 	if (UpdateCurrentHP.IsBound())
 	{
@@ -195,6 +197,10 @@ int32 UStatusComponent::GetMaxHP() const
 void UStatusComponent::SetMaxHP(int32 NewMaxHP)
 {
 	CharacterStatus.MaxHP = NewMaxHP;
+	if (CharacterStatus.CurrentHP > CharacterStatus.MaxHP)
+	{
+		SetCurrentHP(CharacterStatus.MaxHP);
+	}
 	if (UpdateMaxHP.IsBound())
 	{
 		UpdateMaxHP.Execute(CharacterStatus.MaxHP);

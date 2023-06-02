@@ -142,6 +142,10 @@ void AMyCharacter::TestRandomizeStatus()
 	StatusComponent->SetStrength(FMath::RandRange(0, 10));
 	StatusComponent->SetTalent(FMath::RandRange(0, 10));
 	StatusComponent->SetVitality(FMath::RandRange(0, 10));
+
+	StatusComponent->SetMaxHP(FMath::RandRange(0, 10));
+	StatusComponent->SetCurrentHP(FMath::RandRange(1, StatusComponent->GetMaxHP()));
+	StatusComponent->SetAttackPower(FMath::RandRange(1, 10));
 }
 
 int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)
