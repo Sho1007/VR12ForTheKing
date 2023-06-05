@@ -157,9 +157,14 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	for (int i = 0; i < BattleTurnArray.Num(); ++i)
 	{
 		FString CharacterName = BattleTurnArray[i]->GetName();
+		
 		UStatusComponent* StatusComponent = Cast<UStatusComponent>(BattleTurnArray[i]->FindComponentByClass(UStatusComponent::StaticClass()));
-
-		UE_LOG(LogTemp, Warning, TEXT("%s  MaxHP%d  CurrentHP%d"), *CharacterName, StatusComponent->GetMaxHP(), StatusComponent->GetCurrentHP());
+		UBattleComponent* BattleComponent = Cast<UBattleComponent>(BattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
+		
+		EFactionType CharacterFaction = BattleComponent->GetFactionType();
+		
+		FString CharacterFactionName = UEnum::GetDisplayValueAsText(CharacterFaction).ToString();
+		UE_LOG(LogTemp, Warning, TEXT("%s  %s  MaxHP%d  CurrentHP%d"), *CharacterFactionName, *CharacterName, StatusComponent->GetMaxHP(), StatusComponent->GetCurrentHP());
 	}
 	return;
 }
@@ -272,27 +277,71 @@ void UBattleManagerComponent::InitUnitTurn()
 
 void UBattleManagerComponent::MoveToNextUnitTurn()
 {
+
 	AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
-	UseBattleTurnArray.Add(FirstIndexCharacter);
-	UseBattleTurnArray.RemoveAt(0);
-	UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]->FindComponentByClass(UBattleComponent::StaticClass()));
-	if (NewBattleComponent->GetFactionType() == EFactionType::Player)
+
+	
+		UseBattleTurnArray.Add(FirstIndexCharacter);
+		UseBattleTurnArray.RemoveAt(0);
+
+	
+
+	
+
+	UBattleComponent* FisrtCharacterBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]->FindComponentByClass(UBattleComponent::StaticClass()));
+	
+	
+	
+	EFactionType CharacterFaction = FisrtCharacterBattleComponent->GetFactionType();
+	FString CharacterFactionName = UEnum::GetDisplayValueAsText(CharacterFaction).ToString();// Get FactionType of BattleTurnArray[0] and change it to string
+
+	if (FisrtCharacterBattleComponent->GetFactionType() == EFactionType::Player)
 	{
+		
 		checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
 		BattleWidget->InitWidget(UseBattleTurnArray[0]);
 		//UE_LOG(LogTemp, Warning, TEXT("BattleWidgetName %s"), *BattleWidget->GetName());
 		BattleWidget->ShowWidget();
-		UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *UseBattleTurnArray[0]->GetName());
+		
+		UE_LOG(LogTemp, Warning, TEXT("%s  %s Turn"),*CharacterFactionName, *UseBattleTurnArray[0]->GetName());
 	}
-	else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
+	else if (FisrtCharacterBattleComponent->GetFactionType() == EFactionType::Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("RandomEnemyAttack"));
+		
+		checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
+		UE_LOG(LogTemp, Warning, TEXT("%s  %s RandomEnemyAttack"), *CharacterFactionName, *UseBattleTurnArray[0]->GetName());
 		int32 TargerCharacterNum = FMath::RandRange(0, PlayerCharacterArray.Num() - 1);
-		NewBattleComponent->SetActionTarget(PlayerCharacterArray[TargerCharacterNum]);
-		NewBattleComponent->RandomEnemyAction();
+		FisrtCharacterBattleComponent->SetActionTarget(PlayerCharacterArray[TargerCharacterNum]);
+		FisrtCharacterBattleComponent->RandomEnemyAction();
 	}
 }
 
+
+void UBattleManagerComponent::RemoveDeadUnitFromArray()
+{
+	
+	UseBattleTurnArray.Num();
+
+	UE_LOG(LogTemp, Warning, TEXT("RemoveDeadUnitFromArray called"));
+	//UE_LOG(LogTemp, Warning, TEXT("ArrayNum %d"), UseBattleTurnArray.Num());
+	//checkf(UseBattleTurnArray.Num() != 0, TEXT("UseBattleTurnArray is Empty"));
+	
+	/*
+		for (int i = 0; i < UseBattleTurnArray.Num();)
+		{
+			UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(BattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
+			if (NewBattleComponent->IsDead() == true)
+			{
+				UseBattleTurnArray.RemoveAt(i);
+			}
+			else if (NewBattleComponent->IsDead() == false)
+			{
+				++i;
+			}
+			UE_LOG(LogTemp, Warning, TEXT("ArrayNum %d"), UseBattleTurnArray.Num());
+		}*/
+	
+}
 
 void UBattleManagerComponent::CreateBattleWidget()
 {

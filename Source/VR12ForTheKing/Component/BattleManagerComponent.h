@@ -40,7 +40,7 @@ public:
 	bool SetGameMode(AGameModeBase* NewGameMode);
 	bool IsBattle();
 	void MoveToNextUnitTurn();
-	
+	void RemoveDeadUnitFromArray();
 private:
 	// Battle Process
 	bool SpawnEnemy();

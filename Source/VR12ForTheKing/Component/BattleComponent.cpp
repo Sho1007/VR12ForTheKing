@@ -63,6 +63,11 @@ void UBattleComponent::SetActionTarget(AMyCharacter* NewActionTarget)
 	ActionTarget = NewActionTarget;
 }
 
+AMyCharacter* UBattleComponent::GetActionTarget()
+{
+	return ActionTarget;
+}
+
 void UBattleComponent::EndTurn()
 {
 	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
@@ -112,7 +117,7 @@ void UBattleComponent::RangetAttack()
 {
 	SetCharacterRotation();
 	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
-	CalculateDamage();
+	GiveDamage();
 	EndTurn();
 	//SpawnActor(); have to spawn projectileclass actor
 
@@ -140,6 +145,45 @@ int32 UBattleComponent::CalculateDamage()
 	return Damage;
 }
 
+void UBattleComponent::GiveDamage()
+{
+	CalculateDamage();
+	UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(ActionTarget->FindComponentByClass(UStatusComponent::StaticClass()));
+	int32 DamagedHP = TargetStatusComponent->GetCurrentHP() - CalculateDamage();
+	FString DamagedCharacterName = ActionTarget->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("%s Current Health %d  Damge %d DamagedHP %d"), *DamagedCharacterName, TargetStatusComponent->GetCurrentHP(), CalculateDamage(), DamagedHP);
+	TargetStatusComponent->SetCurrentHP(DamagedHP);
+	
+		AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+		UBattleManagerComponent* NewBattleComponentManager = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleComponent::StaticClass()));
+		
+		NewBattleComponentManager->RemoveDeadUnitFromArray();
+		
+	
+}
+
+
+bool UBattleComponent::IsDead()
+{
+	
+		UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(ActionTarget->FindComponentByClass(UStatusComponent::StaticClass()));
+		int32 TargetCurrentHP = TargetStatusComponent->GetCurrentHP();
+		if (TargetCurrentHP <= 0)
+		{
+			TargetCurrentHP = 0;
+			FString DeadCharacterName = ActionTarget->GetName();
+			UE_LOG(LogTemp, Warning, TEXT("%s is Dead"), *DeadCharacterName);
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+}
+	
+
+
 void UBattleComponent::DoAction(FName NewActionName)
 {
 	
@@ -166,15 +210,8 @@ void UBattleComponent::ReachToDestination()
 		bGoToTarget = false;
 
 		//give damage to actiontarget
-		CalculateDamage();
-		UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(ActionTarget->FindComponentByClass(UStatusComponent::StaticClass()));
-		int32 DamagedHP = TargetStatusComponent->GetCurrentHP() - CalculateDamage();
-		if (DamagedHP <= 0)
-		{
-			DamagedHP = 0;
-		}
+		GiveDamage();
 		
-		UE_LOG(LogTemp, Warning, TEXT("Current Health %d  Damge %d DamagedHP %d"),(TargetStatusComponent->GetCurrentHP()),(CalculateDamage()),DamagedHP);
 		//go back to BaseTransform position after give damage
 
 		AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
@@ -197,11 +234,11 @@ void UBattleComponent::ReachToDestination()
 
 void UBattleComponent::SetCharacterRotation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Run SetCharacterRotation"));
+	//UE_LOG(LogTemp, Warning, TEXT("Run SetCharacterRotation"));
 	bIsTurnEnd = false;
 	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
 	CharacterRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), ActionTarget->GetActorLocation());
 	FString CharacterRotString = CharacterRot.ToString();
-	UE_LOG(LogTemp, Warning, TEXT("CharacterRotation %s"), *CharacterRotString);
+	//UE_LOG(LogTemp, Warning, TEXT("CharacterRotation %s"), *CharacterRotString);
 	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
 }

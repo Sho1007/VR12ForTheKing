@@ -60,7 +60,12 @@ void UActionWidget::UseFocusToken()
 //when BattleComponenet action activated call function action ended in battlemangetcomponent
 void UActionWidget::ActionButtonOnClicked()
 {
-	ParentWidget->HideWidget();
+
+	if (TargetBattleComponent->GetActionTarget() != nullptr) // check ActionTarget is nullpter, to check whether widget have to be hide or not
+	{
+		ParentWidget->HideWidget();
+	}
+	
 	//this->SetVisibility(ESlateVisibility::Collapsed);
 	TargetBattleComponent->DoAction(ActionName);
 	

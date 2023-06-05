@@ -80,6 +80,11 @@ public:
 	int32 CalculateDamage();
 
 	UFUNCTION(BlueprintCallable)
+		void GiveDamage();
+	UFUNCTION(BlueprintCallable)
+		bool IsDead();
+
+	UFUNCTION(BlueprintCallable)
 		void DoAction(FName NewActionName);
 	UFUNCTION(BlueprintCallable)
 	void ReachToDestination();
@@ -93,6 +98,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetFactionType(EFactionType NewFactionType);
 
+	
 	void SetBaseTransform(FTransform NewBaseTransform);
 
 	UFUNCTION(BlueprintCallable)
@@ -101,6 +107,7 @@ public:
 
 	void SetActionTarget(AMyCharacter* NewActionTarget);
 
+	AMyCharacter* GetActionTarget();
 	void EndTurn();
 
 	void RandomEnemyAction();
