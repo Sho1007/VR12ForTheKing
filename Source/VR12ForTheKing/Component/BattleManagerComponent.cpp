@@ -152,8 +152,7 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->SetTurnArray(BattleTurnArray);
 	NextTurnIndex = 0;
 	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->MoveToNextTurn(BattleTurnArray[NextTurnIndex]);
-	InitUnitTurn();// check whether first index of BattleTurnIndex is Enemy or not and StartUnitTurn;
-
+	
 	for (int i = 0; i < BattleTurnArray.Num(); ++i)
 	{
 		FString CharacterName = BattleTurnArray[i]->GetName();
@@ -166,6 +165,8 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 		FString CharacterFactionName = UEnum::GetDisplayValueAsText(CharacterFaction).ToString();
 		UE_LOG(LogTemp, Warning, TEXT("%s  %s  MaxHP%d  CurrentHP%d"), *CharacterFactionName, *CharacterName, StatusComponent->GetMaxHP(), StatusComponent->GetCurrentHP());
 	}
+
+	InitUnitTurn();// check whether first index of BattleTurnIndex is Enemy or not and StartUnitTurn;
 	return;
 }
 
@@ -278,15 +279,12 @@ void UBattleManagerComponent::InitUnitTurn()
 void UBattleManagerComponent::MoveToNextUnitTurn()
 {
 
+	checkf(UseBattleTurnArray.Num() != 0, TEXT("UsebattleTurnArray is empty"));
 	AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
 
 	
 		UseBattleTurnArray.Add(FirstIndexCharacter);
 		UseBattleTurnArray.RemoveAt(0);
-
-	
-
-	
 
 	UBattleComponent* FisrtCharacterBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]->FindComponentByClass(UBattleComponent::StaticClass()));
 	
@@ -320,18 +318,17 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 void UBattleManagerComponent::RemoveDeadUnitFromArray()
 {
 	
-	UseBattleTurnArray.Num();
+	
 
 	UE_LOG(LogTemp, Warning, TEXT("RemoveDeadUnitFromArray called"));
-	//UE_LOG(LogTemp, Warning, TEXT("ArrayNum %d"), UseBattleTurnArray.Num());
-	//checkf(UseBattleTurnArray.Num() != 0, TEXT("UseBattleTurnArray is Empty"));
+    checkf(UseBattleTurnArray.Num() != 0, TEXT("UseBattleTurnArray is Empty"));
 	
-	/*
 		for (int i = 0; i < UseBattleTurnArray.Num();)
 		{
-			UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(BattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
+			UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
 			if (NewBattleComponent->IsDead() == true)
 			{
+				DeadCharacterArray.Add(UseBattleTurnArray[i]);
 				UseBattleTurnArray.RemoveAt(i);
 			}
 			else if (NewBattleComponent->IsDead() == false)
@@ -339,7 +336,43 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray()
 				++i;
 			}
 			UE_LOG(LogTemp, Warning, TEXT("ArrayNum %d"), UseBattleTurnArray.Num());
-		}*/
+		}
+		
+		CountDeadCharacter();
+}
+
+void UBattleManagerComponent::CountDeadCharacter()
+{
+	if (DeadCharacterArray.Num() != 0)
+	{
+		DeadEnemyCount = 0;
+		DeadPlayerCount = 0;
+		for (int i = 0; i < DeadCharacterArray.Num();++i)
+		{
+			UBattleComponent* DeadBattleComponent = Cast<UBattleComponent>(DeadCharacterArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
+			if (DeadBattleComponent->GetFactionType() == EFactionType::Enemy)
+			{
+				++DeadEnemyCount;	
+			}
+			else if (DeadBattleComponent->GetFactionType() == EFactionType::Player)
+			{
+				++DeadPlayerCount;
+			}
+
+		
+		}
+
+		if (DeadEnemyCount/2 == EnemyCharacterArray.Num())
+		{
+			EndBattle();
+		}
+		if (DeadPlayerCount/2 == PlayerCharacterArray.Num())
+		{
+			GameOver();
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("DeadPlayer %d   DeadEnemy %d"), DeadPlayerCount, DeadEnemyCount);
+	}
 	
 }
 
@@ -350,4 +383,14 @@ void UBattleManagerComponent::CreateBattleWidget()
 	check(BattleWidget != nullptr);
 	BattleWidget->AddToPlayerScreen(0);
 	BattleWidget->HideWidget();
+}
+
+void UBattleManagerComponent::EndBattle()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Victory!!"));
+}
+
+void UBattleManagerComponent::GameOver()
+{
+	UE_LOG(LogTemp, Warning, TEXT("GameOver!!"));
 }

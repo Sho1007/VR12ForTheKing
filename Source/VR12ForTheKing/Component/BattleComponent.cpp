@@ -155,9 +155,9 @@ void UBattleComponent::GiveDamage()
 	TargetStatusComponent->SetCurrentHP(DamagedHP);
 	
 		AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-		UBattleManagerComponent* NewBattleComponentManager = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleComponent::StaticClass()));
-		
-		NewBattleComponentManager->RemoveDeadUnitFromArray();
+		UBattleManagerComponent* NewBattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+
+		NewBattleManagerComponent->RemoveDeadUnitFromArray();
 		
 	
 }
@@ -166,12 +166,13 @@ void UBattleComponent::GiveDamage()
 bool UBattleComponent::IsDead()
 {
 	
-		UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(ActionTarget->FindComponentByClass(UStatusComponent::StaticClass()));
+		UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
 		int32 TargetCurrentHP = TargetStatusComponent->GetCurrentHP();
+
 		if (TargetCurrentHP <= 0)
 		{
 			TargetCurrentHP = 0;
-			FString DeadCharacterName = ActionTarget->GetName();
+			FString DeadCharacterName = GetOwner()->GetName();
 			UE_LOG(LogTemp, Warning, TEXT("%s is Dead"), *DeadCharacterName);
 
 			return true;

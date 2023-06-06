@@ -41,6 +41,7 @@ public:
 	bool IsBattle();
 	void MoveToNextUnitTurn();
 	void RemoveDeadUnitFromArray();
+	void CountDeadCharacter();
 private:
 	// Battle Process
 	bool SpawnEnemy();
@@ -49,7 +50,8 @@ private:
 	void CalculateTurn();
 	void InitUnitTurn();
 	void CreateBattleWidget();
-
+	void EndBattle();
+	void GameOver();
 private:
 	// Battle Var
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
@@ -57,7 +59,12 @@ private:
 	TArray<AMyCharacter*> EnemyCharacterArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> PlayerCharacterArray;
-
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TArray<AMyCharacter*> DeadCharacterArray;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	int32 DeadEnemyCount;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	int32 DeadPlayerCount;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	int32 CurrentBattleRound;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
