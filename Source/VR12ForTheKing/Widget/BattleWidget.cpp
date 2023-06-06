@@ -29,7 +29,7 @@ void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	TargetCharacter = NewTargetCharacter;
 	UBattleComponent* BattleComponent = Cast<UBattleComponent>(NewTargetCharacter->GetComponentByClass(UBattleComponent::StaticClass()));
 	checkf(BattleComponent != nullptr, TEXT("Character has no Battle Component"));
-
+	BattleComponent->AddResurrectionToActionArray();
 	checkf(ActionWidgetClass != nullptr, TEXT("ActionWidgetClass is not valid"));
 	TArray<FName> ActionArray = BattleComponent->GetActionArray();
 	for (int i = 0; i < ActionArray.Num(); ++i)

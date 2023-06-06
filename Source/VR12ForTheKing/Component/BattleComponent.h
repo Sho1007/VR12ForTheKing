@@ -73,6 +73,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void WeakHeal();
+
+	UFUNCTION(BlueprintCallable)
+	void Resurrection();
+
 	UFUNCTION(BlueprintCallable)
 	void BackToBattlePos();
 
@@ -90,6 +94,7 @@ public:
 	void ReachToDestination();
 
 	
+	void AddResurrectionToActionArray();
 
 	//Setter Getter
 	UFUNCTION(BlueprintCallable)

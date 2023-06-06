@@ -128,6 +128,11 @@ void UBattleComponent::WeakHeal()
 	EndTurn();
 }
 
+void UBattleComponent::Resurrection()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Resurrection"));
+}
+
 void UBattleComponent::BackToBattlePos()
 {
 	bIsTurnEnd = true;
@@ -187,7 +192,7 @@ bool UBattleComponent::IsDead()
 
 void UBattleComponent::DoAction(FName NewActionName)
 {
-	
+
 	if(NewActionName == "NormalAttack")
 	{
 		MeleeAttack();
@@ -200,6 +205,11 @@ void UBattleComponent::DoAction(FName NewActionName)
 	{
 		RangetAttack();
 	}
+	else if (NewActionName == "Resurrection")
+	{
+		Resurrection();
+	}
+
 }
 
 void UBattleComponent::ReachToDestination()
@@ -227,6 +237,24 @@ void UBattleComponent::ReachToDestination()
 		
 		EndTurn();
 	}
+}
+
+void UBattleComponent::AddResurrectionToActionArray()
+{
+	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	UBattleManagerComponent* NewBattleManagerComponent =
+	Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+	int32 DeadPlayerNum = NewBattleManagerComponent->GetDeadPlayerNum();
+	if (DeadPlayerNum > 0)
+	{
+		for (int i = 0; i < DeadPlayerNum/2; ++i)
+		{
+			ActionArray.Add("Resurrection");
+		}
+	
+	}
+
+	
 }
 
 

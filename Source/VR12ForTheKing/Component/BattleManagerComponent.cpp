@@ -182,6 +182,14 @@ bool UBattleManagerComponent::IsBattle()
 	return bIsBattle;
 }
 
+
+
+int32 UBattleManagerComponent::GetDeadPlayerNum()
+{
+	
+	return DeadPlayerCount;
+}
+
 bool UBattleManagerComponent::SpawnEnemy()
 {
 	int32 SpawnEnemyCount = 0;
