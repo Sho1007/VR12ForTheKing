@@ -13,6 +13,7 @@ class AMyCharacter;
 class UActionWidget;
 class UHorizontalBox;
 class UTextBlock;
+class UBattleManagerComponent;
 UCLASS()
 class VR12FORTHEKING_API UBattleWidget : public UUserWidget
 {

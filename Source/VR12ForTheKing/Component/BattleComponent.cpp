@@ -7,7 +7,7 @@
 #include "StatusComponent.h"
 #include "../MyGameModeBase.h"
 #include "BattleManagerComponent.h"
-
+#include "../Widget/ActionWidget.h"
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
 {
@@ -83,7 +83,18 @@ void UBattleComponent::RandomEnemyAction()
 	FString ActionName = ActionArray[ActionNum].ToString();
 	UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *ActionName);
 
-	DoAction(ActionArray[ActionNum]);
+	if (ActionName == "NormalAttack")
+	{
+		MeleeAttack();
+	}
+	else if (ActionName == "WeakHeal")
+	{
+		WeakHeal();
+	}
+	else if (ActionName == "RangeAttack")
+	{
+		RangetAttack();
+	}
 	
 }
 
@@ -98,6 +109,7 @@ void UBattleComponent::Attack_Implementation()
 bool UBattleComponent::MeleeAttack()
 {
 	
+	UE_LOG(LogTemp, Warning, TEXT("MeleeAttack"));
 	if (ActionTarget == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
@@ -115,6 +127,7 @@ bool UBattleComponent::MeleeAttack()
 
 void UBattleComponent::RangetAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("RangeAttack"));
 	SetCharacterRotation();
 	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
 	GiveDamage();
@@ -125,12 +138,20 @@ void UBattleComponent::RangetAttack()
 
 void UBattleComponent::WeakHeal()
 {
+	UE_LOG(LogTemp, Warning, TEXT("WeakHeal"));
 	EndTurn();
 }
 
-void UBattleComponent::Resurrection()
+void UBattleComponent::Resurrection(AMyCharacter* TargetCharacter)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Resurrection"));
+	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	UBattleManagerComponent* NewBattleManagerComponent =
+		Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+
+	NewBattleManagerComponent->ResurrectCharacter(TargetCharacter);
+	
+	EndTurn();
 }
 
 void UBattleComponent::BackToBattlePos()
@@ -190,24 +211,24 @@ bool UBattleComponent::IsDead()
 	
 
 
-void UBattleComponent::DoAction(FName NewActionName)
+void UBattleComponent::DoAction(UActionWidget* ActionWidget)
 {
 
-	if(NewActionName == "NormalAttack")
+	if(ActionWidget->GetActionName() == "NormalAttack")
 	{
 		MeleeAttack();
 	}
-	else if(NewActionName == "WeakHeal")
+	else if(ActionWidget->GetActionName() == "WeakHeal")
 	{
 		WeakHeal();
 	}
-	else if (NewActionName == "RangeAttack")
+	else if (ActionWidget->GetActionName() == "RangeAttack")
 	{
 		RangetAttack();
 	}
-	else if (NewActionName == "Resurrection")
+	else if (ActionWidget->GetActionName() == "Resurrection")
 	{
-		Resurrection();
+		Resurrection(ActionWidget->GetDeadPlayer());
 	}
 
 }
@@ -239,23 +260,7 @@ void UBattleComponent::ReachToDestination()
 	}
 }
 
-void UBattleComponent::AddResurrectionToActionArray()
-{
-	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	UBattleManagerComponent* NewBattleManagerComponent =
-	Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-	int32 DeadPlayerNum = NewBattleManagerComponent->GetDeadPlayerNum();
-	if (DeadPlayerNum > 0)
-	{
-		for (int i = 0; i < DeadPlayerNum/2; ++i)
-		{
-			ActionArray.Add("Resurrection");
-		}
-	
-	}
 
-	
-}
 
 
 
