@@ -4,38 +4,37 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "InventoryItemListSlot.generated.h"
+#include "EquipSelectMenuWidget.generated.h"
 
 /**
  * 
  */
-class UTextBlock;
-class UImage;
 class UButton;
 class AMyCharacter;
-class UStatusWidget;
 UCLASS()
-class VR12FORTHEKING_API UInventoryItemListSlot : public UUserWidget
+class VR12FORTHEKING_API UEquipSelectMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
-	void InitWidget(UStatusWidget* NewStatusWidget, AMyCharacter* NewOwnerCharacter, int32 NewItemIndex);
-
+	virtual void NativeConstruct() override;
+	
+	void InitWidget(AMyCharacter* NewOwnerCharacter, int32 NewSlotIndex);
 private:
 	UFUNCTION()
-	void ButtonOnClicked();
+	void UnequipButtonOnClicked();
+	UFUNCTION()
+	void CloseButtonOnClicked();
 private:
-	UStatusWidget* StatusWidget;
 	AMyCharacter* OwnerCharacter;
-	int32 ItemIndex;
+	int32 SlotIndex;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UButton* Btn_Item;
+	UButton* Btn_Unequip;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_ItemName;
+	UButton* Btn_Hide;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_ItemCount;
+	UButton* Btn_Show;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UImage* Img_ItemIcon;
+	UButton* Btn_Close;
 };

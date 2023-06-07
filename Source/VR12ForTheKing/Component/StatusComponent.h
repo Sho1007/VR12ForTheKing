@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../VR12ForTheKing.h"
 #include "Components/ActorComponent.h"
 #include "StatusComponent.generated.h"
 
-DECLARE_DELEGATE_OneParam(FDele_Single_Int, int32);
-DECLARE_DELEGATE_OneParam(FDele_Single_Bool, bool);
+
 
 USTRUCT(BlueprintType)
 struct FCharacterStatus

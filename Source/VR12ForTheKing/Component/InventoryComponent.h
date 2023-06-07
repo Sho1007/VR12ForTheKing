@@ -6,82 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "../Event/TileEventManager.h"
+#include "../Item/ItemBase.h"
 #include "InventoryComponent.generated.h"
-
-class UTexture2D;
-USTRUCT(BlueprintType)
-struct FItem : public FTableRowBase
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FText ItemName;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EItemRarity ItemRarity;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EItemType ItemType;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 MaxStackCount;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UTexture2D* ItemIcon;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UTexture2D* ItemImage;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString ItemDiscription;
-
-	// Equipment
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EEquipmentType EquipmentType;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FName> ActionArray;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsTwoHand;
-
-	// Option
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusArmor;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusCognition;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusEvasion;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusFocus;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusIntelligence;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusLuck;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusResistance;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusSpeed;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusStrength;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusTalent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BonusVitality;
-};
-
-USTRUCT(BlueprintType)
-struct FItemInstance
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FName ItemRow;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 CurrentStackCount;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 MaxStackCount;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsEquiped;
-};
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
 	
 public:	
 	// Sets default values for this component's properties
@@ -99,18 +30,25 @@ public:
 	void AddItem(const FName NewItemRow, int32 NewItemCount);
 	
 	UFUNCTION(BlueprintCallable)
-	bool EquipItem(int ItemIndex);
+	bool EquipItem(int32 ItemIndex);
 	UFUNCTION(BlueprintCallable)
 	bool UnEquipItem(EEquipmentType TargetSlot);
+	UFUNCTION(BlueprintCallable)
+	bool UseItem(int32 ItemIndex);
 public:
 	// Getter / Setter
 	int32 GetCurrentGold() const;
 	TArray<FItemInstance>& GetItemArray();
 	FItem* GetItemInfo(FName NewItemRow);
-	TArray<int32>& GetEquipmentSlot();
+	FItem* GetItemInfoAtInventory(int32 ItemIndex);
+	TArray<FItemInstance>& GetEquipmentSlot();
+
+public:
+	FDele_Single UpdateInventory;
+
 private:
-	void AttachItemOption(EEquipmentType TargetEuipmentType);
-	void DetachItemOption(EEquipmentType TargetEuipmentType);
+	void AttachItemOption(EEquipmentType NewEquipmentType);
+	void DetachItemOption(EEquipmentType NewEquipmentType);
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<FItemInstance> ItemArray;
@@ -119,5 +57,5 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	int32 Gold;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	TArray<int32> EquipmentSlot;
+	TArray<FItemInstance> EquipmentSlot;
 };
