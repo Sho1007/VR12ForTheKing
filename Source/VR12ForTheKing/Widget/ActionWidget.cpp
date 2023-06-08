@@ -11,13 +11,10 @@
 #include "BattleWidget.h"
 #include "../Character/MyPlayerController.h"
 
-<<<<<<< HEAD
+
 
 
 void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget, UBattleComponent* NewBattleComponent, AMyCharacter* NewDeadPlayer)
-=======
-void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget, UBattleComponent* NewBattleComponent)
->>>>>>> b356322baaf061147ce0b2d7c2770c5695b3c0f1
 {
 	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
 	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
@@ -93,10 +90,8 @@ void UActionWidget::ActionButtonOnClicked()
 	}
 	
 	//this->SetVisibility(ESlateVisibility::Collapsed);
-<<<<<<< HEAD
+
 	TargetBattleComponent->DoAction(this);
 	
-=======
-	TargetBattleComponent->DoAction(ActionName);
->>>>>>> b356322baaf061147ce0b2d7c2770c5695b3c0f1
+
 }

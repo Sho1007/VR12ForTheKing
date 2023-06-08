@@ -27,7 +27,13 @@ public:
 	void InitBattleTurnWidget();
 
 	UFUNCTION(BlueprintCallable)
-	void MoveToNextTurn(AMyCharacter* NewCharacter);
+	void MoveToNextTurn(AMyCharacter* NewCharacter = nullptr);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveUnitFromImageArray(int32 Index);
+
+	UFUNCTION(BlueprintCallable)
+	void AddUnitToImageArray(AMyCharacter* NewCharacter, int32 Index);
 private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> BasicTurnArray;
