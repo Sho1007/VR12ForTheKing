@@ -9,17 +9,19 @@
 /**
  * 
  */
+class UInventoryComponent;
 class UStatusComponent;
 class AMyCharacter;
 class UStatusWidget;
 class UButton;
+class UInventorySlotButton;
 class UProgressBar;
 class UTextBlock;
+class UUniformGridPanel;
 UCLASS()
 class VR12FORTHEKING_API UStatusBoardWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
 
 protected:
 	virtual void NativeConstruct() override;
@@ -28,6 +30,8 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateStatus();
+	UFUNCTION()
+	void UpdateInventory();
 public:
 	// Getter / Setter
 	void SetOwnerCharacter(AMyCharacter* NewOwnerCharacter);
@@ -76,11 +80,40 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true), Category = "Status")
 	AMyCharacter* OwnerCharacter;
 	UStatusWidget* ParentWidget;
+	UInventoryComponent* OwnerInventory;
+
+	// Inventory Var
+	TArray<UInventorySlotButton*> InventorySlotArray;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UTextBlock* TB_Gold;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot0;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot1;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot2;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot3;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot4;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot5;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot6;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot7;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot8;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UInventorySlotButton* Btn_InvenSlot9;
+
+	// Status Var
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UTextBlock* TB_PlayerName;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_Gold;
+	
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UTextBlock* TB_CurrentHP;
 

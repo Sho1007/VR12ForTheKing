@@ -25,6 +25,7 @@ public:
 	virtual void NativeConstruct() override;
 public:
 	void InitWidget(AMyCharacter* NewTargetCharacter);
+	void UpdateWidget(AMyCharacter* NewTargetCharacter);
 	void SwitchToStatus();
 	void SwitchToInventory();
 public:

@@ -9,8 +9,13 @@
 /**
  * 
  */
+struct FItem;
+
 class UStatusLayoutWidget;
 class UStatusBoardWidget;
+class UItemDetailWidget;
+class UItemSelectMenuWidget;
+class UEquipSelectMenuWidget;
 class UStatusComponent;
 class AMyCharacter;
 UCLASS()
@@ -24,6 +29,8 @@ public:
 	void HideWidget();
 	void OpenInventory(AMyCharacter* TargetCharacter);
 	void OpenStatus(AMyCharacter* TargetCharacter);
+
+	void UpdateLayoutWidget(AMyCharacter* NewTargetCharacter);
 
 public:
 	UFUNCTION()
@@ -46,6 +53,13 @@ public:
 	void SetParentToChild();
 
 	void SetOwnerCharacter(const TArray<AMyCharacter*>& NewCharacterArray);
+
+	void InitItemDetail(FItem* NewItemInfo);
+	void HideItemDetail();
+
+	void InitItemSelectMenu(AMyCharacter* OwnerCharacter, int32 ItemIndex);
+	
+	void InitEquipSelectMenu(AMyCharacter* OwnerCharacter, int32 SlotIndex);
 	
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
@@ -56,4 +70,10 @@ private:
 	UStatusBoardWidget* WBP_StatusBoard3;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UStatusLayoutWidget* WBP_StatusLayout;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
+	UItemDetailWidget* WBP_ItemDetail;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
+	UItemSelectMenuWidget* WBP_ItemSelectMenu;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
+	UEquipSelectMenuWidget* WBP_EquipSelectMenu;
 };

@@ -9,6 +9,7 @@
 #include "TileEventMeshCapturor.h"
 #include "../HexGrid/HexGridManager.h"
 #include "../Widget/TileEventWidget.h"
+#include "../Component/BattleComponent.h"
 
 // Sets default values
 UTileEventManager::UTileEventManager()
@@ -108,6 +109,14 @@ AEventActor* UTileEventManager::SetCurrentTileEvent(AHexTile* NewHexTile)
 AEventActor* UTileEventManager::GetTileEvent() const
 {
 	return CurrentTileEvent;
+}
+
+FAction* UTileEventManager::FindActionInfo(FName TargetActionRow) const
+{
+	if (TargetActionRow == FName("None")) return nullptr;
+	FAction* ActionInfo = ActionDataTable->FindRow<FAction>(TargetActionRow, FString(""));
+
+	return ActionInfo;
 }
 
 void UTileEventManager::HideWidget()

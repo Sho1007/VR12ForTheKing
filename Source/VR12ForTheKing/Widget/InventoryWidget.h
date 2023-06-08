@@ -13,6 +13,7 @@ class AMyCharacter;
 class UVerticalBox;
 class UInventoryItemListSlot;
 class UTextBlock;
+class UStatusWidget;
 UCLASS()
 class VR12FORTHEKING_API UInventoryWidget : public UUserWidget
 {
@@ -21,7 +22,7 @@ class VR12FORTHEKING_API UInventoryWidget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 public:
-	void InitWidget(AMyCharacter* NewTargetCharacter);
+	void InitWidget(UStatusWidget* StatusWidget, AMyCharacter* NewTargetCharacter);
 
 private:
 	AMyCharacter* TargetCharacter;

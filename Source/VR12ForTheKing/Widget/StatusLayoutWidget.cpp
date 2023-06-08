@@ -9,6 +9,7 @@
 
 #include "../Character/MyCharacter.h"
 #include "../Component/StatusComponent.h"
+#include "../Component/InventoryComponent.h"
 #include "../Widget/StatusWidget.h"
 #include "../Widget/InventoryWidget.h"
 
@@ -23,6 +24,7 @@ void UStatusLayoutWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 
 	TB_PlayerName->SetText(TargetCharacter->GetCharacterName());
 
+	// Status
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(TargetCharacter->GetComponentByClass(UStatusComponent::StaticClass()));
 	checkf(StatusComponent != nullptr, TEXT("Character has not StatusComponent"));
 
@@ -37,6 +39,14 @@ void UStatusLayoutWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	this->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UStatusLayoutWidget::UpdateWidget(AMyCharacter* NewTargetCharacter)
+{
+	if (TargetCharacter != NewTargetCharacter || this->GetVisibility() != ESlateVisibility::Visible) return;
+
+	InitWidget(NewTargetCharacter);
+	WBP_Inventory->InitWidget(ParentWidget, TargetCharacter);
+}
+
 void UStatusLayoutWidget::SwitchToStatus()
 {
 	WS_Layout->SetActiveWidgetIndex(0);
@@ -44,7 +54,7 @@ void UStatusLayoutWidget::SwitchToStatus()
 
 void UStatusLayoutWidget::SwitchToInventory()
 {
-	WBP_Inventory->InitWidget(TargetCharacter);
+	WBP_Inventory->InitWidget(ParentWidget, TargetCharacter);
 	WS_Layout->SetActiveWidgetIndex(1);
 }
 

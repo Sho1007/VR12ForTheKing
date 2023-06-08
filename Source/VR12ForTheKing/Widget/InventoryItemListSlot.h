@@ -9,20 +9,27 @@
 /**
  * 
  */
-struct FItemInstance;
-struct FItem;
 class UTextBlock;
 class UImage;
 class UButton;
+class AMyCharacter;
+class UStatusWidget;
 UCLASS()
 class VR12FORTHEKING_API UInventoryItemListSlot : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
-	void InitWidget(FItem* NewItem, FItemInstance* NewItemInstance);
+	void InitWidget(UStatusWidget* NewStatusWidget, AMyCharacter* NewOwnerCharacter, int32 NewItemIndex);
 
 private:
+	UFUNCTION()
+	void ButtonOnClicked();
+private:
+	UStatusWidget* StatusWidget;
+	AMyCharacter* OwnerCharacter;
+	int32 ItemIndex;
+
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UButton* Btn_Item;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))

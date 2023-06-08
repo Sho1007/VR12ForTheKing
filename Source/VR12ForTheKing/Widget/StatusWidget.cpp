@@ -3,9 +3,14 @@
 
 #include "../Widget/StatusWidget.h"
 
+#include "Components/CanvasPanelSlot.h"
+
 #include "../Component/StatusComponent.h"
 #include "StatusBoardWidget.h"
 #include "StatusLayoutWidget.h"
+#include "ItemDetailWidget.h"
+#include "ItemSelectMenuWidget.h"
+#include "EquipSelectMenuWidget.h"
 
 bool UStatusWidget::UpdateStatusBoard(int BoardIndex)
 {
@@ -53,6 +58,11 @@ void UStatusWidget::OpenStatus(AMyCharacter* TargetCharacter)
 
 	WBP_StatusLayout->SwitchToStatus();
 	WBP_StatusLayout->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UStatusWidget::UpdateLayoutWidget(AMyCharacter* NewTargetCharacter)
+{
+	WBP_StatusLayout->UpdateWidget(NewTargetCharacter);
 }
 
 void UStatusWidget::UpdateStrength(UStatusBoardWidget* TargetBoard, int32 Strength)
@@ -159,4 +169,37 @@ void UStatusWidget::SetOwnerCharacter(const TArray<AMyCharacter*>& NewCharacterA
 	{
 		WBP_StatusBoard3->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UStatusWidget::InitItemDetail(FItem* NewItemInfo)
+{
+	WBP_ItemDetail->InitWidget(NewItemInfo);
+	WBP_ItemDetail->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UStatusWidget::HideItemDetail()
+{
+	WBP_ItemDetail->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UStatusWidget::InitItemSelectMenu(AMyCharacter* OwnerCharacter, int32 ItemIndex)
+{
+	double MouseX, MouseY;
+	GetWorld()->GetFirstPlayerController()->GetMousePosition(MouseX, MouseY);
+
+	UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(WBP_ItemSelectMenu->Slot);
+	CanvasPanelSlot->SetPosition(FVector2D(MouseX, MouseY));
+
+	WBP_ItemSelectMenu->InitWidget(OwnerCharacter, ItemIndex);
+}
+
+void UStatusWidget::InitEquipSelectMenu(AMyCharacter* OwnerCharacter, int32 SlotIndex)
+{
+	double MouseX, MouseY;
+	GetWorld()->GetFirstPlayerController()->GetMousePosition(MouseX, MouseY);
+
+	UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(WBP_EquipSelectMenu->Slot);
+	CanvasPanelSlot->SetPosition(FVector2D(MouseX, MouseY));
+
+	WBP_EquipSelectMenu->InitWidget(OwnerCharacter, SlotIndex);
 }

@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "TileEventManager.generated.h"
 
+struct FAction;
+
 class UDataTable;
 class AEventActor;
 class AHexTile;
@@ -34,6 +36,7 @@ public:
 	const float GetEventOccurChance() const;
 	AEventActor* SetCurrentTileEvent(AHexTile* NewHexTile);
 	AEventActor* GetTileEvent() const;
+	FAction* FindActionInfo(FName TargetActionRow) const;
 
 	void HideWidget();
 

@@ -7,7 +7,7 @@
 #include "Components/Image.h"
 
 #include "../Component/StatusComponent.h"
-
+#include "../Character/MyCharacter.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -28,8 +28,7 @@ void UInventoryComponent::BeginPlay()
 	// ...
 
 	checkf(ItemDataTable != nullptr, TEXT("ItemDataTable is not valid"));
-	ItemArray.Init(FItemInstance(), 10);
-	EquipmentSlot.Init(-1, (int32)EEquipmentType::SIZE);
+	EquipmentSlot.Init(FItemInstance(), (int32)EEquipmentType::SIZE);
 }
 
 
@@ -43,44 +42,43 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UInventoryComponent::AddItem(const FName NewItemRow, int32 NewItemCount)
 {
-	// Todo : Change ReturnType to int32? present remain item count 
+	FItem* ItemInfo = ItemDataTable->FindRow<FItem>(NewItemRow, FString(""));
+	if (ItemInfo == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Item Row"));
+		return;
+	}
+	
+	if (NewItemCount <= 0) return;
 	for (int i = 0; i < ItemArray.Num(); ++i)
 	{
-		if (NewItemCount == 0)
-		{
-			return;
-		}
 		if (ItemArray[i].ItemRow == NewItemRow)
 		{
 			int32 EmptySpace = ItemArray[i].MaxStackCount - ItemArray[i].CurrentStackCount;
-			if (EmptySpace > 0)
-			{
-				int32 AddItemCount = FMath::Min(NewItemCount, EmptySpace);
-				// Todo : Add Effect
-				ItemArray[i].CurrentStackCount += AddItemCount;
-				NewItemCount -= AddItemCount;
-				
-			}
-		}
-		else if (ItemArray[i].ItemRow == FName(TEXT("None")))
-		{
-			FItem* ItemRow = ItemDataTable->FindRow<FItem>(NewItemRow, FString(""));
-			if (ItemRow == nullptr)
-			{
-				UE_LOG(LogTemp, Error, TEXT("Can't Find Item"));
-				return;
-			}
-			ItemArray[i].ItemRow = NewItemRow;
-			int32 AddItemCount = FMath::Min(NewItemCount, ItemRow->MaxStackCount);
-			ItemArray[i].CurrentStackCount = AddItemCount;
-			ItemArray[i].MaxStackCount = ItemRow->MaxStackCount;
-			NewItemCount -= AddItemCount;
+			int32 AddCount = FMath::Min(NewItemCount, EmptySpace);
+
+			ItemArray[i].CurrentStackCount += AddCount;
+			NewItemCount -= AddCount;
+
+			if (NewItemCount == 0) break;
 		}
 	}
 
-	if (NewItemCount > 0)
+	while (NewItemCount > 0)
 	{
-		// Todo : If Item Remain because Inventory is full
+		int32 AddCount = FMath::Min(ItemInfo->MaxStackCount, NewItemCount);
+		NewItemCount -= AddCount;
+		FItemInstance NewItem;
+		NewItem.CurrentStackCount = AddCount;
+		NewItem.ItemRow = NewItemRow;
+		NewItem.MaxStackCount = ItemInfo->MaxStackCount;
+		NewItem.bIsEquiped = false;
+		ItemArray.Add(NewItem);
+	}
+
+	if (UpdateInventory.IsBound())
+	{
+		UpdateInventory.Execute();
 	}
 }
 
@@ -99,16 +97,27 @@ FItem* UInventoryComponent::GetItemInfo(FName NewItemRow)
 	return ItemDataTable->FindRow<FItem>(NewItemRow, FString(""));
 }
 
-TArray<int32>& UInventoryComponent::GetEquipmentSlot()
+FItem* UInventoryComponent::GetItemInfoAtInventory(int32 ItemIndex)
+{
+	if (ItemIndex < 0 || ItemIndex >= ItemArray.Num()) nullptr;
+
+	FName ItemRow = ItemArray[ItemIndex].ItemRow;
+
+	return ItemDataTable->FindRow<FItem>(ItemRow, FString(""));
+}
+
+TArray<FItemInstance>& UInventoryComponent::GetEquipmentSlot()
 {
 	return EquipmentSlot;
 }
 
-void UInventoryComponent::AttachItemOption(EEquipmentType TargetEuipmentType)
+void UInventoryComponent::AttachItemOption(EEquipmentType NewEquipmentType)
 {
 	// Todo : Apply Item Effects
+	FItemInstance& ItemInstance = EquipmentSlot[(int32)NewEquipmentType];
+	if (ItemInstance.ItemRow.IsNone()) return;
 
-	FItem* Item = ItemDataTable->FindRow<FItem>(ItemArray[EquipmentSlot[(int32)TargetEuipmentType]].ItemRow, FString(""));
+	FItem* Item = ItemDataTable->FindRow<FItem>(ItemInstance.ItemRow, FString(""));
 	checkf(Item != nullptr, TEXT("Cannot Find Item"));
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
 	checkf(StatusComponent != nullptr, TEXT("Character has not StatusComponent"));
@@ -117,7 +126,7 @@ void UInventoryComponent::AttachItemOption(EEquipmentType TargetEuipmentType)
 	StatusComponent->SetArmor(StatusComponent->GetArmor() + Item->BonusArmor);
 	StatusComponent->SetCognition(StatusComponent->GetCognition() + Item->BonusCognition);
 	StatusComponent->SetEvasion(StatusComponent->GetEvasion() + Item->BonusEvasion);
-	StatusComponent->SetMaxFocus(StatusComponent->GetMaxFocus() + Item->BonusFocus);
+	StatusComponent->SetMaxFocus(StatusComponent->GetMaxFocus() + Item->BonusMaxFocus);
 	StatusComponent->SetIntelligence(StatusComponent->GetIntelligence() + Item->BonusIntelligence);
 	StatusComponent->SetLuck(StatusComponent->GetLuck() + Item->BonusLuck);
 	StatusComponent->SetResistance(StatusComponent->GetResistance() + Item->BonusResistance);
@@ -127,9 +136,12 @@ void UInventoryComponent::AttachItemOption(EEquipmentType TargetEuipmentType)
 	StatusComponent->SetVitality(StatusComponent->GetVitality() + Item->BonusVitality);
 }
 
-void UInventoryComponent::DetachItemOption(EEquipmentType TargetEuipmentType)
+void UInventoryComponent::DetachItemOption(EEquipmentType NewEquipmentType)
 {
-	FItem* Item = ItemDataTable->FindRow<FItem>(ItemArray[EquipmentSlot[(int32)TargetEuipmentType]].ItemRow, FString(""));
+	FItemInstance& ItemInstance = EquipmentSlot[(int32)NewEquipmentType];
+	if (ItemInstance.ItemRow.IsNone()) return;
+
+	FItem* Item = ItemDataTable->FindRow<FItem>(ItemInstance.ItemRow, FString(""));
 	checkf(Item != nullptr, TEXT("Cannot Find Item"));
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->GetComponentByClass(UStatusComponent::StaticClass()));
 	checkf(StatusComponent != nullptr, TEXT("Character has not StatusComponent"));
@@ -138,7 +150,7 @@ void UInventoryComponent::DetachItemOption(EEquipmentType TargetEuipmentType)
 	StatusComponent->SetArmor(StatusComponent->GetArmor() - Item->BonusArmor);
 	StatusComponent->SetCognition(StatusComponent->GetCognition() - Item->BonusCognition);
 	StatusComponent->SetEvasion(StatusComponent->GetEvasion() - Item->BonusEvasion);
-	StatusComponent->SetMaxFocus(StatusComponent->GetMaxFocus() - Item->BonusFocus);
+	StatusComponent->SetMaxFocus(StatusComponent->GetMaxFocus() - Item->BonusMaxFocus);
 	StatusComponent->SetIntelligence(StatusComponent->GetIntelligence() - Item->BonusIntelligence);
 	StatusComponent->SetLuck(StatusComponent->GetLuck() - Item->BonusLuck);
 	StatusComponent->SetResistance(StatusComponent->GetResistance() - Item->BonusResistance);
@@ -148,62 +160,100 @@ void UInventoryComponent::DetachItemOption(EEquipmentType TargetEuipmentType)
 	StatusComponent->SetVitality(StatusComponent->GetVitality() - Item->BonusVitality);
 }
 
-bool UInventoryComponent::EquipItem(int ItemIndex)
+bool UInventoryComponent::EquipItem(int32 ItemIndex)
 {
 	if (ItemIndex < 0 || ItemIndex >= ItemArray.Num())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid ItemIndex"));
 		return false;
 	}
-	FItemInstance& TargetItemInstance = ItemArray[ItemIndex];
-	if (TargetItemInstance.ItemRow == FName("None"))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Target InventorySlot is Empty"));
-		return false;
-	}
-	FItem* TargetItemInfo = ItemDataTable->FindRow<FItem>(TargetItemInstance.ItemRow, FString(""));
-	if (TargetItemInfo == nullptr)
+	FItemInstance& ItemInstance = ItemArray[ItemIndex];
+	FItem* ItemInfo = ItemDataTable->FindRow<FItem>(ItemInstance.ItemRow, FString(""));
+	if (ItemInfo == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Can not find Item at ItemRow"));
 		return false;
 	}
-	if (TargetItemInstance.bIsEquiped)
+	if (ItemInstance.bIsEquiped)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target Item is already Equiped"));
 		return false;
 	}
-	if (TargetItemInfo->ItemType != EItemType::EQUIPMENT)
+	if (ItemInfo->ItemType != EItemType::EQUIPMENT)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target Item Type is not Equipment"));
 		return false;
 	}
-	EEquipmentType TargetEquipmentType = TargetItemInfo->EquipmentType;
+	EEquipmentType EquipmentType = ItemInfo->EquipmentType;
 
-	UnEquipItem(TargetEquipmentType);
+	UnEquipItem(EquipmentType);
 
-	TargetItemInstance.bIsEquiped = true;
-	EquipmentSlot[(int32)TargetEquipmentType] = ItemIndex;
+	ItemInstance.bIsEquiped = true;
+	EquipmentSlot[(int32)EquipmentType] = ItemInstance;
+	ItemArray.RemoveAt(ItemIndex);
 
-	AttachItemOption(TargetEquipmentType);
+	AttachItemOption(EquipmentType);
 	// Todo : Update Inventory Widget;
+
+	if (UpdateInventory.IsBound())
+	{
+		UpdateInventory.Execute();
+	}
 
 	return true;
 }
 
 bool UInventoryComponent::UnEquipItem(EEquipmentType TargetSlot)
 {
-	int32 WornedEquipmentIndex = EquipmentSlot[(int32)TargetSlot];
-	if (WornedEquipmentIndex == -1)
+	FItemInstance& ItemInstance = EquipmentSlot[(int32)TargetSlot];
+	if (ItemInstance.ItemRow.IsNone())
 	{
 		// Alreay Empty Slot
+		UE_LOG(LogTemp, Warning, TEXT("Slot is Already None"));
 		return true;
 	}
 
 	DetachItemOption(TargetSlot);
 
-	ItemArray[WornedEquipmentIndex].bIsEquiped = false;
+	ItemInstance.bIsEquiped = false;
+
+	ItemArray.Add(ItemInstance);
+
 	// Todo : Disapply Item Effects
-	EquipmentSlot[(int32)TargetSlot] = -1;
+	EquipmentSlot[(int32)TargetSlot].ItemRow = FName("None");
+
+	if (UpdateInventory.IsBound())
+	{
+		UpdateInventory.Execute();
+	}
 	
 	return true;
+}
+
+bool UInventoryComponent::UseItem(int32 ItemIndex)
+{
+	FItemInstance& ItemInstance = ItemArray[ItemIndex];
+	FItem* ItemInfo = GetItemInfoAtInventory(ItemIndex);
+	if (ItemInfo == nullptr) return false;
+
+	
+	AMyCharacter* OwnerCharacter = Cast<AMyCharacter>(GetOwner());
+
+	AItemBase* ItemBase = GetWorld()->SpawnActor<AItemBase>(ItemInfo->ItemClass, FVector(0, 0, 0), FRotator(0, 0, 0));
+	checkf(ItemBase != nullptr, TEXT("ItemBase is not Spawned"));
+
+	UE_LOG(LogTemp, Warning, TEXT("ItemBase Spawned"));
+	ItemBase->Use(OwnerCharacter);
+	
+	if (--ItemInstance.CurrentStackCount == 0)
+	{
+		ItemArray.RemoveAt(ItemIndex);
+	}
+
+	if (UpdateInventory.IsBound())
+	{
+		UpdateInventory.Execute();
+	}
+
+	return false;
 }

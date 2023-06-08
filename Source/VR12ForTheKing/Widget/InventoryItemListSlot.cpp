@@ -4,11 +4,33 @@
 #include "../Widget/InventoryItemListSlot.h"
 
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
+#include "Components/Image.h"
 
 #include "../Component/InventoryComponent.h"
+#include "../Character/MyCharacter.h"
+#include "StatusWidget.h"
 
-void UInventoryItemListSlot::InitWidget(FItem* NewItem, FItemInstance* NewItemInstance)
+void UInventoryItemListSlot::InitWidget(UStatusWidget* NewStatusWidget, AMyCharacter* NewOwnerCharacter, int32 NewItemIndex)
 {
-	TB_ItemName->SetText(NewItem->ItemName);
-	TB_ItemCount->SetText(FText::FromString(FString::FromInt(NewItemInstance->CurrentStackCount)));
+	StatusWidget = NewStatusWidget;
+	OwnerCharacter = NewOwnerCharacter;
+	ItemIndex = NewItemIndex;
+
+	Btn_Item->OnClicked.AddDynamic(this, &UInventoryItemListSlot::ButtonOnClicked);
+
+	UInventoryComponent* InventoryComponent = Cast<UInventoryComponent>(OwnerCharacter->FindComponentByClass(UInventoryComponent::StaticClass()));
+	checkf(InventoryComponent != nullptr, TEXT("OwnerCharacter has not InventoryComponent"));
+	
+	FItemInstance& ItemInstance = InventoryComponent->GetItemArray()[ItemIndex];
+	FItem* ItemInfo = InventoryComponent->GetItemInfoAtInventory(ItemIndex);
+
+	Img_ItemIcon->SetBrushFromTexture(ItemInfo->ItemIcon);
+	TB_ItemName->SetText(ItemInfo->ItemName);
+	TB_ItemCount->SetText(FText::FromString(FString::FromInt(ItemInstance.CurrentStackCount)));
+}
+
+void UInventoryItemListSlot::ButtonOnClicked()
+{
+	StatusWidget->InitItemSelectMenu(OwnerCharacter, ItemIndex);
 }
