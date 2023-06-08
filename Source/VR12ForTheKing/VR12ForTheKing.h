@@ -4,6 +4,12 @@
 
 #include "CoreMinimal.h"
 
+// Delegate
+
+DECLARE_DELEGATE(FDele_Single);
+DECLARE_DELEGATE_OneParam(FDele_Single_Int, int32);
+DECLARE_DELEGATE_OneParam(FDele_Single_Bool, bool);
+
 // Event Enum
 
 UENUM(BlueprintType)

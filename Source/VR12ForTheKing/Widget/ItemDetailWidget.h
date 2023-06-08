@@ -4,51 +4,53 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "InventoryWidget.generated.h"
+#include "ItemDetailWidget.generated.h"
 
 /**
  * 
  */
-class AMyCharacter;
-class UVerticalBox;
-class UInventoryItemListSlot;
+struct FItem;
+class UBorder;
+class UImage;
 class UTextBlock;
-class UStatusWidget;
+class UHorizontalBox;
+class UVerticalBox;
 UCLASS()
-class VR12FORTHEKING_API UInventoryWidget : public UUserWidget
+class VR12FORTHEKING_API UItemDetailWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-protected:
-	virtual void NativeConstruct() override;
 public:
-	void InitWidget(UStatusWidget* StatusWidget, AMyCharacter* NewTargetCharacter);
-
-private:
-	AMyCharacter* TargetCharacter;
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UVerticalBox* VB_ItemList;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UVerticalBox* VB_EquipmentSlot;
+	void InitWidget(FItem* NewItemInfo);
 	
-	TArray<UTextBlock*> EquipmentNameArray;
+private:
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UBorder* Brd_ItemImage;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UBorder* Brd_ItemDiscription;
+	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UImage* Img_Item;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UImage* Img_ItemIcon;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UImage* Img_TwoHand;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_WeaponSlotName;
+	UTextBlock* TB_ItemName;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_ShieldSlotName;
+	UTextBlock* TB_ItemRank;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_HeadgearSlotName;
+	UTextBlock* TB_Damage;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_ArmorSlotName;
+	UTextBlock* TB_DamageType;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_FootwearSlotName;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_NecklaceSlotName;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_TrinketSlotName;
+	UTextBlock* TB_ItemDiscription;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UInventoryItemListSlot> InventoryItemListSlotClass;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UHorizontalBox* HB_StatIcon;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UHorizontalBox* HB_Action;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UVerticalBox* VB_WeaponDiscription;
 };

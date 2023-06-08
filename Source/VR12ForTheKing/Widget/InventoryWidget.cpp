@@ -22,27 +22,28 @@ void UInventoryWidget::NativeConstruct()
 	EquipmentNameArray.Add(TB_TrinketSlotName);
 }
 
-void UInventoryWidget::InitWidget(AMyCharacter* NewTargetCharacter)
+void UInventoryWidget::InitWidget(UStatusWidget* StatusWidget, AMyCharacter* NewTargetCharacter)
 {
 	TargetCharacter = NewTargetCharacter;
 	UInventoryComponent* InventoryComponent = Cast<UInventoryComponent>(TargetCharacter->GetComponentByClass(UInventoryComponent::StaticClass()));
 	checkf(InventoryComponent != nullptr, TEXT("Target Character has not InventoryComponent"));
 	TArray<FItemInstance>& ItemArray = InventoryComponent->GetItemArray();
-	TArray<int32>& EquipmentSlot = InventoryComponent->GetEquipmentSlot();
+	TArray<FItemInstance>& EquipmentSlot = InventoryComponent->GetEquipmentSlot();
 
 	// Init EquipmentSlot
 	
-	for (int i = 0; i < EquipmentSlot.Num() - 2; ++i)
+	for (int i = 1; i < EquipmentSlot.Num() - 1; ++i)
 	{
-		int32 TargetItemIndex = EquipmentSlot[i + 1];
-		if (TargetItemIndex != -1)
+		if (EquipmentSlot[i].ItemRow.IsNone())
 		{
-			FItem* ItemInfo = InventoryComponent->GetItemInfo(ItemArray[TargetItemIndex].ItemRow);
-			EquipmentNameArray[i]->SetText(ItemInfo->ItemName);
+			EquipmentNameArray[i - 1]->SetText(FText());
 		}
 		else
 		{
-			EquipmentNameArray[i]->SetText(FText());
+			FItem* ItemInfo = InventoryComponent->GetItemInfo(EquipmentSlot[i].ItemRow);
+			checkf(ItemInfo != nullptr, TEXT("Cannot find Item in DataTable"));
+
+			EquipmentNameArray[i - 1]->SetText(ItemInfo->ItemName);
 		}
 	}
 	
@@ -55,12 +56,6 @@ void UInventoryWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	{
 		UInventoryItemListSlot* InventoryItemListSlot = CreateWidget<UInventoryItemListSlot>(GetWorld()->GetFirstPlayerController(), InventoryItemListSlotClass);
 		VB_ItemList->AddChildToVerticalBox(InventoryItemListSlot);
-
-		if (ItemArray[i].ItemRow != "None")
-		{
-			FItem* Item = InventoryComponent->GetItemInfo(ItemArray[i].ItemRow);
-			InventoryItemListSlot->InitWidget(Item, &ItemArray[i]);
-		}
-		InventoryItemListSlot->SetVisibility(ItemArray[i].bIsEquiped || ItemArray[i].ItemRow == "None" ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+		InventoryItemListSlot->InitWidget(StatusWidget, TargetCharacter, i);
 	}
 }

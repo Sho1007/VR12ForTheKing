@@ -11,6 +11,7 @@
 #include "../Component/StatusComponent.h"
 #include "../Component/InventoryComponent.h"
 #include "../Widget/StatusWidget.h"
+#include "../Widget/InventorySlotButton.h"
 
 void UStatusBoardWidget::NativeConstruct()
 {
@@ -18,6 +19,17 @@ void UStatusBoardWidget::NativeConstruct()
 
 	Btn_Inventory->OnClicked.AddDynamic(this, &UStatusBoardWidget::InventoryButtonOnClicked);
 	Btn_Status->OnClicked.AddDynamic(this, &UStatusBoardWidget::StatusButtonOnClicked);
+
+	InventorySlotArray.Add(Btn_InvenSlot0);
+	InventorySlotArray.Add(Btn_InvenSlot1);
+	InventorySlotArray.Add(Btn_InvenSlot2);
+	InventorySlotArray.Add(Btn_InvenSlot3);
+	InventorySlotArray.Add(Btn_InvenSlot4);
+	InventorySlotArray.Add(Btn_InvenSlot5);
+	InventorySlotArray.Add(Btn_InvenSlot6);
+	InventorySlotArray.Add(Btn_InvenSlot7);
+	InventorySlotArray.Add(Btn_InvenSlot8);
+	InventorySlotArray.Add(Btn_InvenSlot9);
 }
 
 FReply UStatusBoardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -78,11 +90,44 @@ void UStatusBoardWidget::UpdateStatus()
 	UpdateLuck(StatusComponent->GetLuck());
 }
 
+void UStatusBoardWidget::UpdateInventory()
+{
+	TArray<FItemInstance>& ItemArray = OwnerInventory->GetItemArray();
+
+	UE_LOG(LogTemp, Warning, TEXT("UpdateInventory is Called : %d"), ItemArray.Num());
+
+	int32 SlotIndex = 0;
+
+	for (int i = 0; i < ItemArray.Num(); ++i)
+	{
+		FName ItemRow = ItemArray[i].ItemRow;
+		FItem* ItemInfo = OwnerInventory->GetItemInfo(ItemRow);
+		if (ItemInfo->ItemType != EItemType::CONSUMABLE) continue;
+		InventorySlotArray[SlotIndex]->InitWidget(OwnerInventory, i);
+		InventorySlotArray[SlotIndex++]->SetVisibility(ESlateVisibility::Visible);
+		if (SlotIndex == 10) break;
+	}
+
+	for (; SlotIndex < 10; ++SlotIndex)
+	{
+		InventorySlotArray[SlotIndex]->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	ParentWidget->UpdateLayoutWidget(OwnerCharacter);
+}
+
 void UStatusBoardWidget::SetOwnerCharacter(AMyCharacter* NewOwnerCharacter)
 {
 	OwnerCharacter = NewOwnerCharacter;
 
+	OwnerInventory = Cast<UInventoryComponent>(NewOwnerCharacter->FindComponentByClass(UInventoryComponent::StaticClass()));
+
+	checkf(OwnerInventory != nullptr, TEXT("Owner has not Inventory Component"));
+
+	OwnerInventory->UpdateInventory.BindUFunction(this, FName(TEXT("UpdateInventory")));
+
 	UpdateStatus();
+	UpdateInventory();
 }
 
 AMyCharacter* UStatusBoardWidget::GetOwnerCharacter() const
@@ -94,6 +139,11 @@ void UStatusBoardWidget::SetParent(UStatusWidget* NewParentWidget)
 {
 	checkf(NewParentWidget != nullptr, TEXT("NewParentWidget is not valid"));
 	ParentWidget = NewParentWidget;
+
+	for (int i = 0; i < InventorySlotArray.Num(); ++i)
+	{
+		InventorySlotArray[i]->NativeConstruct(ParentWidget);
+	}
 }
 
 void UStatusBoardWidget::InventoryButtonOnClicked()
