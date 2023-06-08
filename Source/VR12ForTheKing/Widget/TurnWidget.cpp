@@ -42,7 +42,7 @@ void UTurnWidget::AddHeartCount()
 {
 	UHeartSlot* NewHeartSlot = CreateWidget<UHeartSlot>(GetWorld()->GetFirstPlayerController(), HeartSlotClass);
 	HeartBox->AddChildToHorizontalBox(NewHeartSlot);
-	
+
 }
 
 void UTurnWidget::DeleteHeartCount()

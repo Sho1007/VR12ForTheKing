@@ -10,22 +10,22 @@
 class UBattleWidget;
 class AMyCharacter;
 class ABattleMap;
-UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VR12FORTHEKING_API UBattleManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UBattleManagerComponent();
 
 
-	
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -37,12 +37,14 @@ public:
 	void InitBattle(AActor* BattleTile);
 	void MoveToNextUnitTurn();
 	void RemoveDeadUnitFromArray();
-	void CountDeadCharacter();
+	void ResurrectCharacter(AMyCharacter* ResurrectCharacter);
+
 public:
 	// Getter / Setter
 	bool SetGameMode(AGameModeBase* NewGameMode);
 	bool IsBattle();
-	int32 GetDeadPlayerNum();
+	AMyCharacter* GetPlayerCharacter(int32 Index);
+	int32 GetPlayerCharacterArrayNum();
 private:
 	// Battle Process
 	bool SpawnEnemy();
@@ -57,41 +59,41 @@ private:
 	// Battle Var
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TArray<AMyCharacter*> EnemyCharacterArray;
+		TArray<AMyCharacter*> EnemyCharacterArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TArray<AMyCharacter*> PlayerCharacterArray;
+		TArray<AMyCharacter*> PlayerCharacterArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TArray<AMyCharacter*> DeadCharacterArray;
+		TArray<AMyCharacter*> DeadCharacterArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	int32 DeadEnemyCount;
+		int32 DeadEnemyCount;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	int32 DeadPlayerCount;
+		int32 DeadPlayerCount;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	int32 CurrentBattleRound;
+		int32 CurrentBattleRound;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TArray<AMyCharacter*> BattleTurnArray;
+		TArray<AMyCharacter*> BattleTurnArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TArray<AMyCharacter*> UseBattleTurnArray;
+		TArray<AMyCharacter*> UseBattleTurnArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	ABattleMap* BattleMap;
+		ABattleMap* BattleMap;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
-	TArray<ABattleMap*> BattleMapArray;
+		TArray<ABattleMap*> BattleMapArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<ABattleMap> BattleMapClass;
+		TSubclassOf<ABattleMap> BattleMapClass;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
-	int32 SpawnEnemyIndex;
+		int32 SpawnEnemyIndex;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
-	int32 NextTurnIndex;
+		int32 NextTurnIndex;
 	// BattleWidget Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UBattleWidget> BattleWidgetClass;
+		TSubclassOf<UBattleWidget> BattleWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	UBattleWidget* BattleWidget;
+		UBattleWidget* BattleWidget;
 
 	AGameModeBase* GameMode;
 
 	bool bIsBattle;
 	//function
-	
-	
+
+
 };

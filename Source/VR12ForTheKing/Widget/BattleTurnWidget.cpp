@@ -11,7 +11,7 @@ void UBattleTurnWidget::SetTurnArray(const TArray<AMyCharacter*>& NewTurnArray)
 {
 
 	BasicTurnArray = NewTurnArray;
-	
+
 	InitBattleTurnWidget();
 }
 
@@ -20,23 +20,23 @@ void UBattleTurnWidget::InitBattleTurnWidget()
 
 	int32 ArrayLength = BasicTurnArray.Num();
 
-	for (int i = 0; i < ArrayLength; ++i) 
+	for (int i = 0; i < ArrayLength; ++i)
 	{
-		
-			UBattleTurnWidgetSlot* NewBattleTurnWidgetSlot = CreateWidget<UBattleTurnWidgetSlot>(GetWorld()->GetFirstPlayerController(), BattleTurnWidgetSlotClass);
-			checkf(NewBattleTurnWidgetSlot != nullptr, TEXT("NewBattleTurnWidgetSlot is not created"));
-			if (BasicTurnArray[i] != nullptr)
-			{
-				NewBattleTurnWidgetSlot->InitWidget(BasicTurnArray[i]);
-			}
-			else if(BasicTurnArray[i] == nullptr)
-			{
-				NewBattleTurnWidgetSlot->SetVisibility(ESlateVisibility::Collapsed);
-			}
-			TurnImageArray->AddChildToHorizontalBox(NewBattleTurnWidgetSlot);
+
+		UBattleTurnWidgetSlot* NewBattleTurnWidgetSlot = CreateWidget<UBattleTurnWidgetSlot>(GetWorld()->GetFirstPlayerController(), BattleTurnWidgetSlotClass);
+		checkf(NewBattleTurnWidgetSlot != nullptr, TEXT("NewBattleTurnWidgetSlot is not created"));
+		if (BasicTurnArray[i] != nullptr)
+		{
+			NewBattleTurnWidgetSlot->InitWidget(BasicTurnArray[i]);
+		}
+		else if (BasicTurnArray[i] == nullptr)
+		{
+			NewBattleTurnWidgetSlot->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		TurnImageArray->AddChildToHorizontalBox(NewBattleTurnWidgetSlot);
 	}
-	
-	
+
+
 
 }
 
@@ -62,9 +62,9 @@ void UBattleTurnWidget::RemoveUnitFromImageArray(int32 Index)
 
 }
 
-void UBattleTurnWidget::AddUnitToImageArray(AMyCharacter* NewCharacter,int32 Index)
+void UBattleTurnWidget::AddUnitToImageArray(AMyCharacter* NewCharacter, int32 Index)
 {
 	UBattleTurnWidgetSlot* NewBattleTurnWidgetSlot = CreateWidget<UBattleTurnWidgetSlot>(GetWorld()->GetFirstPlayerController(), BattleTurnWidgetSlotClass);
 	NewBattleTurnWidgetSlot->InitWidget(NewCharacter);
-	TurnImageArray->InsertChildAt(Index,NewBattleTurnWidgetSlot);
+	TurnImageArray->InsertChildAt(Index, NewBattleTurnWidgetSlot);
 }

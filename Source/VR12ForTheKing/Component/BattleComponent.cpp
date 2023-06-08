@@ -7,7 +7,7 @@
 #include "StatusComponent.h"
 #include "../MyGameModeBase.h"
 #include "BattleManagerComponent.h"
-
+#include "../Widget/ActionWidget.h"
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
 {
@@ -25,7 +25,7 @@ void UBattleComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -83,8 +83,19 @@ void UBattleComponent::RandomEnemyAction()
 	FString ActionName = ActionArray[ActionNum].ToString();
 	UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *ActionName);
 
-	DoAction(ActionArray[ActionNum]);
-	
+	if (ActionName == "NormalAttack")
+	{
+		MeleeAttack();
+	}
+	else if (ActionName == "WeakHeal")
+	{
+		WeakHeal();
+	}
+	else if (ActionName == "RangeAttack")
+	{
+		RangetAttack();
+	}
+
 }
 
 void UBattleComponent::BattleAction_Implementation()
@@ -97,24 +108,26 @@ void UBattleComponent::Attack_Implementation()
 
 bool UBattleComponent::MeleeAttack()
 {
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("MeleeAttack"));
 	if (ActionTarget == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
 		return false;
 
 	}
-		
+
 
 	bGoToTarget = true;
 	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
 	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
-	
+
 	return true;
 }
 
 void UBattleComponent::RangetAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("RangeAttack"));
 	SetCharacterRotation();
 	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
 	GiveDamage();
@@ -125,12 +138,20 @@ void UBattleComponent::RangetAttack()
 
 void UBattleComponent::WeakHeal()
 {
+	UE_LOG(LogTemp, Warning, TEXT("WeakHeal"));
 	EndTurn();
 }
 
-void UBattleComponent::Resurrection()
+void UBattleComponent::Resurrection(AMyCharacter* TargetCharacter)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Resurrection"));
+	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	UBattleManagerComponent* NewBattleManagerComponent =
+		Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+
+	NewBattleManagerComponent->ResurrectCharacter(TargetCharacter);
+
+	EndTurn();
 }
 
 void UBattleComponent::BackToBattlePos()
@@ -144,7 +165,7 @@ void UBattleComponent::BackToBattlePos()
 
 int32 UBattleComponent::CalculateDamage()
 {
-	
+
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
 	int32 Damage = StatusComponent->GetAttackPower() + 0;// have to put LevelDamage at place of 0
 	return Damage;
@@ -158,56 +179,56 @@ void UBattleComponent::GiveDamage()
 	FString DamagedCharacterName = ActionTarget->GetName();
 	UE_LOG(LogTemp, Warning, TEXT("%s Current Health %d  Damge %d DamagedHP %d"), *DamagedCharacterName, TargetStatusComponent->GetCurrentHP(), CalculateDamage(), DamagedHP);
 	TargetStatusComponent->SetCurrentHP(DamagedHP);
-	
-		AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-		UBattleManagerComponent* NewBattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
 
-		NewBattleManagerComponent->RemoveDeadUnitFromArray();
-		
-	
+	AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	UBattleManagerComponent* NewBattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+
+	NewBattleManagerComponent->RemoveDeadUnitFromArray();
+
+
 }
 
 
 bool UBattleComponent::IsDead()
 {
-	
-		UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
-		int32 TargetCurrentHP = TargetStatusComponent->GetCurrentHP();
 
-		if (TargetCurrentHP <= 0)
-		{
-			TargetCurrentHP = 0;
-			FString DeadCharacterName = GetOwner()->GetName();
-			UE_LOG(LogTemp, Warning, TEXT("%s is Dead"), *DeadCharacterName);
+	UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
+	int32 TargetCurrentHP = TargetStatusComponent->GetCurrentHP();
 
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+	if (TargetCurrentHP <= 0)
+	{
+		TargetCurrentHP = 0;
+		FString DeadCharacterName = GetOwner()->GetName();
+		UE_LOG(LogTemp, Warning, TEXT("%s is Dead"), *DeadCharacterName);
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
-	
 
 
-void UBattleComponent::DoAction(FName NewActionName)
+
+void UBattleComponent::DoAction(UActionWidget* ActionWidget)
 {
 
-	if(NewActionName == "NormalAttack")
+	if (ActionWidget->GetActionName() == "NormalAttack")
 	{
 		MeleeAttack();
 	}
-	else if(NewActionName == "WeakHeal")
+	else if (ActionWidget->GetActionName() == "WeakHeal")
 	{
 		WeakHeal();
 	}
-	else if (NewActionName == "RangeAttack")
+	else if (ActionWidget->GetActionName() == "RangeAttack")
 	{
 		RangetAttack();
 	}
-	else if (NewActionName == "Resurrection")
+	else if (ActionWidget->GetActionName() == "Resurrection")
 	{
-		Resurrection();
+		Resurrection(ActionWidget->GetDeadPlayer());
 	}
 
 }
@@ -217,45 +238,29 @@ void UBattleComponent::ReachToDestination()
 	//UE_LOG(LogTemp, Warning, TEXT("ReachToDestination"));
 	if (bGoToTarget)
 	{
-		
+
 		bGoToTarget = false;
 
 		//give damage to actiontarget
 		GiveDamage();
-		
+
 		//go back to BaseTransform position after give damage
 
 		AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
 		FQuat GoBackQuat(0.0f, 0.0f, 1.0f, 0.0f);// use to change character rotation
-		GetOwner()->SetActorRotation(BaseTransform.GetRotation()* GoBackQuat, ETeleportType::None);
+		GetOwner()->SetActorRotation(BaseTransform.GetRotation() * GoBackQuat, ETeleportType::None);
 		NewCharacter->SetDestination(BaseTransform.GetLocation(), 0.0, 1.0);
 	}
 	else
 	{
 		// Return To BaseTransform
 		BackToBattlePos();
-		
+
 		EndTurn();
 	}
 }
 
-void UBattleComponent::AddResurrectionToActionArray()
-{
-	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	UBattleManagerComponent* NewBattleManagerComponent =
-	Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-	int32 DeadPlayerNum = NewBattleManagerComponent->GetDeadPlayerNum();
-	if (DeadPlayerNum > 0)
-	{
-		for (int i = 0; i < DeadPlayerNum/2; ++i)
-		{
-			ActionArray.Add("Resurrection");
-		}
-	
-	}
 
-	
-}
 
 
 

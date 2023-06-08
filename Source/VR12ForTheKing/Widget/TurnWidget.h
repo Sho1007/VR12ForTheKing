@@ -7,7 +7,7 @@
 #include "TurnWidget.generated.h"
 
 /**
- * 
+ *
  */
 
 class UMoveTurnWidget;
@@ -25,34 +25,34 @@ class VR12FORTHEKING_API UTurnWidget : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintCallable, CallInEditor)
-	void Get_Day_Text();
+		void Get_Day_Text();
 
 	UFUNCTION(BlueprintCallable)
-	void ChaosCount();
+		void ChaosCount();
 
 	UFUNCTION(BlueprintCallable)
-	void AddHeartCount();
+		void AddHeartCount();
 
 	UFUNCTION(BlueprintCallable)
-	void DeleteHeartCount();
+		void DeleteHeartCount();
 
 	UFUNCTION(BlueprintCallable)
-	void OpenSettion();
+		void OpenSettion();
 
 	UFUNCTION(BlueprintCallable)
-	void TurnOver();
+		void TurnOver();
 
 	UFUNCTION(BlueprintCallable)
-	void ChangetoBattleTurnWidget();
+		void ChangetoBattleTurnWidget();
 
 	UFUNCTION(BlueprintCallable)
-	void ChangetoMoveTurnWidget();
+		void ChangetoMoveTurnWidget();
 
 	UBattleTurnWidget* GetBattleTurnWidget()const;
 
 	void InitWidget();
 
-	
+
 private:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
@@ -63,25 +63,25 @@ private:
 
 	//widget
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UBattleTurnWidget* WBP_BattleTurnWidget;
+		UBattleTurnWidget* WBP_BattleTurnWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UMoveTurnWidget* WBP_MoveTurnWidget;
+		UMoveTurnWidget* WBP_MoveTurnWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UWidgetSwitcher* MoveBattleSwitcher;
+		UWidgetSwitcher* MoveBattleSwitcher;
 
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UHorizontalBox* HeartBox;
+		UHorizontalBox* HeartBox;
 
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UImage* Chaos1;
+		UImage* Chaos1;
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UImage* Chaos2;
+		UImage* Chaos2;
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UImage* Chaos3;
+		UImage* Chaos3;
 
 	UPROPERTY(BluePrintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* Day;
-	
+		UTextBlock* Day;
+
 };

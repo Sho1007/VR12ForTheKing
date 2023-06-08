@@ -21,19 +21,19 @@ class VR12FORTHEKING_API UBattleTurnWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetTurnArray(const TArray<AMyCharacter*>& NewTurnArray);
+		void SetTurnArray(const TArray<AMyCharacter*>& NewTurnArray);
 
 	UFUNCTION(BlueprintCallable)
-	void InitBattleTurnWidget();
+		void InitBattleTurnWidget();
 
 	UFUNCTION(BlueprintCallable)
-	void MoveToNextTurn(AMyCharacter* NewCharacter = nullptr);
+		void MoveToNextTurn(AMyCharacter* NewCharacter = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveUnitFromImageArray(int32 Index);
+		void RemoveUnitFromImageArray(int32 Index);
 
 	UFUNCTION(BlueprintCallable)
-	void AddUnitToImageArray(AMyCharacter* NewCharacter, int32 Index);
+		void AddUnitToImageArray(AMyCharacter* NewCharacter, int32 Index);
 private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> BasicTurnArray;
@@ -41,12 +41,12 @@ private:
 		TSubclassOf<UBattleTurnWidgetSlot> BattleTurnWidgetSlotClass;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		UBattleTurnWidgetSlot* BattleTurnWidgetSlot;
-	
-	
+
+
 
 
 	//widget
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = true, BindWidget))
-	UHorizontalBox* TurnImageArray;
-	
+		UHorizontalBox* TurnImageArray;
+
 };

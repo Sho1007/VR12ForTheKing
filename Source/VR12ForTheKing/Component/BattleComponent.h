@@ -17,34 +17,35 @@ struct FAction : public FTableRowBase
 {
 	GENERATED_BODY()
 
+		UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UTexture2D* Image;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UTexture2D* Image;
+		FText Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FText Name;
+		FText Discription;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FText Discription;
+		int32 Power;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Power;
+		int32 CheckCount;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 CheckCount;
+		int32 CheckPercent;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 CheckPercent;
+		EStatusType StatType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EStatusType StatType;
+		EActionType ActionType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EActionType ActionType;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EActionRange ActionRange;
+		EActionRange ActionRange;
 };
 
 class AMyCharacter;
 class UStatusComponent;
-UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class UActionWidget;
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UBattleComponent();
 
@@ -52,36 +53,36 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, CallInEditor)
-	void BattleAction();
+		void BattleAction();
 	void BattleAction_Implementation();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Attack();
+		void Attack();
 	void Attack_Implementation();
 
 	UFUNCTION(BlueprintCallable)
-	bool MeleeAttack();
+		bool MeleeAttack();
 
 	UFUNCTION(BlueprintCallable)
-	void RangetAttack();
+		void RangetAttack();
 
 	UFUNCTION(BlueprintCallable)
-	void WeakHeal();
+		void WeakHeal();
 
 	UFUNCTION(BlueprintCallable)
-	void Resurrection();
+		void Resurrection(AMyCharacter* TargerCharacter);
 
 	UFUNCTION(BlueprintCallable)
-	void BackToBattlePos();
+		void BackToBattlePos();
 
 	UFUNCTION(BlueprintCallable)
-	int32 CalculateDamage();
+		int32 CalculateDamage();
 
 	UFUNCTION(BlueprintCallable)
 		void GiveDamage();
@@ -89,25 +90,25 @@ public:
 		bool IsDead();
 
 	UFUNCTION(BlueprintCallable)
-		void DoAction(FName NewActionName);
+		void DoAction(UActionWidget* ActionWidget);
 	UFUNCTION(BlueprintCallable)
-	void ReachToDestination();
+		void ReachToDestination();
 
-	
-	void AddResurrectionToActionArray();
+
+
 
 	//Setter Getter
 	UFUNCTION(BlueprintCallable)
-	void SetCharacterRotation();
+		void SetCharacterRotation();
 
 	UFUNCTION(BlueprintCallable)
-	void SetFactionType(EFactionType NewFactionType);
+		void SetFactionType(EFactionType NewFactionType);
 
-	
+
 	void SetBaseTransform(FTransform NewBaseTransform);
 
 	UFUNCTION(BlueprintCallable)
-	const EFactionType& GetFactionType() const;
+		const EFactionType& GetFactionType() const;
 	const TArray<FName>& GetActionArray() const;
 
 	void SetActionTarget(AMyCharacter* NewActionTarget);
@@ -119,27 +120,28 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EFactionType FactionType;
+		EFactionType FactionType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FName> ActionArray;
+		TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	AMyCharacter* ActionTarget;
-
+		AMyCharacter* ActionTarget;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+		TSubclassOf<UActionWidget> ActionWidgetClass;
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	bool bIsTurnEnd;
+		bool bIsTurnEnd;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	bool GoBack;
-	
+		bool GoBack;
+
 	// Reference
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	bool bGoToTarget;
+		bool bGoToTarget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	AMyCharacter* Character;
+		AMyCharacter* Character;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	FTransform BaseTransform;
-	
+		FTransform BaseTransform;
+
 
 	FRotator CharacterRot;
 };
