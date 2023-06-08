@@ -39,7 +39,6 @@ struct FAction : public FTableRowBase
 
 class AMyCharacter;
 class UStatusComponent;
-class UActionWidget;
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
 {
@@ -76,7 +75,7 @@ public:
 	void WeakHeal();
 
 	UFUNCTION(BlueprintCallable)
-	void Resurrection(AMyCharacter* TargerCharacter);
+	void Resurrection();
 
 	UFUNCTION(BlueprintCallable)
 	void BackToBattlePos();
@@ -90,12 +89,12 @@ public:
 		bool IsDead();
 
 	UFUNCTION(BlueprintCallable)
-		void DoAction(UActionWidget* ActionWidget);
+		void DoAction(FName NewActionName);
 	UFUNCTION(BlueprintCallable)
 	void ReachToDestination();
 
 	
-	
+	void AddResurrectionToActionArray();
 
 	//Setter Getter
 	UFUNCTION(BlueprintCallable)
@@ -125,8 +124,7 @@ protected:
 	TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AMyCharacter* ActionTarget;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UActionWidget> ActionWidgetClass;
+
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	bool bIsTurnEnd;

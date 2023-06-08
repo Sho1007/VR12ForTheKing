@@ -10,8 +10,7 @@
 #include "../Event/TileEventManager.h"
 #include "GameFramework/GameModeBase.h"
 #include "Components/TextBlock.h"
-#include "../Component/BattleManagerComponent.h"
-#include "../MyGameModeBase.h"
+
 void UBattleWidget::HideWidget()
 {
 	this->SetVisibility(ESlateVisibility::Collapsed);
@@ -26,35 +25,19 @@ void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *NewTargetCharacter->GetName());
 	HB_Action->ClearChildren();
+
 	TargetCharacter = NewTargetCharacter;
 	UBattleComponent* BattleComponent = Cast<UBattleComponent>(NewTargetCharacter->GetComponentByClass(UBattleComponent::StaticClass()));
 	checkf(BattleComponent != nullptr, TEXT("Character has no Battle Component"));
-	
+	BattleComponent->AddResurrectionToActionArray();
 	checkf(ActionWidgetClass != nullptr, TEXT("ActionWidgetClass is not valid"));
 	TArray<FName> ActionArray = BattleComponent->GetActionArray();
-	for (int32 i = 0; i < ActionArray.Num(); ++i)
+	for (int i = 0; i < ActionArray.Num(); ++i)
 	{
 		UActionWidget* ActionWidget = CreateWidget<UActionWidget>(GetWorld()->GetFirstPlayerController(), ActionWidgetClass);
 		checkf(ActionWidget != nullptr, TEXT("ActionWidget is not created"));
 		ActionWidget->InitWidget(ActionArray[i], this, BattleComponent);
 		HB_Action->AddChildToHorizontalBox(ActionWidget);
-	}
-	AMyGameModeBase* NewGamModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	UBattleManagerComponent* NewBattleManagerComponent =
-		Cast<UBattleManagerComponent>(NewGamModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-
-	for (int32 i = 0; i < NewBattleManagerComponent->GetPlayerCharacterArrayNum(); ++i)
-	{
-		if (NewBattleManagerComponent->GetPlayerCharacter(i) == NewTargetCharacter) continue;
-		UBattleComponent* NewBatttleComponent = Cast<UBattleComponent>(NewBattleManagerComponent->GetPlayerCharacter(i)->GetComponentByClass(UBattleComponent::StaticClass()));
-		if (NewBatttleComponent->IsDead() == true)
-		{
-			UActionWidget* ResurrectActionWidget = CreateWidget<UActionWidget>(GetWorld()->GetFirstPlayerController(), ActionWidgetClass);
-			checkf(ResurrectActionWidget != nullptr, TEXT("ResurrectActionWidget is not created"));
-			ResurrectActionWidget->InitWidget("Resurrection", this, BattleComponent, NewBattleManagerComponent->GetPlayerCharacter(i));
-			HB_Action->AddChildToHorizontalBox(ResurrectActionWidget);
-		}
-		
 	}
 }
 

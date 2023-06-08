@@ -37,14 +37,12 @@ public:
 	void InitBattle(AActor* BattleTile);
 	void MoveToNextUnitTurn();
 	void RemoveDeadUnitFromArray();
-	void ResurrectCharacter(AMyCharacter* ResurrectCharacter);
-	
+	void CountDeadCharacter();
 public:
 	// Getter / Setter
 	bool SetGameMode(AGameModeBase* NewGameMode);
 	bool IsBattle();
-	AMyCharacter* GetPlayerCharacter(int32 Index);
-	int32 GetPlayerCharacterArrayNum();
+	int32 GetDeadPlayerNum();
 private:
 	// Battle Process
 	bool SpawnEnemy();

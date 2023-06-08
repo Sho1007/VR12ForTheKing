@@ -184,23 +184,11 @@ bool UBattleManagerComponent::IsBattle()
 
 
 
-AMyCharacter* UBattleManagerComponent::GetPlayerCharacter(int32 Index)
+int32 UBattleManagerComponent::GetDeadPlayerNum()
 {
-	if (PlayerCharacterArray.Num() > 0 && Index < PlayerCharacterArray.Num())
-	{
-		return PlayerCharacterArray[Index];
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-int32 UBattleManagerComponent::GetPlayerCharacterArrayNum()
-{
-	return PlayerCharacterArray.Num();
-}
 	
+	return DeadPlayerCount;
+}
 
 bool UBattleManagerComponent::SpawnEnemy()
 {
@@ -337,6 +325,9 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 
 void UBattleManagerComponent::RemoveDeadUnitFromArray()
 {
+	
+	
+
 	UE_LOG(LogTemp, Warning, TEXT("RemoveDeadUnitFromArray called"));
     checkf(UseBattleTurnArray.Num() != 0, TEXT("UseBattleTurnArray is Empty"));
 	
@@ -345,15 +336,7 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray()
 			UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
 			if (NewBattleComponent->IsDead() == true)
 			{
-				if (NewBattleComponent->GetFactionType() == EFactionType::Player)
-				{
-					++DeadPlayerCount;
-					
-				}
-				else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
-				{
-					++DeadEnemyCount;
-				}
+				DeadCharacterArray.Add(UseBattleTurnArray[i]);
 				UseBattleTurnArray.RemoveAt(i);
 			}
 			else if (NewBattleComponent->IsDead() == false)
@@ -362,70 +345,44 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray()
 			}
 			UE_LOG(LogTemp, Warning, TEXT("ArrayNum %d"), UseBattleTurnArray.Num());
 		}
+		
+		CountDeadCharacter();
+}
 
-		if (DeadEnemyCount / 2 == EnemyCharacterArray.Num())
+void UBattleManagerComponent::CountDeadCharacter()
+{
+	if (DeadCharacterArray.Num() != 0)
+	{
+		DeadEnemyCount = 0;
+		DeadPlayerCount = 0;
+		for (int i = 0; i < DeadCharacterArray.Num();++i)
+		{
+			UBattleComponent* DeadBattleComponent = Cast<UBattleComponent>(DeadCharacterArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
+			if (DeadBattleComponent->GetFactionType() == EFactionType::Enemy)
+			{
+				++DeadEnemyCount;	
+			}
+			else if (DeadBattleComponent->GetFactionType() == EFactionType::Player)
+			{
+				++DeadPlayerCount;
+			}
+
+		
+		}
+
+		if (DeadEnemyCount/2 == EnemyCharacterArray.Num())
 		{
 			EndBattle();
 		}
-		if (DeadPlayerCount / 2 == PlayerCharacterArray.Num())
+		if (DeadPlayerCount/2 == PlayerCharacterArray.Num())
 		{
 			GameOver();
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("DeadPlayer %d   DeadEnemy %d"), DeadPlayerCount/2, DeadEnemyCount/2);
-
-
-}
-
-void UBattleManagerComponent::ResurrectCharacter(AMyCharacter* ResurrectCharacter)
-{
-	for (int32 i = 0; i < 2; ++i)
-	{
-		UseBattleTurnArray.Add(ResurrectCharacter);
-		--DeadPlayerCount;
+		UE_LOG(LogTemp, Warning, TEXT("DeadPlayer %d   DeadEnemy %d"), DeadPlayerCount, DeadEnemyCount);
 	}
-
-
-
-	UseBattleTurnArray.Sort([](const AMyCharacter& IP1, const AMyCharacter& IP2)
-	{
-			// Todo : Implement Calculateturn Logic
-			return IP1.FindComponentByClass<UStatusComponent>()->GetSpeed() > IP2.FindComponentByClass<UStatusComponent>()->GetSpeed();
-	});
-
-	TArray<AMyCharacter*> TempArray;
-	for (int32 i = 0; i < UseBattleTurnArray.Num(); ++i)
-	{
-		if (i % 2 == 0)
-		{
-			TempArray.Add(UseBattleTurnArray[i]);
-			UseBattleTurnArray.RemoveAt(i);
-		}
-	}
-	for (int i = 0; i < TempArray.Num(); ++i)
-	{
-		UseBattleTurnArray.Add(TempArray[i]);
-	}
-
-	UStatusComponent* NewStatusComponent = Cast<UStatusComponent>(ResurrectCharacter->FindComponentByClass(UStatusComponent::StaticClass()));
-	NewStatusComponent->SetCurrentHP(1);
 	
-	for (int i = 0; i < UseBattleTurnArray.Num(); ++i)
-	{
-		FString CharacterName = UseBattleTurnArray[i]->GetName();
-
-		UStatusComponent* StatusComponent = Cast<UStatusComponent>(UseBattleTurnArray[i]->FindComponentByClass(UStatusComponent::StaticClass()));
-		UBattleComponent* BattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
-
-		EFactionType CharacterFaction = BattleComponent->GetFactionType();
-
-		FString CharacterFactionName = UEnum::GetDisplayValueAsText(CharacterFaction).ToString();
-		UE_LOG(LogTemp, Warning, TEXT("%s  %s  MaxHP%d  CurrentHP%d"), *CharacterFactionName, *CharacterName, StatusComponent->GetMaxHP(), StatusComponent->GetCurrentHP());
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("ArrayNum %d"), UseBattleTurnArray.Num());
 }
-
 
 void UBattleManagerComponent::CreateBattleWidget()
 {
