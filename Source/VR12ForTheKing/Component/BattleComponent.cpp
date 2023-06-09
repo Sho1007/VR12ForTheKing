@@ -186,6 +186,8 @@ void UBattleComponent::GiveDamage()
 	NewBattleManagerComponent->RemoveDeadUnitFromArray();
 
 
+
+
 }
 
 
