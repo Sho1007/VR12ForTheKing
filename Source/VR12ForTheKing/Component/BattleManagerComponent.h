@@ -10,6 +10,7 @@
 class UBattleWidget;
 class AMyCharacter;
 class ABattleMap;
+class UBattleComponent;
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VR12FORTHEKING_API UBattleManagerComponent : public UActorComponent
 {
@@ -37,6 +38,7 @@ public:
 	void InitBattle(AActor* BattleTile);
 	void MoveToNextUnitTurn();
 	void RemoveDeadUnitFromArray();
+	void ResetActionTargetWhenEnemyDead();
 	void ResurrectCharacter(AMyCharacter* ResurrectCharacter);
 
 public:

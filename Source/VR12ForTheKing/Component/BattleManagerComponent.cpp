@@ -191,6 +191,8 @@ bool UBattleManagerComponent::IsBattle()
 
 
 
+
+
 AMyCharacter* UBattleManagerComponent::GetPlayerCharacter(int32 Index)
 {
 	if (PlayerCharacterArray.Num() > 0 && Index < PlayerCharacterArray.Num())
@@ -421,6 +423,10 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray()
 				else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
 				{
 					++DeadEnemyCount;
+					
+					NewBattleComponent->GetOwner()->Destroy();
+				
+					
 				}
 				GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->RemoveUnitFromImageArray(i);
 				checkf(UseBattleTurnArray.Num() != 0, TEXT("UsebattleTurnArray is empty"));
@@ -432,6 +438,12 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray()
 				++i;
 			}
 			UE_LOG(LogTemp, Warning, TEXT("ArrayNum %d"), UseBattleTurnArray.Num());
+
+		/*	if (NewBattleComponent->GetOwner()->Destroy() == true)
+			{
+				ResetActionTargetWhenEnemyDead();
+			}*/ // try to reset actiontarget but actiontarget keep remove from screen
+
 		}
 		else if (UseBattleTurnArray[i] == nullptr)
 		{
@@ -439,7 +451,6 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray()
 			continue;
 
 		}
-
 
 
 	}
@@ -458,6 +469,27 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray()
 
 
 
+}
+
+void UBattleManagerComponent::ResetActionTargetWhenEnemyDead()
+{
+	
+	checkf(UseBattleTurnArray.Num() != 0, TEXT("UseBattleTurnArray is Empty"));
+	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));
+
+	for (int i = 0; i < UseBattleTurnArray.Num();++i)
+	{
+		if (UseBattleTurnArray[i] != nullptr)
+		{
+			UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
+			if (NewBattleComponent->GetFactionType() == EFactionType::Player)
+			{
+				NewBattleComponent->SetActionTarget(nullptr);
+			}
+		}
+		
+	}
 }
 
 void UBattleManagerComponent::ResurrectCharacter(AMyCharacter* ResurrectCharacter)
