@@ -181,6 +181,7 @@ int32 UStatusComponent::GetCurrentHP() const
 void UStatusComponent::SetCurrentHP(int32 NewCurrentHP)
 {
 	NewCurrentHP = NewCurrentHP > GetMaxHP() ? GetMaxHP() : NewCurrentHP;
+	NewCurrentHP = NewCurrentHP < 0 ? 0 : NewCurrentHP;
 
 	CharacterStatus.CurrentHP = NewCurrentHP;
 	if (UpdateCurrentHP.IsBound())
@@ -303,4 +304,9 @@ void UStatusComponent::SetLevel(int32 NewLevel)
 	{
 		UpdateLevel.Execute(CharacterStatus.Level);
 	}
+}
+
+bool UStatusComponent::IsDead() const
+{
+	return GetCurrentHP() == 0;
 }

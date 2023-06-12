@@ -38,6 +38,8 @@ public:
 	AMyCharacter* GetOwnerCharacter() const;
 	void SetParent(UStatusWidget* NewParentWidget);
 private:
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	UFUNCTION()
 	void InventoryButtonOnClicked();
 	UFUNCTION()

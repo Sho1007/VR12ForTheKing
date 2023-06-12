@@ -17,7 +17,6 @@ class VR12FORTHEKING_API UInventoryComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UInventoryComponent();
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -42,6 +41,7 @@ public:
 	FItem* GetItemInfo(FName NewItemRow);
 	FItem* GetItemInfoAtInventory(int32 ItemIndex);
 	TArray<FItemInstance>& GetEquipmentSlot();
+	FItem* GetEquipItemInfo(int32 NewSlotIndex) const;
 
 public:
 	FDele_Single UpdateInventory;

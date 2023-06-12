@@ -44,7 +44,7 @@ void UStatusLayoutWidget::UpdateWidget(AMyCharacter* NewTargetCharacter)
 	if (TargetCharacter != NewTargetCharacter || this->GetVisibility() != ESlateVisibility::Visible) return;
 
 	InitWidget(NewTargetCharacter);
-	WBP_Inventory->InitWidget(ParentWidget, TargetCharacter);
+	WBP_Inventory->InitWidget(TargetCharacter);
 }
 
 void UStatusLayoutWidget::SwitchToStatus()
@@ -54,13 +54,14 @@ void UStatusLayoutWidget::SwitchToStatus()
 
 void UStatusLayoutWidget::SwitchToInventory()
 {
-	WBP_Inventory->InitWidget(ParentWidget, TargetCharacter);
+	WBP_Inventory->InitWidget(TargetCharacter);
 	WS_Layout->SetActiveWidgetIndex(1);
 }
 
 void UStatusLayoutWidget::SetParent(UStatusWidget* NewParentWidget)
 {
 	ParentWidget = NewParentWidget;
+	WBP_Inventory->SetParent(ParentWidget);
 }
 
 AMyCharacter* UStatusLayoutWidget::GetTargetCharacter() const

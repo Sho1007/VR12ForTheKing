@@ -36,12 +36,15 @@ public:
 	void AddPlayerCharacter(AMyCharacter* NewPlayerCharacter);
 	void MoveToNextCharacterIndex();
 	AMyCharacter* GetPlayerCharacter();
+	void SetIsOnWidget(bool bNewIsOnWidget);
 private:
 	void LeftClickPressed();
 	
 	void CheckFocusActor();
 	AActor* GetHitActor();
 protected:
+	bool bIsOnWidget;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputMappingContext* IMC_Default;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

@@ -79,6 +79,16 @@ void AHexTile::Search()
 	// Todo : If this tile already has event, invoke the event
 }
 
+bool AHexTile::GetIsPassable() const
+{
+	return bIsPassable;
+}
+
+void AHexTile::SetIsPassable(bool bNewIsPassable)
+{
+	bIsPassable = bNewIsPassable;
+}
+
 void AHexTile::ArriveToTile(AMyCharacter* NewArrival)
 {
 	checkf(NewArrival != nullptr, TEXT("AHexTile::ArriveToTile : NewArrival is nullptr"));

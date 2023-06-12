@@ -20,6 +20,7 @@ void UEquipSelectMenuWidget::InitWidget(AMyCharacter* NewOwnerCharacter, int32 N
 {
 	OwnerCharacter = NewOwnerCharacter;
 	SlotIndex = NewSlotIndex;
+	this->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UEquipSelectMenuWidget::UnequipButtonOnClicked()

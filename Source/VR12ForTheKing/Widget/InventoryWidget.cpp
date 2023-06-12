@@ -10,19 +10,9 @@
 #include "../Character/MyCharacter.h"
 #include "../Component/InventoryComponent.h"
 #include "../Widget/InventoryItemListSlot.h"
+#include "EquipItemListSlot.h"
 
-void UInventoryWidget::NativeConstruct()
-{
-	EquipmentNameArray.Add(TB_WeaponSlotName);
-	EquipmentNameArray.Add(TB_ShieldSlotName);
-	EquipmentNameArray.Add(TB_HeadgearSlotName);
-	EquipmentNameArray.Add(TB_ArmorSlotName);
-	EquipmentNameArray.Add(TB_FootwearSlotName);
-	EquipmentNameArray.Add(TB_NecklaceSlotName);
-	EquipmentNameArray.Add(TB_TrinketSlotName);
-}
-
-void UInventoryWidget::InitWidget(UStatusWidget* StatusWidget, AMyCharacter* NewTargetCharacter)
+void UInventoryWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 {
 	TargetCharacter = NewTargetCharacter;
 	UInventoryComponent* InventoryComponent = Cast<UInventoryComponent>(TargetCharacter->GetComponentByClass(UInventoryComponent::StaticClass()));
@@ -31,20 +21,10 @@ void UInventoryWidget::InitWidget(UStatusWidget* StatusWidget, AMyCharacter* New
 	TArray<FItemInstance>& EquipmentSlot = InventoryComponent->GetEquipmentSlot();
 
 	// Init EquipmentSlot
-	
-	for (int i = 1; i < EquipmentSlot.Num() - 1; ++i)
-	{
-		if (EquipmentSlot[i].ItemRow.IsNone())
-		{
-			EquipmentNameArray[i - 1]->SetText(FText());
-		}
-		else
-		{
-			FItem* ItemInfo = InventoryComponent->GetItemInfo(EquipmentSlot[i].ItemRow);
-			checkf(ItemInfo != nullptr, TEXT("Cannot find Item in DataTable"));
 
-			EquipmentNameArray[i - 1]->SetText(ItemInfo->ItemName);
-		}
+	for (int i = 0; i < EquipItemSlotArray.Num(); ++i)
+	{
+		EquipItemSlotArray[i]->InitWidget(TargetCharacter);
 	}
 	
 	// Init ItemList
@@ -57,5 +37,17 @@ void UInventoryWidget::InitWidget(UStatusWidget* StatusWidget, AMyCharacter* New
 		UInventoryItemListSlot* InventoryItemListSlot = CreateWidget<UInventoryItemListSlot>(GetWorld()->GetFirstPlayerController(), InventoryItemListSlotClass);
 		VB_ItemList->AddChildToVerticalBox(InventoryItemListSlot);
 		InventoryItemListSlot->InitWidget(StatusWidget, TargetCharacter, i);
+	}
+}
+
+void UInventoryWidget::SetParent(UStatusWidget* NewStatusWidget)
+{
+	StatusWidget = NewStatusWidget;
+
+	int32 ChildrenCount = VB_EquipmentSlot->GetChildrenCount();
+	for (int i = 0; i < ChildrenCount; ++i)
+	{
+		EquipItemSlotArray.Add(Cast<UEquipItemListSlot>(VB_EquipmentSlot->GetChildAt(i)));
+		EquipItemSlotArray[i]->SetSlotIndex(StatusWidget, i + 1);
 	}
 }

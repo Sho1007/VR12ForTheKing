@@ -41,6 +41,9 @@ public:
 	bool GetIsSearched();
 	void Search();
 
+	bool GetIsPassable() const;
+	void SetIsPassable(bool bNewIsPassable);
+
 	void ArriveToTile(AMyCharacter* NewArrival);
 	void LeaveFromTile(AMyCharacter* NewLeaver);
 
@@ -68,8 +71,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AEventActor* EventActor = nullptr;
 
-
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	bool bIsSearched = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	bool bIsPassable = true;
 };

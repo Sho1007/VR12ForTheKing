@@ -12,6 +12,7 @@
 #include "../Component/InventoryComponent.h"
 #include "../Widget/StatusWidget.h"
 #include "../Widget/InventorySlotButton.h"
+#include "../Character/MyPlayerController.h"
 
 void UStatusBoardWidget::NativeConstruct()
 {
@@ -144,6 +145,20 @@ void UStatusBoardWidget::SetParent(UStatusWidget* NewParentWidget)
 	{
 		InventorySlotArray[i]->NativeConstruct(ParentWidget);
 	}
+}
+
+void UStatusBoardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Mouse Enterd in %s"), *this->GetName());
+
+	Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController())->SetIsOnWidget(true);
+}
+
+void UStatusBoardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Mouse Leaved in %s"), *this->GetName());
+
+	Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController())->SetIsOnWidget(false);
 }
 
 void UStatusBoardWidget::InventoryButtonOnClicked()

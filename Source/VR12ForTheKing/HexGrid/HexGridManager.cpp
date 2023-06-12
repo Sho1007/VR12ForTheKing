@@ -127,7 +127,8 @@ void UHexGridManager::FindNeighborTiles(TArray<AHexTile*>& NewNeighborTileArray,
 		{
 			if (CenterPos.Y + i < 0 || CenterPos.Y + i >= Height) continue;
 			if (CenterPos.X + j < 0 || CenterPos.X + j >= Width) continue;
-			if (FVector::Distance(CurrentTile->GetActorLocation(), HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]->GetActorLocation()) <= distance * FindAdjOffset)
+			if (FVector::Distance(CurrentTile->GetActorLocation(), HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]->GetActorLocation()) <= distance * FindAdjOffset
+				&& HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]->GetIsPassable())
 			{
 				NewNeighborTileArray.Add(HexGrid[CenterPos.Y + i].TileArray[CenterPos.X + j]);
 			}

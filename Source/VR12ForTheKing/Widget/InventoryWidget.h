@@ -14,40 +14,39 @@ class UVerticalBox;
 class UInventoryItemListSlot;
 class UTextBlock;
 class UStatusWidget;
+class UEquipItemListSlot;
 UCLASS()
 class VR12FORTHEKING_API UInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
-protected:
-	virtual void NativeConstruct() override;
 public:
-	void InitWidget(UStatusWidget* StatusWidget, AMyCharacter* NewTargetCharacter);
-
+	void InitWidget(AMyCharacter* NewTargetCharacter);
+	void SetParent(UStatusWidget* NewStatusWidget);
 private:
 	AMyCharacter* TargetCharacter;
+	UStatusWidget* StatusWidget;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UVerticalBox* VB_ItemList;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	UVerticalBox* VB_EquipmentSlot;
 	
-	TArray<UTextBlock*> EquipmentNameArray;
+	TArray<UEquipItemListSlot*> EquipItemSlotArray;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_WeaponSlotName;
+	UEquipItemListSlot* WBP_WeaponSlot;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_ShieldSlotName;
+	UEquipItemListSlot* WBP_ShieldSlot;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_HeadgearSlotName;
+	UEquipItemListSlot* WBP_HeadgearSlot;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_ArmorSlotName;
+	UEquipItemListSlot* WBP_ArmorSlot;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_FootwearSlotName;
+	UEquipItemListSlot* WBP_FootwearSlot;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_NecklaceSlotName;
+	UEquipItemListSlot* WBP_NecklaceSlot;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UTextBlock* TB_TrinketSlotName;
+	UEquipItemListSlot* WBP_TrinketSlot;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UInventoryItemListSlot> InventoryItemListSlotClass;

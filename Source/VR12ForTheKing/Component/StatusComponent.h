@@ -131,6 +131,8 @@ public:
 	
 	int32 GetLevel() const;
 	void SetLevel(int32 NewLevel);
+
+	bool IsDead() const;
 public:
 	// Delegate
 	FDele_Single_Int UpdateArmor;

@@ -111,6 +111,13 @@ TArray<FItemInstance>& UInventoryComponent::GetEquipmentSlot()
 	return EquipmentSlot;
 }
 
+FItem* UInventoryComponent::GetEquipItemInfo(int32 NewSlotIndex) const
+{
+	if (NewSlotIndex <= 0 || NewSlotIndex >= (int32)EEquipmentType::SIZE) return nullptr;
+	if (EquipmentSlot[NewSlotIndex].ItemRow.IsNone()) return nullptr;
+	return ItemDataTable->FindRow<FItem>(EquipmentSlot[NewSlotIndex].ItemRow, FString(""));
+}
+
 void UInventoryComponent::AttachItemOption(EEquipmentType NewEquipmentType)
 {
 	// Todo : Apply Item Effects

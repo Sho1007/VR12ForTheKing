@@ -86,9 +86,15 @@ AMyCharacter* AMyPlayerController::GetPlayerCharacter()
 	return PlayerCharacterArray[CurrentCharacterIndex];
 }
 
+void AMyPlayerController::SetIsOnWidget(bool bNewIsOnWidget)
+{
+	bIsOnWidget = bNewIsOnWidget;
+}
+
 void AMyPlayerController::LeftClickPressed()
 {
-	// Multi �� �ٲٸ� �� �պ�����
+	if (bIsOnWidget) return;
+
 	UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(GameMode->GetComponentByClass(UBattleManagerComponent::StaticClass()));
 	checkf(BattleManagerComponent != nullptr, TEXT("GameMode has not BattleManagerComponent"));
 	if (BattleManagerComponent->IsBattle())
