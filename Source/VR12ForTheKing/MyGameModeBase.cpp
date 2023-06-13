@@ -76,7 +76,7 @@ void AMyGameModeBase::CheckFocusActor(AActor* NewActor, APlayerController* Targe
 
 void AMyGameModeBase::CheckEndTile(AActor* NewActor, APlayerController* TargetPlayerController)
 {
-	Cast<AMyGameInstance>(GetGameInstance());
+	//Cast<AMyGameInstance>(GetGameInstance());
 
 	if (!MoveManager->IsMoved() && MoveManager->GetCurrentController() == TargetPlayerController)
 	{
