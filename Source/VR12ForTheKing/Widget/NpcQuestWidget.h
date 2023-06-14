@@ -9,9 +9,14 @@
 /**
  * 
  */
+struct FQuestNPCData;
+
 UCLASS()
 class VR12FORTHEKING_API UNpcQuestWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintCallable)
+	void InitWidget(FQuestNPCData NewQuestNPCData);
 };
