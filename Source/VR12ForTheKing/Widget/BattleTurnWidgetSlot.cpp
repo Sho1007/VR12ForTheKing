@@ -12,6 +12,13 @@ void UBattleTurnWidgetSlot::SetImage(UTexture2D* NewImage)
 void UBattleTurnWidgetSlot::InitWidget(AMyCharacter* NewCharacter)
 {
 	MyCharacter = NewCharacter;
-	SetImage(MyCharacter->GetCharacterImage());
+	if (MyCharacter == nullptr)
+	{
+		this->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else
+	{
+		SetImage(MyCharacter->GetCharacterImage());
+	}
 }
 

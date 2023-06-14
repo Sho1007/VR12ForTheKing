@@ -86,6 +86,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void GiveDamage();
+
+	void ReceiveDamage(int Damage);
+
 	UFUNCTION(BlueprintCallable)
 		bool IsDead();
 
@@ -94,6 +97,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ReachToDestination();
 
+	
 
 
 
@@ -104,6 +108,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetFactionType(EFactionType NewFactionType);
 
+	UFUNCTION(BlueprintCallable)
+		void SetTargetCamera(AActor* NewTargetCamera);
+	UFUNCTION(BlueprintCallable)
+		AActor* GetTargetCamera()const;
 
 	void SetBaseTransform(FTransform NewBaseTransform);
 
@@ -121,6 +129,8 @@ public:
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		EFactionType FactionType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		AActor* TargetCamera;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

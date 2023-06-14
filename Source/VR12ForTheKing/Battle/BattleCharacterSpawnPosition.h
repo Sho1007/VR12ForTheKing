@@ -26,7 +26,7 @@ public:
 public:
 	// Getter / Setter
 	UFUNCTION(BlueprintCallable)
-	const AActor* GetCameraPosition() const;
+	 AActor* GetCameraPosition() const;
 private:
 	UPROPERTY(BlueprintReadOnly, EditInstanceOnly, meta = (AllowPrivateAccess = true))
 	AActor* CameraPosition;

@@ -12,6 +12,7 @@
 #include "Components/TextBlock.h"
 #include "../Component/BattleManagerComponent.h"
 #include "../MyGameModeBase.h"
+#include "../Component//StatusComponent.h"
 void UBattleWidget::HideWidget()
 {
 	this->SetVisibility(ESlateVisibility::Collapsed);
@@ -43,11 +44,11 @@ void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	UBattleManagerComponent* NewBattleManagerComponent =
 		Cast<UBattleManagerComponent>(NewGamModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
 
-	for (int32 i = 0; i < NewBattleManagerComponent->GetPlayerCharacterArrayNum(); ++i)
+	for (int32 i = 0; i < NewBattleManagerComponent->GetPlayerCharacterArrayNum(); ++i) // check whether there is deadcharacter, if deadcharacter exist create resurrection widget
 	{
 		if (NewBattleManagerComponent->GetPlayerCharacter(i) == NewTargetCharacter) continue;
-		UBattleComponent* NewBatttleComponent = Cast<UBattleComponent>(NewBattleManagerComponent->GetPlayerCharacter(i)->GetComponentByClass(UBattleComponent::StaticClass()));
-		if (NewBatttleComponent->IsDead() == true)
+		UStatusComponent* StatusComponent = Cast<UStatusComponent>(NewBattleManagerComponent->GetPlayerCharacter(i)->GetComponentByClass(UStatusComponent::StaticClass()));
+		if (StatusComponent->IsDead() == true)
 		{
 			UActionWidget* ResurrectActionWidget = CreateWidget<UActionWidget>(GetWorld()->GetFirstPlayerController(), ActionWidgetClass);
 			checkf(ResurrectActionWidget != nullptr, TEXT("ResurrectActionWidget is not created"));

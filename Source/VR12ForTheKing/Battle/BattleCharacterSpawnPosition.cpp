@@ -25,7 +25,7 @@ void ABattleCharacterSpawnPosition::Tick(float DeltaTime)
 
 }
 
-const AActor* ABattleCharacterSpawnPosition::GetCameraPosition() const
+ AActor* ABattleCharacterSpawnPosition::GetCameraPosition() const
 {
 	return CameraPosition;
 }

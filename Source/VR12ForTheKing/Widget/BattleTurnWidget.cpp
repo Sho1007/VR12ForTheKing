@@ -6,6 +6,7 @@
 #include "../Character/MyCharacter.h"
 #include "Components/HorizontalBox.h"
 #include "Components/Image.h"
+#include "Components/PanelWidget.h"
 
 void UBattleTurnWidget::SetTurnArray(const TArray<AMyCharacter*>& NewTurnArray)
 {
@@ -34,9 +35,20 @@ void UBattleTurnWidget::InitBattleTurnWidget()
 			NewBattleTurnWidgetSlot->SetVisibility(ESlateVisibility::Collapsed);
 		}
 		TurnImageArray->AddChildToHorizontalBox(NewBattleTurnWidgetSlot);
+
+		if (BasicTurnArray[i] != nullptr) // show basicturnarray on log when initalize
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TurnImageArray %s"), *BasicTurnArray[i]->GetName());
+		}
+		else if (BasicTurnArray[i] == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TurnImageArray Null"));
+		}
+
+	
 	}
 
-
+	UE_LOG(LogTemp, Warning, TEXT("TurnImageArrayNum %d"), TurnImageArray->GetChildrenCount());
 
 }
 
@@ -44,27 +56,46 @@ void UBattleTurnWidget::MoveToNextTurn(AMyCharacter* NewCharacter)
 {
 
 	//UBattleTurnWidgetSlot* FirstBattleTurnWidgetSlot = Cast<UBattleTurnWidgetSlot>(TurnImageArray->GetChildAt(0));
-	checkf(TurnImageArray->GetChildAt(0), TEXT("TurnImageArray is empty"));
+	checkf(TurnImageArray->GetChildrenCount() != 0, TEXT("TurnImageArray is empty"));
 	UBattleTurnWidgetSlot* NewBattleTurnWidgetSlot = CreateWidget<UBattleTurnWidgetSlot>(GetWorld()->GetFirstPlayerController(), BattleTurnWidgetSlotClass);
 	if (NewCharacter != nullptr)
 	{
 		NewBattleTurnWidgetSlot->InitWidget(NewCharacter);
+		TurnImageArray->AddChildToHorizontalBox(NewBattleTurnWidgetSlot);
+		TurnImageArray->GetChildAt(0)->RemoveFromParent();
 	}
-	TurnImageArray->AddChildToHorizontalBox(NewBattleTurnWidgetSlot);
-	TurnImageArray->GetChildAt(0)->RemoveFromParent();
+	if (NewCharacter == nullptr)
+	{
+		NewBattleTurnWidgetSlot->SetVisibility(ESlateVisibility::Collapsed);
+		TurnImageArray->AddChildToHorizontalBox(NewBattleTurnWidgetSlot);
+		TurnImageArray->GetChildAt(0)->RemoveFromParent();
+	}
+
 
 
 }
 
-void UBattleTurnWidget::RemoveUnitFromImageArray(int32 Index)
+void UBattleTurnWidget::RemoveUnitFromImageArray(int32 RemoveIndex)
 {
-	TurnImageArray->GetChildAt(Index)->RemoveFromParent();
-
+	checkf(TurnImageArray->GetChildrenCount() > RemoveIndex, TEXT("TurnImageArray is empty"));
+	TurnImageArray->GetChildAt(RemoveIndex)->RemoveFromParent();
+	UE_LOG(LogTemp, Warning, TEXT("TurnImageArrayNum %d"), TurnImageArray->GetChildrenCount());
 }
 
-void UBattleTurnWidget::AddUnitToImageArray(AMyCharacter* NewCharacter, int32 Index)
+void UBattleTurnWidget::AddUnitToImageArray(TArray<AMyCharacter*>& NewTurnArray)
 {
-	UBattleTurnWidgetSlot* NewBattleTurnWidgetSlot = CreateWidget<UBattleTurnWidgetSlot>(GetWorld()->GetFirstPlayerController(), BattleTurnWidgetSlotClass);
+	TurnImageArray->ClearChildren();
+
+	for (int i = 0; i < NewTurnArray.Num(); ++i)
+	{
+		UBattleTurnWidgetSlot* NewBattleTurnWidgetSlot = CreateWidget<UBattleTurnWidgetSlot>(GetWorld()->GetFirstPlayerController(), BattleTurnWidgetSlotClass);
+		NewBattleTurnWidgetSlot->InitWidget(NewTurnArray[i]);
+
+		TurnImageArray->AddChildToHorizontalBox(NewBattleTurnWidgetSlot);
+	}
+
+	/*UBattleTurnWidgetSlot* NewBattleTurnWidgetSlot = CreateWidget<UBattleTurnWidgetSlot>(GetWorld()->GetFirstPlayerController(), BattleTurnWidgetSlotClass);
 	NewBattleTurnWidgetSlot->InitWidget(NewCharacter);
-	TurnImageArray->InsertChildAt(Index, NewBattleTurnWidgetSlot);
+
+	UE_LOG(LogTemp, Warning, TEXT("InsertImage at %d"), InsertIndex);*/
 }
