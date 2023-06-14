@@ -76,6 +76,8 @@ void AMyGameModeBase::CheckFocusActor(AActor* NewActor, APlayerController* Targe
 
 void AMyGameModeBase::CheckEndTile(AActor* NewActor, APlayerController* TargetPlayerController)
 {
+	//Cast<AMyGameInstance>(GetGameInstance());
+
 	if (!MoveManager->IsMoved() && MoveManager->GetCurrentController() == TargetPlayerController)
 	{
 		AHexTile* HexTile = Cast<AHexTile>(NewActor);
