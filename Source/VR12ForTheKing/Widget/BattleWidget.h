@@ -14,6 +14,7 @@ class UActionWidget;
 class UHorizontalBox;
 class UTextBlock;
 class UBattleManagerComponent;
+class UChanceCoinSlot;
 UCLASS()
 class VR12FORTHEKING_API UBattleWidget : public UUserWidget
 {
@@ -30,12 +31,16 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TSubclassOf<UActionWidget> ActionWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+		TSubclassOf<UChanceCoinSlot> ChanceCoinSlotClass;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<FText> ActionRangeTextArray;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<FText> ActionTypeTextArray;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 		UHorizontalBox* HB_Action;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+		UHorizontalBox* CoinChanceBox;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 		UTextBlock* TB_ActionName;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))

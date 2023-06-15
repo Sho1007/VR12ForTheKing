@@ -91,7 +91,8 @@ private:
 		int32 NextTurnIndex;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 		int32 MapIndex;
-
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+		int32 VictoryCount;
 
 	FVector CurrentLocation;
 	FRotator CurrentRotation;

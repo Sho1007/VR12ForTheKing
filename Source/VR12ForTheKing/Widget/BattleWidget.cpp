@@ -82,4 +82,8 @@ void UBattleWidget::InitActionDiscription(FName NewActionName)
 	TB_Damage->SetText(FText::FromString(FString::Printf(TEXT("%d"), NewAction->Power)));
 	TB_SlotAccuracy->SetText(FText::FromString(FString::Printf(TEXT("%d"), NewAction->CheckPercent)));
 	TB_ActionDiscription->SetText(NewAction->Discription);
+
+
+//	UChanceCoinSlot* NewChanceCoinSlot = CreateWidget<UChanceCoinSlot>(GetWorld()->GetFirstPlayerController(), ChanceCoinSlotClass);
+
 }

@@ -105,6 +105,7 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	SpawnEnemyIndex = 0;
 	bIsBattle = true;
 	MapIndex = 0;
+	VictoryCount = 0;
 	UHexGridManager* HexGridManager = Cast<UHexGridManager>(GetOwner()->GetComponentByClass(UHexGridManager::StaticClass()));
 	checkf(HexGridManager != nullptr, TEXT("UBattleManagerComponent::InitBattle : HexGridManager is nullptr"));
 
@@ -656,11 +657,21 @@ void UBattleManagerComponent::CreateBattleWidget()
 
 void UBattleManagerComponent::EndBattle()
 {
+	++VictoryCount;
 	UE_LOG(LogTemp, Warning, TEXT("Victory!!"));
 	BattleMapArray[MapIndex]->MoveNextSceneIndex();
 	TeleportCharacter();
 	SpawnEnemy();
 	MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
+
+	UWorld* World = GetWorld();
+
+
+	if (VictoryCount == 1)
+	{
+		World->ServerTravel("/Game/Develop/Jino/Map/CPPTestMap");
+	}
+
 }
 
 void UBattleManagerComponent::GameOver()
