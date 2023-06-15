@@ -3,3 +3,8 @@
 
 #include "../Widget/NpcQuestWidget.h"
 
+#include "../Component/QuestManagerComponent.h"
+
+void UNpcQuestWidget::InitWidget(FQuestNPCData NewQuestNPCData)
+{
+}

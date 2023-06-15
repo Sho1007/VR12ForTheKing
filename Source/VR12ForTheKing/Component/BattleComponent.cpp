@@ -42,6 +42,17 @@ void UBattleComponent::SetFactionType(EFactionType NewFactionType)
 	FactionType = NewFactionType;
 }
 
+void UBattleComponent::SetTargetCamera(AActor* NewTargetCamera)
+{
+	TargetCamera = NewTargetCamera;
+
+}
+
+AActor* UBattleComponent::GetTargetCamera() const
+{
+	return TargetCamera;
+}
+
 void UBattleComponent::SetBaseTransform(FTransform NewBaseTransform)
 {
 	BaseTransform = NewBaseTransform;
@@ -110,14 +121,14 @@ bool UBattleComponent::MeleeAttack()
 {
 
 	UE_LOG(LogTemp, Warning, TEXT("MeleeAttack"));
-	if (ActionTarget == nullptr)
+	if (ActionTarget == nullptr || !ActionTarget->IsValidLowLevelFast() || ActionTarget->IsPendingKill())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
 		return false;
 
 	}
 
-
+	UE_LOG(LogTemp, Warning, TEXT("ActionTargetName %s"), *ActionTarget->GetName());
 	bGoToTarget = true;
 	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
 	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
@@ -138,8 +149,15 @@ void UBattleComponent::RangetAttack()
 
 void UBattleComponent::WeakHeal()
 {
-	UE_LOG(LogTemp, Warning, TEXT("WeakHeal"));
-	EndTurn();
+	if (ActionTarget == nullptr || !ActionTarget->IsValidLowLevelFast() || ActionTarget->IsPendingKill())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
+	}
+	if (ActionTarget != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WeakHeal"));
+		EndTurn();
+	}
 }
 
 void UBattleComponent::Resurrection(AMyCharacter* TargetCharacter)
@@ -173,27 +191,47 @@ int32 UBattleComponent::CalculateDamage()
 
 void UBattleComponent::GiveDamage()
 {
-	CalculateDamage();
-	UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(ActionTarget->FindComponentByClass(UStatusComponent::StaticClass()));
-	int32 DamagedHP = TargetStatusComponent->GetCurrentHP() - CalculateDamage();
-	FString DamagedCharacterName = ActionTarget->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("%s Current Health %d  Damge %d DamagedHP %d"), *DamagedCharacterName, TargetStatusComponent->GetCurrentHP(), CalculateDamage(), DamagedHP);
-	TargetStatusComponent->SetCurrentHP(DamagedHP);
+	if (ActionTarget != nullptr)
+	{
+		UBattleComponent* BattleComponent = Cast<UBattleComponent>(ActionTarget->FindComponentByClass(UBattleComponent::StaticClass()));
+		checkf(BattleComponent != nullptr, TEXT("TargetCharacter has not BattleComponent"));
 
-	AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	UBattleManagerComponent* NewBattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-
-	NewBattleManagerComponent->RemoveDeadUnitFromArray();
-
-
+		BattleComponent->ReceiveDamage(CalculateDamage());
+	}
 
 
 }
 
+void UBattleComponent::ReceiveDamage(int Damage)
+{
+	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
+
+	StatusComponent->SetCurrentHP(StatusComponent->GetCurrentHP() - CalculateDamage());
+	//int32 DamagedHP = TargetStatusComponent->GetCurrentHP() - CalculateDamage();
+	//FString DamagedCharacterName = ActionTarget->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("%s CurrentHP : %d"), *GetOwner()->GetName(), StatusComponent->GetCurrentHP());
+	//TargetStatusComponent->SetCurrentHP(DamagedHP);
+
+	
+	if (StatusComponent->IsDead())
+	{
+		AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+		UBattleManagerComponent* NewBattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+		
+		AMyCharacter* DeadCharacter = Cast<AMyCharacter>(this->GetOwner());
+		NewBattleManagerComponent->RemoveDeadUnitFromArray(DeadCharacter);
+
+		if (GetFactionType() == EFactionType::Enemy)
+		{
+			this->GetOwner()->Destroy();
+		}
+	}
+}
+
 
 bool UBattleComponent::IsDead()
-{
-
+{/*
+	UE_LOG(LogTemp, Warning, TEXT("%s is Dead"), *DeadCharacterName);
 	UStatusComponent* TargetStatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
 	int32 TargetCurrentHP = TargetStatusComponent->GetCurrentHP();
 
@@ -208,8 +246,10 @@ bool UBattleComponent::IsDead()
 	else
 	{
 		return false;
-	}
-}
+	}*/
+
+	return false;
+} 
 
 
 
@@ -272,9 +312,13 @@ void UBattleComponent::SetCharacterRotation()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Run SetCharacterRotation"));
 	bIsTurnEnd = false;
-	checkf(ActionTarget != nullptr, TEXT("ActionTarget doesn't exist"));
-	CharacterRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), ActionTarget->GetActorLocation());
-	FString CharacterRotString = CharacterRot.ToString();
-	//UE_LOG(LogTemp, Warning, TEXT("CharacterRotation %s"), *CharacterRotString);
-	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
+
+	if (ActionTarget != nullptr)
+	{
+		CharacterRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), ActionTarget->GetActorLocation());
+		FString CharacterRotString = CharacterRot.ToString();
+		//UE_LOG(LogTemp, Warning, TEXT("CharacterRotation %s"), *CharacterRotString);
+		GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
+	}
+
 }

@@ -30,10 +30,10 @@ public:
 		void MoveToNextTurn(AMyCharacter* NewCharacter = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-		void RemoveUnitFromImageArray(int32 Index);
+		void RemoveUnitFromImageArray(int32 RemoveIndex);
 
 	UFUNCTION(BlueprintCallable)
-		void AddUnitToImageArray(AMyCharacter* NewCharacter, int32 Index);
+		void AddUnitToImageArray(TArray<AMyCharacter*>& NewTurnArray);
 private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> BasicTurnArray;

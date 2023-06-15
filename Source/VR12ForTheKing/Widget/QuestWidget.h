@@ -23,9 +23,9 @@ public:
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UNpcQuestWidget* WBP_NpcQuest;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = ture))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UQuestEventInfoWidget* WBP_QuestEventInfo;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = ture))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget, AllowPrivateAccess = true))
 	UQuestOnScreenWidget* WBP_QuestOnScreen;
 
 };

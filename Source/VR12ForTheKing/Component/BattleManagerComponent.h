@@ -37,7 +37,7 @@ public:
 
 	void InitBattle(AActor* BattleTile);
 	void MoveToNextUnitTurn();
-	void RemoveDeadUnitFromArray();
+	void RemoveDeadUnitFromArray(AMyCharacter* TargetCharacter);
 	void ResetActionTargetWhenEnemyDead();
 	void ResurrectCharacter(AMyCharacter* ResurrectCharacter);
 
@@ -51,7 +51,10 @@ private:
 	// Battle Process
 	bool SpawnEnemy();
 	bool TeleportCharacter();
-	void MoveCamera();
+	void MoveCamera(FTransform TargetCameraTransform);
+	void MoveLerpCamera(FTransform NewTargetCameraTransform);
+	UFUNCTION()
+	void LerpTimerFunction();
 	void CalculateTurn();
 	void InitUnitTurn();
 	void CreateBattleWidget();
@@ -60,12 +63,12 @@ private:
 private:
 	// Battle Var
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> EnemyCharacterArray;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> PlayerCharacterArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		TArray<AMyCharacter*> DeadCharacterArray;
+		TArray<AMyCharacter*> TargetPlayerArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		int32 DeadEnemyCount;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -86,6 +89,18 @@ private:
 		int32 SpawnEnemyIndex;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 		int32 NextTurnIndex;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+		int32 MapIndex;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
+		int32 VictoryCount;
+
+	FVector CurrentLocation;
+	FRotator CurrentRotation;
+
+	FVector TargetLocation;
+	FRotator TargetRotation;
+	FTimerHandle CameraLerpTimerHandle;
+
 	// BattleWidget Var
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TSubclassOf<UBattleWidget> BattleWidgetClass;
