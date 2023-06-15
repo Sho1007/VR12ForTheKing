@@ -18,4 +18,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))
 	UBorder* Coin;
 	
+
+	//Getter,Setter
+	void SetImage(UTexture2D* NewImage);
 };

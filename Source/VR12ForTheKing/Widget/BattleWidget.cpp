@@ -13,6 +13,7 @@
 #include "../Component/BattleManagerComponent.h"
 #include "../MyGameModeBase.h"
 #include "../Component//StatusComponent.h"
+#include "ChanceCoinSlot.h"
 void UBattleWidget::HideWidget()
 {
 	this->SetVisibility(ESlateVisibility::Collapsed);
@@ -84,6 +85,18 @@ void UBattleWidget::InitActionDiscription(FName NewActionName)
 	TB_ActionDiscription->SetText(NewAction->Discription);
 
 
-//	UChanceCoinSlot* NewChanceCoinSlot = CreateWidget<UChanceCoinSlot>(GetWorld()->GetFirstPlayerController(), ChanceCoinSlotClass);
+	CoinChanceBox->ClearChildren();
+	
+
+	//static ConstructorHelpers::FObjectFinder<UTexture2D> Texture(TEXT("/Game/Resources/Textures/Texture2D/bfGround01_3")); // Find Path of Image that will be set  test1
+	//CoinTexture = Texture.Object;
+	//CoinTexture = StaticLoadClass(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Resources/Textures/Texture2D/bfGround01_3")); test2
+	//NewChanceCoinSlot->SetImage(CoinTexture);
+
+	for (int i = 0; i < NewAction->CheckCount; ++i) // Add Chance Slot amount of CheckCount
+	{
+		UChanceCoinSlot* NewChanceCoinSlot = CreateWidget<UChanceCoinSlot>(GetWorld()->GetFirstPlayerController(), ChanceCoinSlotClass);// create ChanceCoinSlot Widget
+		CoinChanceBox->AddChildToHorizontalBox(NewChanceCoinSlot);
+	}
 
 }

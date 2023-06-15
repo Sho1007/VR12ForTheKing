@@ -15,6 +15,7 @@ class UHorizontalBox;
 class UTextBlock;
 class UBattleManagerComponent;
 class UChanceCoinSlot;
+class UTexture2D;
 UCLASS()
 class VR12FORTHEKING_API UBattleWidget : public UUserWidget
 {
@@ -25,8 +26,13 @@ public:
 	void ShowWidget();
 	void InitWidget(AMyCharacter* NewTargetCharacter);
 	void InitActionDiscription(FName NewActionName);
+
+	//Getter,Setter
+
 private:
 	AMyCharacter* TargetCharacter;
+	UTexture2D* CoinTexture;
+
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TSubclassOf<UActionWidget> ActionWidgetClass;
