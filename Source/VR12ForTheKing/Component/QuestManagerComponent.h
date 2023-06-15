@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 
 #include "Engine/DataTable.h"
-#include <Map>
 
 #include "QuestManagerComponent.generated.h"
 
@@ -24,7 +23,7 @@ struct FStoryData
 {
 	GENERATED_BODY()
 
-		UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FText GameStory;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FVector StoryTargetLocation;
@@ -35,7 +34,7 @@ struct FObjectiveData
 {
 	GENERATED_BODY()
 
-		UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FText ObjectName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FString ObjectID;
@@ -53,7 +52,7 @@ struct FQuestData
 {
 	GENERATED_BODY()
 
-		UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FText QuestName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FText QuestDescription;
@@ -113,6 +112,8 @@ public:
 
 	UQuestWidget* GetQuestWidget() const;
 
+	FQuestNPCData* FindQuestNPCData(FName TargetRow);
+
 private:
 	UDataTable* QuestDataTable;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
@@ -121,6 +122,8 @@ private:
 	int32 CurrentQuestIndex;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	int32 CurrentStoryIndex;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	int32 CurrentDiscriptionIndex;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UQuestWidget> QuestWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))

@@ -69,3 +69,10 @@ UQuestWidget* UQuestManagerComponent::GetQuestWidget() const
 	return QuestWidget;
 }
 
+FQuestNPCData* UQuestManagerComponent::FindQuestNPCData(FName TargetRow)
+{
+	if (TargetRow.IsNone()) return nullptr;
+
+	return QuestDataTable->FindRow<FQuestNPCData>(TargetRow, FString(""));
+}
+
