@@ -215,6 +215,11 @@ int32 UBattleManagerComponent::GetPlayerCharacterArrayNum()
 	return PlayerCharacterArray.Num();
 }
 
+UBattleWidget* UBattleManagerComponent::GetBattleWidget()
+{
+	return BattleWidget;
+}
+
 
 bool UBattleManagerComponent::SpawnEnemy()
 {
@@ -351,7 +356,7 @@ void UBattleManagerComponent::InitUnitTurn()
 		  int32 TargerCharacterNum = FMath::RandRange(0, TargetPlayerArray.Num() - 1); // Get Random Index In TargetCharacter Array
 		  UE_LOG(LogTemp, Warning, TEXT("%s  RandomEnemyAttack"), *UseBattleTurnArray[0]->GetName()); // enemyunit random attack
 		  NewBattleComponent->SetActionTarget(TargetPlayerArray[TargerCharacterNum]); // set ActionTarget At TargetCharacter Array
-		  NewBattleComponent->RandomEnemyAction(); // Do RandomEnemyAttack
+		  NewBattleComponent->DoAction(); // Do RandomEnemyAttack
 		
 		}
 		else
@@ -407,7 +412,7 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 				int32 TargerCharacterNum = FMath::RandRange(0, TargetPlayerArray.Num() - 1);
 				UE_LOG(LogTemp, Warning, TEXT("%s  %s RandomEnemyAttack"), *CharacterFactionName, *UseBattleTurnArray[0]->GetName()); // enemyunit random attack
 				FirstCharacterBattleComponent->SetActionTarget(TargetPlayerArray[TargerCharacterNum]);
-				FirstCharacterBattleComponent->RandomEnemyAction();
+				FirstCharacterBattleComponent->DoAction();
 				
 			}
 			else
@@ -418,6 +423,7 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 		
 		}
 		UE_LOG(LogTemp, Warning, TEXT("TargetPlayer num %d"), TargetPlayerArray.Num());
+
 	}
 	else if (UseBattleTurnArray[0] == nullptr) // if FirstIndex is nullptr Remove it and add to end
 	{
@@ -449,7 +455,7 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 				UE_LOG(LogTemp, Warning, TEXT("%s  %s RandomEnemyAttack"), *CharacterFactionName, *UseBattleTurnArray[0]->GetName());
 				int32 TargerCharacterNum = FMath::RandRange(0, TargetPlayerArray.Num() - 1);
 				FirstCharacterBattleComponent->SetActionTarget(TargetPlayerArray[TargerCharacterNum]);
-				FirstCharacterBattleComponent->RandomEnemyAction();
+				FirstCharacterBattleComponent->DoAction();
 			}
 			else
 			{

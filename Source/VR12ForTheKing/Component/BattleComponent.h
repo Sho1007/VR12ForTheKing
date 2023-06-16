@@ -6,8 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "../VR12ForTheKing.h"
 #include "Engine/DataTable.h"
-
-
 #include "BattleComponent.generated.h"
 
 // Check Chance
@@ -40,6 +38,7 @@ struct FAction : public FTableRowBase
 class AMyCharacter;
 class UStatusComponent;
 class UActionWidget;
+class UBattleWidget;
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
 {
@@ -93,7 +92,9 @@ public:
 		bool IsDead();
 
 	UFUNCTION(BlueprintCallable)
-		void DoAction(UActionWidget* ActionWidget);
+		void DoAction(UActionWidget* ActionWidget = nullptr);
+	UFUNCTION(BlueprintCallable)
+		void DoActionWork(FName TargetActionName);
 	UFUNCTION(BlueprintCallable)
 		void ReachToDestination();
 
@@ -113,8 +114,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 		AActor* GetTargetCamera()const;
 
-	void SetBaseTransform(FTransform NewBaseTransform);
-
 	UFUNCTION(BlueprintCallable)
 		const EFactionType& GetFactionType() const;
 	const TArray<FName>& GetActionArray() const;
@@ -124,8 +123,8 @@ public:
 	AMyCharacter* GetActionTarget();
 	void EndTurn();
 
-	void RandomEnemyAction();
-
+	void SetBaseTransform(FTransform NewBaseTransform);
+	void ChanceCoinCheck();
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		EFactionType FactionType;
@@ -135,8 +134,7 @@ protected:
 		TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		AMyCharacter* ActionTarget;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		TSubclassOf<UActionWidget> ActionWidgetClass;
+	
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 		bool bIsTurnEnd;
@@ -146,12 +144,14 @@ private:
 	// Reference
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 		bool bGoToTarget;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+		FName TargetActionName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 		AMyCharacter* Character;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 		FTransform BaseTransform;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+		int32 ChanceArrayNum;
 
 	FRotator CharacterRot;
 };

@@ -47,6 +47,7 @@ public:
 	bool IsBattle();
 	AMyCharacter* GetPlayerCharacter(int32 Index);
 	int32 GetPlayerCharacterArrayNum();
+	UBattleWidget* GetBattleWidget();
 private:
 	// Battle Process
 	bool SpawnEnemy();

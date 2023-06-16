@@ -42,8 +42,8 @@ private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 		UButton* Btn_Action;
 	UBattleWidget* ParentWidget;
+	
 
 	int32 FocusCount;
-
 	bool bIsHovered;
 };

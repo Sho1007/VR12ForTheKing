@@ -16,6 +16,9 @@ class UTextBlock;
 class UBattleManagerComponent;
 class UChanceCoinSlot;
 class UTexture2D;
+class UOverlay;
+struct FAction;
+
 UCLASS()
 class VR12FORTHEKING_API UBattleWidget : public UUserWidget
 {
@@ -26,13 +29,22 @@ public:
 	void ShowWidget();
 	void InitWidget(AMyCharacter* NewTargetCharacter);
 	void InitActionDiscription(FName NewActionName);
-
+	void StartUpdateChanceSlot(TArray<bool> NewChanceArray);
+	void InitChanceCoinBox();
 	//Getter,Setter
-
+	void CoinTimerFunction();
 private:
+
 	AMyCharacter* TargetCharacter;
 	UTexture2D* CoinTexture;
-
+	UTexture2D* CoinTextureResult;
+	int32 CoinSuccessCount;
+	int32 ChanceCoinBoxIndex;
+	FTimerHandle CoinCheckTimerHandle;
+	FAction* PlayerAction;
+	TArray<bool> TargetChanceArray;
+	FName PlayerActionName;
+	bool bIsChanceCheckEnd;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TSubclassOf<UActionWidget> ActionWidgetClass;
@@ -47,6 +59,8 @@ private:
 		UHorizontalBox* HB_Action;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 		UHorizontalBox* CoinChanceBox;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+		UOverlay* DiscriptionOverlay;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 		UTextBlock* TB_ActionName;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))

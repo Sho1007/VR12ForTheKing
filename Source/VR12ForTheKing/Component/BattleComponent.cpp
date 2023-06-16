@@ -7,7 +7,9 @@
 #include "StatusComponent.h"
 #include "../MyGameModeBase.h"
 #include "BattleManagerComponent.h"
+#include "../Event/TileEventManager.h"
 #include "../Widget/ActionWidget.h"
+#include "../Widget/BattleWidget.h"
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
 {
@@ -58,6 +60,8 @@ void UBattleComponent::SetBaseTransform(FTransform NewBaseTransform)
 	BaseTransform = NewBaseTransform;
 }
 
+
+
 const EFactionType& UBattleComponent::GetFactionType() const
 {
 	return FactionType;
@@ -88,26 +92,6 @@ void UBattleComponent::EndTurn()
 
 }
 
-void UBattleComponent::RandomEnemyAction()
-{
-	int32 ActionNum = FMath::RandRange(0, ActionArray.Num() - 1);
-	FString ActionName = ActionArray[ActionNum].ToString();
-	UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *ActionName);
-
-	if (ActionName == "NormalAttack")
-	{
-		MeleeAttack();
-	}
-	else if (ActionName == "WeakHeal")
-	{
-		WeakHeal();
-	}
-	else if (ActionName == "RangeAttack")
-	{
-		RangetAttack();
-	}
-
-}
 
 void UBattleComponent::BattleAction_Implementation()
 {
@@ -117,16 +101,71 @@ void UBattleComponent::Attack_Implementation()
 {
 }
 
+
+void UBattleComponent::ChanceCoinCheck()
+{
+	TArray<bool> ChanceArray;
+
+	// Todo :
+	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
+	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
+
+	UDataTable* ActionDataTable = TileEventMangaer->GetActionDataTable();
+	checkf(ActionDataTable != nullptr, TEXT("ActionDataTable is not valid"));
+	FAction* TargetAction = ActionDataTable->FindRow<FAction>(TargetActionName, 0);
+	checkf(TargetAction != nullptr, TEXT("Cannot find NewAction"));
+
+	ChanceArray.Empty();
+
+
+	for (int i = 0; i < TargetAction->CheckCount; ++i)
+	{
+		int32 CoinCheck = FMath::RandRange(1, 100);
+
+		if (1 <= CoinCheck && CoinCheck <= TargetAction->CheckPercent)
+		{
+			ChanceArray.Add(true);
+
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Fail"));
+			ChanceArray.Add(false);
+		}
+	}
+
+	
+	ChanceArray.Add(false);// for last collapsed slot to show all the chancecoin
+	ChanceArrayNum = ChanceArray.Num();
+	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	UBattleManagerComponent* NewBattleManagerComponent =
+	Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+	UBattleWidget* NewBattleWidget = Cast<UBattleWidget>(NewBattleManagerComponent->GetBattleWidget());
+	if (FactionType == EFactionType::Player)
+	{
+		NewBattleWidget->StartUpdateChanceSlot(ChanceArray);
+	
+	}
+
+
+
+
+}
+
 bool UBattleComponent::MeleeAttack()
 {
-
+	
 	UE_LOG(LogTemp, Warning, TEXT("MeleeAttack"));
-	if (ActionTarget == nullptr || !ActionTarget->IsValidLowLevelFast() || ActionTarget->IsPendingKill())
+	if (ActionTarget == nullptr || !IsValidChecked(ActionTarget))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
 		return false;
 
 	}
+	
+
+	//BattleWidget->StartUpdateChanceSlot(ChanceArray);
+	// Damage;
 
 	UE_LOG(LogTemp, Warning, TEXT("ActionTargetName %s"), *ActionTarget->GetName());
 	bGoToTarget = true;
@@ -149,7 +188,7 @@ void UBattleComponent::RangetAttack()
 
 void UBattleComponent::WeakHeal()
 {
-	if (ActionTarget == nullptr || !ActionTarget->IsValidLowLevelFast() || ActionTarget->IsPendingKill())
+	if (ActionTarget == nullptr || !ActionTarget->IsValidLowLevelFast())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
 	}
@@ -183,6 +222,12 @@ void UBattleComponent::BackToBattlePos()
 
 int32 UBattleComponent::CalculateDamage()
 {
+	//int32 FailCount;
+	for (int i = 0; i < ChanceArrayNum - 1; ++i) // Check Fail Count; delet ChanceArrayNum And Use ChanceArray.Num()
+	{
+	//	if(ChanceArray) Have to make ChanceArray at Header and Check Whether index i of ChanceArray is Fail or not
+
+	}
 
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
 	int32 Damage = StatusComponent->GetAttackPower() + 0;// have to put LevelDamage at place of 0
@@ -256,23 +301,43 @@ bool UBattleComponent::IsDead()
 void UBattleComponent::DoAction(UActionWidget* ActionWidget)
 {
 
-	if (ActionWidget->GetActionName() == "NormalAttack")
+	if (this->FactionType == EFactionType::Enemy)
+	{
+		int32 ActionNum = FMath::RandRange(0, ActionArray.Num() - 1);
+		TargetActionName = ActionArray[ActionNum];
+		UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *TargetActionName.ToString());
+		ChanceCoinCheck();
+		DoActionWork(TargetActionName);
+	}
+	else if (this->FactionType == EFactionType::Player)
+	{
+		TargetActionName = ActionWidget->GetActionName();
+
+		if (TargetActionName == "Resurrection")
+		{
+			Resurrection(ActionWidget->GetDeadPlayer());
+		}
+		else
+		{
+			ChanceCoinCheck();
+		}
+	}
+}
+
+void UBattleComponent::DoActionWork(FName NewTargetActionName)
+{
+	if (TargetActionName == "NormalAttack")
 	{
 		MeleeAttack();
 	}
-	else if (ActionWidget->GetActionName() == "WeakHeal")
+	else if (TargetActionName == "WeakHeal")
 	{
 		WeakHeal();
 	}
-	else if (ActionWidget->GetActionName() == "RangeAttack")
+	else if (TargetActionName == "RangeAttack")
 	{
 		RangetAttack();
 	}
-	else if (ActionWidget->GetActionName() == "Resurrection")
-	{
-		Resurrection(ActionWidget->GetDeadPlayer());
-	}
-
 }
 
 void UBattleComponent::ReachToDestination()
