@@ -3,6 +3,7 @@
 
 #include "../Component/MoveManagerComponent.h"
 
+#include "../HUD/MoveBoardHUD.h"
 #include "../Widget/MoveWidget.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "../MyGameModeBase.h"	// 추후 Component 통신 되면 지워야할수도
@@ -43,8 +44,6 @@ void UMoveManagerComponent::Init()
 
 	Day = 0;
 	Turn = 0;
-
-	CreateMoveWidget();
 }
 
 void UMoveManagerComponent::PrepareTurn()
@@ -73,7 +72,7 @@ void UMoveManagerComponent::ExecuteTurn()
 	TileEventManager->SpawnEvent(CurrentCharacter->GetCurrentTile());
 
 	CheckMoveCount();
-	MoveWidget->UpdateMoveJudge(MoveJudgeArray);
+	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->UpdateMoveJudge(MoveJudgeArray);
 
 	HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
 	bIsMoved = false;
@@ -99,7 +98,8 @@ void UMoveManagerComponent::CheckMoveCount()
 
 void UMoveManagerComponent::MoveCharacter()
 {
-	MoveWidget->HideMoveJudgeWidget();
+	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->HideMoveJudgeWidget();
+
 	bIsMoved = true;
 
 	// 현재는 HexGridManager 가 Component가 아니라서 하드코딩 -> 추후 컴포넌트로 바꾸고 컴포넌트끼리 통신하도록
@@ -149,22 +149,9 @@ void UMoveManagerComponent::ReachToDestination()
 	MoveCharacter();
 }
 
-void UMoveManagerComponent::HideWidget()
-{
-	MoveWidget->SetVisibility(ESlateVisibility::Collapsed);
-}
-
 AHexTile* UMoveManagerComponent::GetNextTile() const
 {
 	return NextTile;
-}
-
-void UMoveManagerComponent::CreateMoveWidget()
-{
-	check(MoveWidgetClass != nullptr && GEngine != nullptr);
-	MoveWidget = CreateWidget<UMoveWidget>(GEngine->GetFirstLocalPlayerController(GetWorld()), MoveWidgetClass);
-	check(MoveWidget != nullptr);
-	MoveWidget->AddToPlayerScreen(0);
 }
 
 int32 UMoveManagerComponent::GetMovableCount() const
@@ -185,11 +172,6 @@ const bool UMoveManagerComponent::IsMoved() const
 const AMyPlayerController* UMoveManagerComponent::GetCurrentController() const
 {
 	return CurrentController;
-}
-
-UMoveWidget* UMoveManagerComponent::GetMoveWidget() const
-{
-	return MoveWidget;
 }
 
 void UMoveManagerComponent::SetPlayerCharacterArray(const TArray<AMyCharacter*>& NewPlayerCharacterArray)

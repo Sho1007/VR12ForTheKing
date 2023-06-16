@@ -8,7 +8,19 @@
 
 void UMainMenuWidget::NativeConstruct()
 {
+	Btn_NewGame->OnClicked.AddDynamic(this, &UMainMenuWidget::NewGameButtonOnClicked);
+	Btn_JoinGame->OnClicked.AddDynamic(this, &UMainMenuWidget::JoinGameButtonOnClicked);
 	Btn_Quit->OnClicked.AddDynamic(this, &UMainMenuWidget::QuitButtonOnClicked);
+}
+
+void UMainMenuWidget::NewGameButtonOnClicked()
+{
+	GetWorld()->ServerTravel("/Game/Maps/L_SelectCharacter?listen");
+}
+
+void UMainMenuWidget::JoinGameButtonOnClicked()
+{
+	GetWorld()->GetFirstPlayerController()->ClientTravel("127.0.0.1", ETravelType::TRAVEL_Absolute, false);
 }
 
 void UMainMenuWidget::QuitButtonOnClicked()

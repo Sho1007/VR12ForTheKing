@@ -18,6 +18,7 @@ class VR12FORTHEKING_API UMoveWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	void HideWidget();
 	UFUNCTION(BlueprintNativeEvent)
 	void UpdateMoveJudge(const TArray<bool>& SuccessArray);
 	UFUNCTION(BlueprintNativeEvent)

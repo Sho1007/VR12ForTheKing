@@ -3,6 +3,8 @@
 
 #include "MyGameModeBase.h"
 
+#include "HUD/MoveBoardHUD.h"
+
 #include "HexGrid/HexGridManager.h"
 #include "HexGrid/HexTile.h"
 #include "Character/MyCharacter.h"
@@ -25,13 +27,12 @@ AMyGameModeBase::AMyGameModeBase()
 {
 	// BattleManager
 	BattleManager = CreateDefaultSubobject<UBattleManagerComponent>(TEXT("BattleManager"));
-	checkf(BattleManager != nullptr, TEXT("BattleManager is not spawned"));
+	check(BattleManager != nullptr);
 	BattleManager->SetGameMode(this);
 
 	// MoveManager
 	MoveManager = CreateDefaultSubobject<UMoveManagerComponent>(TEXT("MoveManager"));
 	check(MoveManager != nullptr);
-
 
 	// HexGridManager
 	HexGridManager = CreateDefaultSubobject<UHexGridManager>(TEXT("HexGridManager"));
@@ -57,6 +58,13 @@ void AMyGameModeBase::BeginPlay()
 
 	CreateTurnWidget();
 	CreateStatusWidget();
+}
+
+void AMyGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	UE_LOG(LogTemp, Warning, TEXT("Login Player : %s"), *NewPlayer->GetName());
 }
 
 void AMyGameModeBase::LeftClick(APlayerController* PlayerController)
@@ -106,7 +114,7 @@ void AMyGameModeBase::ReachToTile()
 
 void AMyGameModeBase::FinishUpdateMoveWidget()
 {
-	MoveManager->GetMoveWidget()->HideMoveJudgeWidget();
+	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->HideMoveJudgeWidget();
 }
 
 void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
@@ -115,7 +123,7 @@ void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 	{
 	case ETileEventActionType::Battle:
 		TileEventManager->HideWidget();
-		MoveManager->HideWidget();
+		GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->HideWidget();
 		TurnWidget->ChangetoBattleTurnWidget();
 		for (int i = 0; i < CharacterArray.Num(); ++i)
 		{

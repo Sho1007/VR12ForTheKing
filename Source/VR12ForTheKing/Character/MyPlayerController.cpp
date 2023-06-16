@@ -45,7 +45,7 @@ void AMyPlayerController::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("SubSystem or IMC is not valid!"));
 	}
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInputComponent)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *EnhancedInputComponent->GetName());
@@ -118,7 +118,7 @@ void AMyPlayerController::LeftClickPressed()
 void AMyPlayerController::CheckFocusActor()
 {
 	AActor* HitActor = GetHitActor();
-	GameMode->CheckFocusActor(HitActor, this);
+	//GameMode->CheckFocusActor(HitActor, this);
 }
 
 AActor* AMyPlayerController::GetHitActor()

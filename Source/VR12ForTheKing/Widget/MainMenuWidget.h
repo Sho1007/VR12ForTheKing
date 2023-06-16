@@ -19,9 +19,17 @@ public:
 	virtual void NativeConstruct() override;
 private:
 	UFUNCTION()
+	void NewGameButtonOnClicked();
+	UFUNCTION()
+	void JoinGameButtonOnClicked();
+	UFUNCTION()
 	void QuitButtonOnClicked();
 
 private:
+	UPROPERTY(meta = (AllowPrivateAccess = true, BindWidget))
+	UButton* Btn_NewGame;
+	UPROPERTY(meta = (AllowPrivateAccess = true, BindWidget))
+	UButton* Btn_JoinGame;
 	UPROPERTY(meta = (AllowPrivateAccess = true, BindWidget))
 	UButton* Btn_Quit;
 };

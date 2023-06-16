@@ -12,3 +12,8 @@ void UMoveWidget::UpdateMoveJudge_Implementation(const TArray<bool>& SuccessArra
 void UMoveWidget::HideMoveJudgeWidget_Implementation()
 {
 }
+
+void UMoveWidget::HideWidget()
+{
+	this->SetVisibility(ESlateVisibility::Collapsed);
+}

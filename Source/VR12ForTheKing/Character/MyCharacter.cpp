@@ -14,7 +14,9 @@
 AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+
+	SetReplicates(true);
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
 	SetRootComponent(CapsuleComponent);

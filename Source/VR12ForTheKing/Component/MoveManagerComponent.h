@@ -33,12 +33,8 @@ public:
 	void MoveCharacter();
 	void ReachToDestination();
 
-	void HideWidget();
-
 	AHexTile* GetNextTile() const;
 private:
-	void CreateMoveWidget();
-
 	void PrepareTurn();
 	void ExecuteTurn();
 	void FinishTurn();
@@ -48,7 +44,6 @@ public:
 	// Getter / Setter
 	const bool IsMoved() const;
 	const AMyPlayerController* GetCurrentController() const;
-	UMoveWidget* GetMoveWidget() const;
 	void SetPlayerCharacterArray(const TArray<AMyCharacter*>& NewPlayerCharacterArray);
 	void SetPlayerControllerArray(const TArray<AMyPlayerController*>& NewPlayerControllerArray);
 private:
@@ -61,10 +56,6 @@ private:
 	AMyPlayerController* CurrentController;
 	TArray<AMyCharacter*> PlayerCharacterArray;
 	TArray<AMyPlayerController*> PlayerControllerArray;
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UMoveWidget> MoveWidgetClass;
-	UMoveWidget* MoveWidget;
 
 	int32 MovableCount;
 	TArray<bool> MoveJudgeArray;

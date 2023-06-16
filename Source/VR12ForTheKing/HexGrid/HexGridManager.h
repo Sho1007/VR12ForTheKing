@@ -8,8 +8,6 @@
 
 class AHexTile;
 
-
-
 USTRUCT(BlueprintType)
 struct FTileRow
 {

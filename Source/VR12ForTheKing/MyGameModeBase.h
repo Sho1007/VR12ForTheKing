@@ -33,6 +33,9 @@ public:
 	AMyGameModeBase();
 	virtual void BeginPlay() override;
 
+protected:
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
 public:
 	void LeftClick(APlayerController* PlayerController);
 	void CheckEndTile(AActor* NewActor, APlayerController* TargetPlayerController);
@@ -114,8 +117,6 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 	UInventoryWidget* InventoryWidget;
-
-
 
 	TArray<AMyPlayerController*> PlayerControllerArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
