@@ -48,10 +48,10 @@ void AMoveBoardHUD::InitHUD()
 	check(MoveWidget != nullptr);
 	MoveWidget->AddToViewport();
 
-	check(TileEventWidgetClass != nullptr);
+	/*check(TileEventWidgetClass != nullptr);
 	TileEventWidget = CreateWidget<UTileEventWidget>(GetWorld()->GetFirstPlayerController(), TileEventWidgetClass);
 	check(TileEventWidget != nullptr);
-	TileEventWidget->AddToViewport();
+	TileEventWidget->AddToViewport();*/
 }
 
 UStatusWidget* AMoveBoardHUD::GetStatusWidget() const

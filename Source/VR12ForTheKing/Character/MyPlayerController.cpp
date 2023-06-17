@@ -95,6 +95,8 @@ void AMyPlayerController::LeftClickPressed()
 {
 	if (bIsOnWidget) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("LeftClickPressed"));
+
 	UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(GameMode->GetComponentByClass(UBattleManagerComponent::StaticClass()));
 	checkf(BattleManagerComponent != nullptr, TEXT("GameMode has not BattleManagerComponent"));
 	if (BattleManagerComponent->IsBattle())
@@ -118,7 +120,7 @@ void AMyPlayerController::LeftClickPressed()
 void AMyPlayerController::CheckFocusActor()
 {
 	AActor* HitActor = GetHitActor();
-	//GameMode->CheckFocusActor(HitActor, this);
+	GameMode->CheckFocusActor(HitActor, this);
 }
 
 AActor* AMyPlayerController::GetHitActor()
