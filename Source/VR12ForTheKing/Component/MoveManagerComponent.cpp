@@ -72,7 +72,7 @@ void UMoveManagerComponent::ExecuteTurn()
 	TileEventManager->SpawnEvent(CurrentCharacter->GetCurrentTile());
 
 	CheckMoveCount();
-	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->UpdateMoveJudge(MoveJudgeArray);
+	//GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->UpdateMoveJudge(MoveJudgeArray);
 
 	HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
 	bIsMoved = false;
