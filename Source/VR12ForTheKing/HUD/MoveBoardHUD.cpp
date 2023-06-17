@@ -9,12 +9,20 @@
 #include "../Widget/MoveWidget.h"
 #include "../Widget/TileEventWidget.h"
 
+#include "../Component/MoveManagerComponent.h"
+#include "../MyGameModeBase.h"
+
 void AMoveBoardHUD::BeginPlay()
 {
 	if (bIsInit == false)
 	{
 		bIsInit = true;
 		InitHUD();
+
+		if (HasAuthority())
+		{
+			GetWorld()->GetAuthGameMode()->FindComponentByClass<UMoveManagerComponent>()->StartTurn();
+		}
 	}
 }
 

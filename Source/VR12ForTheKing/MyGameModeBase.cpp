@@ -54,7 +54,7 @@ void AMyGameModeBase::BeginPlay()
 
 	NextTile = NULL;
 
-	MoveManager->StartTurn();
+	//MoveManager->StartTurn();
 
 	CreateTurnWidget();
 	CreateStatusWidget();
