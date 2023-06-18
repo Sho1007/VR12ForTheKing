@@ -13,11 +13,14 @@
 #include "../Event/EnemyEventActor.h"
 #include "BattleComponent.h"
 #include "StatusComponent.h"
+#include "InventoryComponent.h"
 #include "../Battle/BattleMap.h"
 #include "../Battle/BattleCharacterSpawnPosition.h"
 #include "../Widget/BattleWidget.h"
 #include "../Widget/TurnWidget.h"
 #include "../Widget/BattleTurnWidget.h"
+#include "../Widget/VictoryWidget.h"
+#include "../Widget/VictoryWidgetSlot.h"
 
 //#include "TimerManager.h"
 
@@ -232,20 +235,29 @@ bool UBattleManagerComponent::SpawnEnemy()
 			SpawnEnemyIndex += SpawnEnemyCount;
 			return true;
 		}
-	
+
 
 		FTransform EnemySpawnTransform = BattleMapArray[MapIndex]->GetEnemySpawnPosition()[SpawnEnemyCount]->GetActorTransform();
 		AMyCharacter* EnemyCharacter = GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform);
 		UBattleComponent* BattleComponent = Cast<UBattleComponent>(EnemyCharacter->GetComponentByClass(UBattleComponent::StaticClass()));
+		UInventoryComponent* InventoryComponent = Cast<UInventoryComponent>(EnemyCharacter->GetComponentByClass(UInventoryComponent::StaticClass()));
 		checkf(BattleComponent != nullptr, TEXT("EnemyCharacter has not BattleComponent"));
+		checkf(InventoryComponent != nullptr, TEXT("EnemyCharacter has not InventoryComponent"));
+		InventoryComponent->AddItem("NormalSword", 1); // Add Item to enemy to Drop Reward When Enemy die
+		InventoryComponent->AddItem("NormalArmor", 1);
+		//InventoryComponent->AddItem("God'sBeard", 1); can not found God's Beard in DataTable
 		BattleComponent->SetBaseTransform(EnemySpawnTransform);
 		BattleComponent->SetTargetCamera(BattleMapArray[MapIndex]->GetEnemySpawnPosition()[SpawnEnemyCount]->GetCameraPosition());
 		checkf(EnemyCharacter != nullptr, TEXT("UBattleManagerComponent::SpawnEnemy : EnemyCharacter is not spawned"));
 		EnemyCharacterArray.Add(EnemyCharacter);
-	}
 
-	SpawnEnemyIndex += SpawnEnemyCount + 1;
-	return true;
+		UE_LOG(LogTemp, Warning, TEXT("InventoryNum %d"), InventoryComponent->GetItemArray().Num());
+
+	}
+	
+		SpawnEnemyIndex += SpawnEnemyCount + 1;
+		return true;
+	
 }
 
 bool UBattleManagerComponent::TeleportCharacter()
@@ -396,13 +408,16 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 		MoveLerpCamera(FirstCharacterBattleComponent->GetTargetCamera()->GetActorTransform());
 		if (FirstCharacterBattleComponent->GetFactionType() == EFactionType::Player) // initwidget to select action
 		{
+			if (DeadEnemyCount != EnemyCharacterArray.Num()) // check whether all of the enemies are dead, if all the enemies are dead do not init battle Widget
+			{
+				//checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
+				BattleWidget->InitWidget(UseBattleTurnArray[0]);
+				//UE_LOG(LogTemp, Warning, TEXT("BattleWidgetName %s"), *BattleWidget->GetName());
+				BattleWidget->ShowWidget();
+				UE_LOG(LogTemp, Warning, TEXT("%s  %s Turn"), *CharacterFactionName, *UseBattleTurnArray[0]->GetName());
+			}
+		
 			
-			//checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
-			BattleWidget->InitWidget(UseBattleTurnArray[0]);
-			//UE_LOG(LogTemp, Warning, TEXT("BattleWidgetName %s"), *BattleWidget->GetName());
-			BattleWidget->ShowWidget();
-
-			UE_LOG(LogTemp, Warning, TEXT("%s  %s Turn"), *CharacterFactionName, *UseBattleTurnArray[0]->GetName());
 		}
 		else if (FirstCharacterBattleComponent->GetFactionType() == EFactionType::Enemy)
 		{
@@ -440,11 +455,14 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 		if (FirstCharacterBattleComponent->GetFactionType() == EFactionType::Player)
 		{
 
-			checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
-			BattleWidget->InitWidget(UseBattleTurnArray[0]);
-			//UE_LOG(LogTemp, Warning, TEXT("BattleWidgetName %s"), *BattleWidget->GetName());
-			BattleWidget->ShowWidget();
-			UE_LOG(LogTemp, Warning, TEXT("%s  %s Turn"), *CharacterFactionName, *UseBattleTurnArray[0]->GetName());
+			if (DeadEnemyCount != EnemyCharacterArray.Num()) 
+			{
+				checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
+				BattleWidget->InitWidget(UseBattleTurnArray[0]);
+				//UE_LOG(LogTemp, Warning, TEXT("BattleWidgetName %s"), *BattleWidget->GetName());
+				BattleWidget->ShowWidget();
+				UE_LOG(LogTemp, Warning, TEXT("%s  %s Turn"), *CharacterFactionName, *UseBattleTurnArray[0]->GetName());
+			}
 		}
 		else if (FirstCharacterBattleComponent->GetFactionType() == EFactionType::Enemy)
 		{
@@ -519,8 +537,16 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray(AMyCharacter* TargetCharac
 	else if (BattleComponent->GetFactionType() == EFactionType::Enemy)
 	{
 		++DeadEnemyCount;
+		UInventoryComponent* DeadEnemyInventoryComponent = Cast<UInventoryComponent>(TargetCharacter->FindComponentByClass(UInventoryComponent::StaticClass()));
+		int32 RandomRewardNum = FMath::RandRange(0, DeadEnemyInventoryComponent->GetItemArray().Num()-1); // Get Random Index In ItemArray
+		TArray<FItemInstance>RewardTempArray = DeadEnemyInventoryComponent->GetItemArray();
+		RewardArray.Add(RewardTempArray[RandomRewardNum]);
 
-		
+		for (int i = 0; i < RewardArray.Num(); ++i)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ReWardArray %s"), *RewardArray[i].ItemRow.ToString());
+		}
+	
 	}
 
 	for (int i = 0; i < UseBattleTurnArray.Num();)
@@ -661,22 +687,82 @@ void UBattleManagerComponent::CreateBattleWidget()
 	BattleWidget->HideWidget();
 }
 
+void UBattleManagerComponent::CreateVictoryWidget()
+{
+	check(VictoryWidgetClass != nullptr);
+	VictoryWidget = CreateWidget<UVictoryWidget>(GetWorld()->GetFirstPlayerController(), VictoryWidgetClass);
+	check(VictoryWidget != nullptr)
+	VictoryWidget->InitWidget();
+	VictoryWidget->AddToPlayerScreen(0);
+
+
+	for (int i = 0; i < RewardArray.Num(); ++i) // Add ItemList To VictoryWidget;
+	{
+		UVictoryWidgetSlot* VictoryWidgetSlot = CreateWidget<UVictoryWidgetSlot>(GetWorld()->GetFirstPlayerController(), VictoryWidgetSlotClass);
+		VictoryWidgetSlot->SetItmeNameText(FText::FromName(RewardArray[i].ItemRow));
+		VictoryWidget->AddItemToItemListBox(VictoryWidgetSlot);
+	}
+
+
+}
+
+void UBattleManagerComponent::ReceiveReward()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ReceiveReward Called"));
+
+	if (UseBattleTurnArray[0] != nullptr)
+	{
+		AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
+		UseBattleTurnArray.Add(FirstIndexCharacter);
+		UseBattleTurnArray.Remove(0);
+		UInventoryComponent* PlayerInventory = Cast<UInventoryComponent>(UseBattleTurnArray[0]->FindComponentByClass(UInventoryComponent::StaticClass()));
+		
+		PlayerInventory->AddItem(RewardArray[0].ItemRow, 1);
+		
+		for (int i = 0; i < PlayerInventory->GetItemArray().Num(); ++i)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ItemList: %s "), *PlayerInventory->GetItemInfoAtInventory(i)->ItemName.ToString());
+		}
+	
+	}
+	else
+	{
+	
+		UseBattleTurnArray.Add(nullptr);
+		UseBattleTurnArray.Remove(0);
+		UInventoryComponent* PlayerInventory = Cast<UInventoryComponent>(UseBattleTurnArray[0]->FindComponentByClass(UInventoryComponent::StaticClass()));
+		PlayerInventory->AddItem(RewardArray[0].ItemRow, 1);
+		
+		for (int i = 0; i < PlayerInventory->GetItemArray().Num(); ++i)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ItemList: %s "), *PlayerInventory->GetItemInfoAtInventory(i)->ItemName.ToString());
+		}
+	}
+
+}
+
 void UBattleManagerComponent::EndBattle()
 {
 	++VictoryCount;
+	
 	UE_LOG(LogTemp, Warning, TEXT("Victory!!"));
-	BattleMapArray[MapIndex]->MoveNextSceneIndex();
-	TeleportCharacter();
-	SpawnEnemy();
-	MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
+	BattleWidget->HideWidget();
+	CreateVictoryWidget();
 
-	UWorld* World = GetWorld();
+	
+
+	//BattleMapArray[MapIndex]->MoveNextSceneIndex();
+	//TeleportCharacter();
+	//SpawnEnemy();
+	//MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
+
+	//UWorld* World = GetWorld();
 
 
-	if (VictoryCount == 1)
-	{
-		World->ServerTravel("/Game/Develop/Jino/Map/CPPTestMap");
-	}
+	//if (VictoryCount == 1)
+	//{
+	//	World->ServerTravel("/Game/Develop/Jino/Map/CPPTestMap");
+	//}
 
 }
 

@@ -81,7 +81,7 @@ public:
 		void BackToBattlePos();
 
 	UFUNCTION(BlueprintCallable)
-		int32 CalculateDamage();
+		void CalculateDamage(int32 TargetCheckCount);
 
 	UFUNCTION(BlueprintCallable)
 		void GiveDamage();
@@ -133,6 +133,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<bool> ChanceArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		AMyCharacter* ActionTarget;
 	
 private:
@@ -151,7 +153,7 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 		FTransform BaseTransform;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-		int32 ChanceArrayNum;
-
-	FRotator CharacterRot;
+		FRotator CharacterRot;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+		int32 Damage;
 };

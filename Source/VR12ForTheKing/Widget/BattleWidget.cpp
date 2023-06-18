@@ -171,3 +171,7 @@ void UBattleWidget::CoinTimerFunction()
 		ChanceCoinBoxIndex = 0;
 	}
 }
+
+
+
+
