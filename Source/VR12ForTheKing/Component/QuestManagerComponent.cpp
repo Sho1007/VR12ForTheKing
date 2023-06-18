@@ -31,9 +31,16 @@ void UQuestManagerComponent::BeginPlay()
 
 	QuestWidget->AddToViewport();
 
+	FQuestNPCData* QuestNPCData = QuestDataTable->FindRow<FQuestNPCData>(FName("FirstQuest_1"), FString(""));
+	check(QuestNPCData != nullptr);
+	QuestWidget->InitNPCQuest(QuestNPCData);
+	//QuestWidget->InitQuestEventInfo(QuestNPCData);
+	
+
 	FInputModeUIOnly InputMode;
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
+
 }
 
 
@@ -75,4 +82,5 @@ FQuestNPCData* UQuestManagerComponent::FindQuestNPCData(FName TargetRow)
 
 	return QuestDataTable->FindRow<FQuestNPCData>(TargetRow, FString(""));
 }
+
 

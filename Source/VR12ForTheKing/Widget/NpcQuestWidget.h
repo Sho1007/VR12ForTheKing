@@ -22,8 +22,10 @@ class VR12FORTHEKING_API UNpcQuestWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void InitWidget(FQuestNPCData NewQuestNPCData, int32 QuestStoryIndex, int32 QuestPurposeIndex);
+	//UFUNCTION(BlueprintCallable)
+	void InitWidget(FQuestNPCData* NewQuestNPCData, int32 QuestStoryIndex, int32 QuestPurposeIndex);
+
+
 
 
 private:

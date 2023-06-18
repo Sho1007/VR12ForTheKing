@@ -11,19 +11,18 @@
 
 #include "../Component/QuestManagerComponent.h"
 
-void UNpcQuestWidget::InitWidget(FQuestNPCData NewQuestNPCData, int32 QuestStoryIndex, int32 QuestPurposeIndex)
+void UNpcQuestWidget::InitWidget(FQuestNPCData* NewQuestNPCData, int32 QuestStoryIndex, int32 QuestPurposeIndex)
 {
-	TB_NPCName->SetText(NewQuestNPCData.NpcName);
-	TB_NPCNickName->SetText(NewQuestNPCData.NpcNickName);
-	IMG_NPC->SetBrushFromTexture(NewQuestNPCData.NpcImage);
+	TB_NPCName->SetText(NewQuestNPCData->NpcName);
+	TB_NPCNickName->SetText(NewQuestNPCData->NpcNickName);
+	IMG_NPC->SetBrushFromTexture(NewQuestNPCData->NpcImage);
 
 
-	TB_Story->SetText(NewQuestNPCData.StoryDataArray[QuestStoryIndex].GameStory);
+	TB_Story->SetText(NewQuestNPCData->StoryDataArray[QuestStoryIndex].GameStory);
 
-	if (NewQuestNPCData.StoryDataArray.Num() - 1 == QuestStoryIndex)
+	if (NewQuestNPCData->StoryDataArray.Num() - 1 == QuestStoryIndex)
 	{
-		
-		TB_QuestPurpose->SetText(NewQuestNPCData.Purpose[0].QuestDescription);
+		TB_QuestPurpose->SetText(NewQuestNPCData->Purpose[0].QuestDescription);
 		TB_QuestPurpose->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
