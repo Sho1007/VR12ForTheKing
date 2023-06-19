@@ -3,15 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/AudioComponent.h"
+#include "Components/ActorComponent.h"
 #include "MyAudioComponent.generated.h"
 
-/**
- * 
- */
-UCLASS(Blueprintable)
-class VR12FORTHEKING_API UMyAudioComponent : public UAudioComponent
+
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class VR12FORTHEKING_API UMyAudioComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+public:	
+	// Sets default values for this component's properties
+	UMyAudioComponent();
+	void PlayBGM(FName SoundCueName);
 	
+protected:
+	
+
+public:	
+
+
+		
 };
