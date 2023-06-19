@@ -10,6 +10,8 @@
 #include "../Event/TileEventManager.h"
 #include "../Widget/ActionWidget.h"
 #include "../Widget/BattleWidget.h"
+#include "../Widget/DamageText.h"
+#include "Components/WidgetComponent.h"
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
 {
@@ -27,7 +29,7 @@ void UBattleComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-
+	
 }
 
 
@@ -258,7 +260,7 @@ void UBattleComponent::ReceiveDamage(int NewDamage)
 	//FString DamagedCharacterName = ActionTarget->GetName();
 	UE_LOG(LogTemp, Warning, TEXT("%s CurrentHP : %d"), *GetOwner()->GetName(), StatusComponent->GetCurrentHP());
 	//TargetStatusComponent->SetCurrentHP(DamagedHP);
-
+	//CreateDamageTextWidget();
 	
 	if (StatusComponent->IsDead())
 	{
@@ -367,6 +369,17 @@ void UBattleComponent::ReachToDestination()
 
 		EndTurn();
 	}
+}
+
+void UBattleComponent::CreateDamageTextWidget()
+{
+	UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(this->GetOwner()->FindComponentByClass(UWidgetComponent::StaticClass()));
+
+	check(DamageTextClass != nullptr);
+	DamageText = CreateWidget<UDamageText>(GetWorld()->GetFirstPlayerController(), DamageTextClass);
+	check(DamageText != nullptr);
+	DamageText->AddToPlayerScreen(0);
+	DamageText->SetVisibility(ESlateVisibility::Visible);
 }
 
 

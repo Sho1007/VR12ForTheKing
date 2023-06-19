@@ -39,6 +39,7 @@ class AMyCharacter;
 class UStatusComponent;
 class UActionWidget;
 class UBattleWidget;
+class UDamageText;
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VR12FORTHEKING_API UBattleComponent : public UActorComponent
 {
@@ -98,7 +99,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ReachToDestination();
 
-	
+	void CreateDamageTextWidget();
 
 
 
@@ -119,7 +120,7 @@ public:
 	const TArray<FName>& GetActionArray() const;
 
 	void SetActionTarget(AMyCharacter* NewActionTarget);
-
+	
 	AMyCharacter* GetActionTarget();
 	void EndTurn();
 
@@ -156,4 +157,8 @@ private:
 		FRotator CharacterRot;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 		int32 Damage;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+		TSubclassOf<UDamageText> DamageTextClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+		UDamageText* DamageText;
 };

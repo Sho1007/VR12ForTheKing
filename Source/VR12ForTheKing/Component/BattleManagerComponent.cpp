@@ -712,16 +712,24 @@ void UBattleManagerComponent::ReceiveReward()
 
 	if (UseBattleTurnArray[0] != nullptr)
 	{
-		AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
-		UseBattleTurnArray.Add(FirstIndexCharacter);
-		UseBattleTurnArray.Remove(0);
+		
 		UInventoryComponent* PlayerInventory = Cast<UInventoryComponent>(UseBattleTurnArray[0]->FindComponentByClass(UInventoryComponent::StaticClass()));
 		
-		PlayerInventory->AddItem(RewardArray[0].ItemRow, 1);
-		
-		for (int i = 0; i < PlayerInventory->GetItemArray().Num(); ++i)
+		if (RewardArray.Num() > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ItemList: %s "), *PlayerInventory->GetItemInfoAtInventory(i)->ItemName.ToString());
+			PlayerInventory->AddItem(RewardArray[0].ItemRow, 1);
+			RewardArray.RemoveAt(0);
+			AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
+			UseBattleTurnArray.Add(FirstIndexCharacter);
+			UseBattleTurnArray.RemoveAt(0);
+			for (int i = 0; i < PlayerInventory->GetItemArray().Num(); ++i)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("ItemList: %s "), *PlayerInventory->GetItemInfoAtInventory(i)->ItemName.ToString());
+			}
+		}
+		else if(RewardArray.Num()<=0)
+		{
+			MoveToNextStage();
 		}
 	
 	}
@@ -729,13 +737,20 @@ void UBattleManagerComponent::ReceiveReward()
 	{
 	
 		UseBattleTurnArray.Add(nullptr);
-		UseBattleTurnArray.Remove(0);
-		UInventoryComponent* PlayerInventory = Cast<UInventoryComponent>(UseBattleTurnArray[0]->FindComponentByClass(UInventoryComponent::StaticClass()));
-		PlayerInventory->AddItem(RewardArray[0].ItemRow, 1);
-		
-		for (int i = 0; i < PlayerInventory->GetItemArray().Num(); ++i)
+		UseBattleTurnArray.RemoveAt(0);
+		if (RewardArray.Num() > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ItemList: %s "), *PlayerInventory->GetItemInfoAtInventory(i)->ItemName.ToString());
+			UInventoryComponent* PlayerInventory = Cast<UInventoryComponent>(UseBattleTurnArray[0]->FindComponentByClass(UInventoryComponent::StaticClass()));
+			PlayerInventory->AddItem(RewardArray[0].ItemRow, 1);
+			RewardArray.RemoveAt(0);
+			for (int i = 0; i < PlayerInventory->GetItemArray().Num(); ++i)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("ItemList: %s "), *PlayerInventory->GetItemInfoAtInventory(i)->ItemName.ToString());
+			}
+		}
+		else if (RewardArray.Num() <= 0)
+		{
+			MoveToNextStage();
 		}
 	}
 
@@ -749,13 +764,6 @@ void UBattleManagerComponent::EndBattle()
 	BattleWidget->HideWidget();
 	CreateVictoryWidget();
 
-	
-
-	//BattleMapArray[MapIndex]->MoveNextSceneIndex();
-	//TeleportCharacter();
-	//SpawnEnemy();
-	//MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
-
 	//UWorld* World = GetWorld();
 
 
@@ -764,6 +772,14 @@ void UBattleManagerComponent::EndBattle()
 	//	World->ServerTravel("/Game/Develop/Jino/Map/CPPTestMap");
 	//}
 
+}
+
+void UBattleManagerComponent::MoveToNextStage()
+{
+	BattleMapArray[MapIndex]->MoveNextSceneIndex();
+	TeleportCharacter();
+	SpawnEnemy();
+	MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
 }
 
 void UBattleManagerComponent::GameOver()

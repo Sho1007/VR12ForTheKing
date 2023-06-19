@@ -67,6 +67,7 @@ private:
 	void CreateVictoryWidget();
 
 	void EndBattle();
+	void MoveToNextStage();
 	void GameOver();
 private:
 	// Battle Var

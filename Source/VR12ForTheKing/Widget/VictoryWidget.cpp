@@ -27,4 +27,6 @@ void UVictoryWidget::OnClickedReceiveButton()
 	UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
 	BattleManagerComponent->ReceiveReward();
 	ItemListBox->RemoveChildAt(0);
+	UE_LOG(LogTemp, Warning, TEXT("ItemListBoxNum %d"), ItemListBox->GetChildrenCount());
+
 }

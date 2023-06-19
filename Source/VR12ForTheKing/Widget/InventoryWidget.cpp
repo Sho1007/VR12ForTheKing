@@ -50,4 +50,6 @@ void UInventoryWidget::SetParent(UStatusWidget* NewStatusWidget)
 		EquipItemSlotArray.Add(Cast<UEquipItemListSlot>(VB_EquipmentSlot->GetChildAt(i)));
 		EquipItemSlotArray[i]->SetSlotIndex(StatusWidget, i + 1);
 	}
+
+
 }
