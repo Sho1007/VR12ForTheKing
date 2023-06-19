@@ -98,6 +98,7 @@ void UMoveManagerComponent::CheckMoveCount()
 
 void UMoveManagerComponent::MoveCharacter()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UMoveManagerComponent::MoveCharacter : CurrentCharacter : %s"), *CurrentCharacter->GetName());
 	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->HideMoveJudgeWidget();
 
 	bIsMoved = true;
@@ -105,12 +106,11 @@ void UMoveManagerComponent::MoveCharacter()
 	// 현재는 HexGridManager 가 Component가 아니라서 하드코딩 -> 추후 컴포넌트로 바꾸고 컴포넌트끼리 통신하도록
 	NextTile = HexGridManager->GetNextPath();
 
-	UActorComponent* ActorComponent = GetOwner()->GetComponentByClass(UTileEventManager::StaticClass());
-	check(ActorComponent != nullptr);
-	UTileEventManager* TEM = Cast<UTileEventManager>(ActorComponent);
+	UTileEventManager* TileEventManager = GetOwner()->FindComponentByClass<UTileEventManager>();
+	check(TileEventManager != nullptr);
 	if (NextTile)
 	{
-		if (TEM->SetCurrentTileEvent(NextTile))
+		if (TileEventManager->SetCurrentTileEvent(NextTile))
 		{
 			// Todo : Move Half Distance to Event Tile;
 		}

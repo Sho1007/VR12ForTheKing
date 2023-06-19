@@ -115,6 +115,7 @@ public:
 	FQuestNPCData* FindQuestNPCData(FName TargetRow);
 
 private:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UDataTable* QuestDataTable;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<FName> QuestArray;

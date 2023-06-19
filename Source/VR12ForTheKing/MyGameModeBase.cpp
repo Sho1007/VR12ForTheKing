@@ -54,7 +54,7 @@ void AMyGameModeBase::BeginPlay()
 
 	NextTile = NULL;
 
-	MoveManager->StartTurn();
+	//MoveManager->StartTurn();
 
 	CreateTurnWidget();
 	CreateStatusWidget();
@@ -69,6 +69,7 @@ void AMyGameModeBase::PostLogin(APlayerController* NewPlayer)
 
 void AMyGameModeBase::LeftClick(APlayerController* PlayerController)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Clicked Player : %s"), *PlayerController->GetName());
 	if (!MoveManager->IsMoved() && MoveManager->GetCurrentController() == PlayerController)
 	{
 		MoveManager->MoveCharacter();

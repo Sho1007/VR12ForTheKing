@@ -14,7 +14,7 @@
 AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SetReplicates(true);
 
@@ -97,6 +97,7 @@ void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
 
 void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float NewRadius)
 {
+	UE_LOG(LogTemp, Warning, TEXT("AMyCharacter::SetDestination"));
 	if (NewSpeed)
 	{
 		MoveSpeed = NewSpeed;

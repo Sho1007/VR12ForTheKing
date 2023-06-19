@@ -9,12 +9,20 @@
 #include "../Widget/MoveWidget.h"
 #include "../Widget/TileEventWidget.h"
 
+#include "../Component/MoveManagerComponent.h"
+#include "../MyGameModeBase.h"
+
 void AMoveBoardHUD::BeginPlay()
 {
 	if (bIsInit == false)
 	{
 		bIsInit = true;
 		InitHUD();
+
+		if (HasAuthority())
+		{
+			GetWorld()->GetAuthGameMode()->FindComponentByClass<UMoveManagerComponent>()->StartTurn();
+		}
 	}
 }
 
@@ -40,10 +48,10 @@ void AMoveBoardHUD::InitHUD()
 	check(MoveWidget != nullptr);
 	MoveWidget->AddToViewport();
 
-	check(TileEventWidgetClass != nullptr);
+	/*check(TileEventWidgetClass != nullptr);
 	TileEventWidget = CreateWidget<UTileEventWidget>(GetWorld()->GetFirstPlayerController(), TileEventWidgetClass);
 	check(TileEventWidget != nullptr);
-	TileEventWidget->AddToViewport();
+	TileEventWidget->AddToViewport();*/
 }
 
 UStatusWidget* AMoveBoardHUD::GetStatusWidget() const

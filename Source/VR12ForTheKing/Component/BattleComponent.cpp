@@ -104,9 +104,9 @@ void UBattleComponent::Attack_Implementation()
 
 void UBattleComponent::ChanceCoinCheck()
 {
-	TArray<bool> ChanceArray;
+	
 
-	// Todo :
+	
 	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
 	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
 
@@ -129,27 +129,25 @@ void UBattleComponent::ChanceCoinCheck()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Fail"));
 			ChanceArray.Add(false);
 		}
 	}
 
 	
 	ChanceArray.Add(false);// for last collapsed slot to show all the chancecoin
-	ChanceArrayNum = ChanceArray.Num();
 	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 	UBattleManagerComponent* NewBattleManagerComponent =
 	Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
 	UBattleWidget* NewBattleWidget = Cast<UBattleWidget>(NewBattleManagerComponent->GetBattleWidget());
+
+
+
+
+	CalculateDamage(TargetAction->CheckCount); 
 	if (FactionType == EFactionType::Player)
 	{
 		NewBattleWidget->StartUpdateChanceSlot(ChanceArray);
-	
 	}
-
-
-
-
 }
 
 bool UBattleComponent::MeleeAttack()
@@ -170,7 +168,7 @@ bool UBattleComponent::MeleeAttack()
 	UE_LOG(LogTemp, Warning, TEXT("ActionTargetName %s"), *ActionTarget->GetName());
 	bGoToTarget = true;
 	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
-	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 5.0);
+	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 10.0);
 
 	return true;
 }
@@ -220,18 +218,22 @@ void UBattleComponent::BackToBattlePos()
 
 }
 
-int32 UBattleComponent::CalculateDamage()
+void UBattleComponent::CalculateDamage(int32 TargetCheckCount)
 {
-	//int32 FailCount;
-	for (int i = 0; i < ChanceArrayNum - 1; ++i) // Check Fail Count; delet ChanceArrayNum And Use ChanceArray.Num()
+	int32 SuccessCount = 0;
+	for (int i = 0; i < ChanceArray.Num() - 1; ++i) // Check Fail Count; delet ChanceArrayNum And Use ChanceArray.Num()
 	{
-	//	if(ChanceArray) Have to make ChanceArray at Header and Check Whether index i of ChanceArray is Fail or not
+		if (ChanceArray[i]==true)  // Check Whether index i of ChanceArray is Fail or not
+		{
+			++SuccessCount;
+		}
 
 	}
 
+
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
-	int32 Damage = StatusComponent->GetAttackPower() + 0;// have to put LevelDamage at place of 0
-	return Damage;
+	 Damage = ((StatusComponent->GetAttackPower())/ TargetCheckCount)*SuccessCount;  
+	 UE_LOG(LogTemp, Warning, TEXT("Default: %d, CheckCountedDamage: %d"), StatusComponent->GetAttackPower(), Damage);
 }
 
 void UBattleComponent::GiveDamage()
@@ -241,17 +243,17 @@ void UBattleComponent::GiveDamage()
 		UBattleComponent* BattleComponent = Cast<UBattleComponent>(ActionTarget->FindComponentByClass(UBattleComponent::StaticClass()));
 		checkf(BattleComponent != nullptr, TEXT("TargetCharacter has not BattleComponent"));
 
-		BattleComponent->ReceiveDamage(CalculateDamage());
+		BattleComponent->ReceiveDamage(Damage);
 	}
 
 
 }
 
-void UBattleComponent::ReceiveDamage(int Damage)
+void UBattleComponent::ReceiveDamage(int NewDamage)
 {
 	UStatusComponent* StatusComponent = Cast<UStatusComponent>(GetOwner()->FindComponentByClass(UStatusComponent::StaticClass()));
 
-	StatusComponent->SetCurrentHP(StatusComponent->GetCurrentHP() - CalculateDamage());
+	StatusComponent->SetCurrentHP(StatusComponent->GetCurrentHP() - NewDamage);
 	//int32 DamagedHP = TargetStatusComponent->GetCurrentHP() - CalculateDamage();
 	//FString DamagedCharacterName = ActionTarget->GetName();
 	UE_LOG(LogTemp, Warning, TEXT("%s CurrentHP : %d"), *GetOwner()->GetName(), StatusComponent->GetCurrentHP());
@@ -356,7 +358,7 @@ void UBattleComponent::ReachToDestination()
 		AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
 		FQuat GoBackQuat(0.0f, 0.0f, 1.0f, 0.0f);// use to change character rotation
 		GetOwner()->SetActorRotation(BaseTransform.GetRotation() * GoBackQuat, ETeleportType::None);
-		NewCharacter->SetDestination(BaseTransform.GetLocation(), 0.0, 1.0);
+		NewCharacter->SetDestination(BaseTransform.GetLocation(), 0.0, 10.0); // fix shaking problem by setting Destionation Radius larger
 	}
 	else
 	{
