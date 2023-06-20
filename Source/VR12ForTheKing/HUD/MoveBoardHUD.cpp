@@ -8,9 +8,11 @@
 #include "../Widget/StatusWidget.h"
 #include "../Widget/MoveWidget.h"
 #include "../Widget/TileEventWidget.h"
+#include "../Widget/BattleWidget.h"
+#include "../Widget/TurnWidget.h"
+#include "../Widget/BattleTurnWidget.h"
 
-#include "../Component/MoveManagerComponent.h"
-#include "../MyGameModeBase.h"
+#include "../PlayerController/MoveBoardPlayerController.h"
 
 void AMoveBoardHUD::BeginPlay()
 {
@@ -18,11 +20,6 @@ void AMoveBoardHUD::BeginPlay()
 	{
 		bIsInit = true;
 		InitHUD();
-
-		if (HasAuthority())
-		{
-			GetWorld()->GetAuthGameMode()->FindComponentByClass<UMoveManagerComponent>()->StartTurn();
-		}
 	}
 }
 
@@ -35,23 +32,88 @@ void AMoveBoardHUD::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 void AMoveBoardHUD::InitHUD()
 {
-	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(GetOwningPlayerController());
 	check(PC);
 
+	// Create StatusWidget
 	check(StatusWidgetClass != nullptr);
 	StatusWidget = CreateWidget<UStatusWidget>(GetWorld()->GetFirstPlayerController(), StatusWidgetClass);
 	check(StatusWidget != nullptr);
 	StatusWidget->AddToViewport();
-
+	// Create MoveWidget
 	check(MoveWidgetClass != nullptr);
 	MoveWidget = CreateWidget<UMoveWidget>(GetWorld()->GetFirstPlayerController(), MoveWidgetClass);
 	check(MoveWidget != nullptr);
 	MoveWidget->AddToViewport();
-
-	/*check(TileEventWidgetClass != nullptr);
+	// Create TileEventWidget
+	check(TileEventWidgetClass != nullptr);
 	TileEventWidget = CreateWidget<UTileEventWidget>(GetWorld()->GetFirstPlayerController(), TileEventWidgetClass);
 	check(TileEventWidget != nullptr);
-	TileEventWidget->AddToViewport();*/
+	TileEventWidget->AddToViewport();
+	TileEventWidget->HideWidget();
+	// Create BattleWidget
+	check(BattleWidgetClass);
+	BattleWidget = CreateWidget<UBattleWidget>(GetWorld()->GetFirstPlayerController(), BattleWidgetClass);
+	check(BattleWidget);
+	BattleWidget->AddToViewport();
+	BattleWidget->HideWidget();
+	// Create TurnWidget
+	checkf(TurnWidgetClass != nullptr, TEXT("TurnWidgetClass is nullptr"));
+	TurnWidget = CreateWidget<UTurnWidget>(GetWorld()->GetFirstPlayerController(), TurnWidgetClass);
+	checkf(TurnWidget != nullptr, TEXT("TurnWidget is not created"));
+	TurnWidget->AddToPlayerScreen(0);
+	TurnWidget->InitWidget();
+	// Set InputMode
+	FInputModeGameAndUI InputMode;
+	PC->SetInputMode(InputMode);
+	PC->SetShowMouseCursor(true);
+	PC->ReadyToPlay();
+}
+
+void AMoveBoardHUD::ChangeToBattleWidget()
+{
+	TileEventWidget->HideWidget();
+	MoveWidget->HideWidget();
+	TurnWidget->ChangetoBattleTurnWidget();
+}
+
+void AMoveBoardHUD::InitTileEventWidget(AEventActor* NewTileEvent)
+{
+	TileEventWidget->InitEventWidget(NewTileEvent);
+}
+
+void AMoveBoardHUD::SetBattleTurnArray(TArray<AMyCharacter*>& NewBattleTrunAray)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("AMoveBoardHUD::SetBattleTurnArray")));
+}
+
+void AMoveBoardHUD::StartUpdateChanceSlot(const TArray<bool>& NewChanceArray)
+{
+}
+
+void AMoveBoardHUD::InitBattleWidget(AMyCharacter* TargetCharacter)
+{
+	BattleWidget->InitWidget(TargetCharacter);
+}
+
+void AMoveBoardHUD::HideBattleWidget()
+{
+	BattleWidget->HideWidget();
+}
+
+void AMoveBoardHUD::ChangeToVictoryWidget()
+{
+	BattleWidget->ChangeToVictoryWidget();
+}
+
+void AMoveBoardHUD::DeleteHeartCount()
+{
+	TurnWidget->DeleteHeartCount();
+}
+
+void AMoveBoardHUD::AddUnitToImageArray(const TArray<AMyCharacter*>& NewImageArray)
+{
+	TurnWidget->GetBattleTurnWidget()->AddUnitToImageArray(NewImageArray);
 }
 
 UStatusWidget* AMoveBoardHUD::GetStatusWidget() const

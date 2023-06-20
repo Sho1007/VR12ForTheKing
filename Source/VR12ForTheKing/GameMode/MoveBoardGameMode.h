@@ -27,27 +27,4 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;
-
-private:
-	void InitGameMode();
-	void CreatePlayer();
-private:
-	UPROPERTY(meta = (AllowPrivateAccess = true))
-	bool bIsInit;
-private:
-	// Battle Manager
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	UBattleManagerComponent* BattleManager;
-
-	// MoveManager Var
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	UMoveManagerComponent* MoveManager;
-
-	// HexGridManager Var
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	UHexGridManager* HexGridManager;
-
-	// EventManager Var
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	UTileEventManager* TileEventManager;
 };

@@ -17,6 +17,7 @@ class UBattleManagerComponent;
 class UChanceCoinSlot;
 class UTexture2D;
 class UOverlay;
+class UVictoryWidget;
 struct FAction;
 
 UCLASS()
@@ -31,6 +32,9 @@ public:
 	void InitActionDiscription(FName NewActionName);
 	void StartUpdateChanceSlot(TArray<bool> NewChanceArray);
 	void InitChanceCoinBox();
+
+	void ChangeToVictoryWidget();
+
 	//Getter,Setter
 	void CoinTimerFunction();
 private:
@@ -45,6 +49,9 @@ private:
 	TArray<bool> TargetChanceArray;
 	FName PlayerActionName;
 	bool bIsChanceCheckEnd;
+
+	UPROPERTY(meta = (AllowPrivateAccess = true, BindWidget))
+	UVictoryWidget* WBP_VictoryWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TSubclassOf<UActionWidget> ActionWidgetClass;
@@ -61,6 +68,10 @@ private:
 		UHorizontalBox* CoinChanceBox;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 		UOverlay* DiscriptionOverlay;
+
+
+
+
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
 		UTextBlock* TB_ActionName;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))

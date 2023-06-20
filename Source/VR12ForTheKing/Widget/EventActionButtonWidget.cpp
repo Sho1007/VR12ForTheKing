@@ -8,7 +8,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Kismet/GamePlayStatics.h"
 
-#include "../MyGameModeBase.h"
+#include "../PlayerController/MoveBoardPlayerController.h"
 
 void UEventActionButtonWidget::NativeConstruct()
 {
@@ -17,10 +17,12 @@ void UEventActionButtonWidget::NativeConstruct()
 
 void UEventActionButtonWidget::ActionButtonOnClicked()
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("UEventActionButtonWidget::ActionButtonOnClicked")));
 	//UE_LOG(LogTemp, Warning, TEXT("UEventActionButtonWidget::ActionButtonOnClicked : Called"));
-	AMyGameModeBase* GameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	checkf(GameMode != nullptr, TEXT("UEventActionButtonWidget::ActionButtonOnClicked : GameMode is nullptr"));
-	GameMode->DoEventAction(TileEventActionType);
+
+	AMoveBoardPlayerController* PC = GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>();
+	check(PC);
+	PC->DoEventAction(TileEventActionType);
 }
 
 void UEventActionButtonWidget::SetButtonName(FText NewButtonName)

@@ -6,13 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "BattleManagerComponent.generated.h"
 
-
-class UBattleWidget;
 class AMyCharacter;
 class ABattleMap;
 class UBattleComponent;
-class UVictoryWidget;
-class UVictoryWidgetSlot;
 class ALevelSequenceActor;
 class UDataTable;
 struct FItemInstance;
@@ -58,19 +54,19 @@ public:
 	AMyCharacter* GetPlayerCharacter(int32 Index);
 	int32 GetPlayerCharacterArrayNum();
 	UDataTable* GetPlayerAnimDataTable();
-	UBattleWidget* GetBattleWidget();
 	void ReceiveReward();
 private:
 	// Battle Process
 	bool SpawnEnemy();
 	bool TeleportCharacter();
-	void MoveCamera(FTransform TargetCameraTransform);
+
+	UFUNCTION(NetMulticast, Reliable)
 	void MoveLerpCamera(FTransform NewTargetCameraTransform);
+	void MoveLerpCamera_Implementation(FTransform NewTargetCameraTransform);
 	UFUNCTION()
 	void LerpTimerFunction();
 	void CalculateTurn();
 	void InitUnitTurn();
-	void CreateBattleWidget();
 	void CreateVictoryWidget();
 
 	void EndBattle();
@@ -125,22 +121,10 @@ private:
 	FRotator TargetRotation;
 	FTimerHandle CameraLerpTimerHandle;
 
-	// BattleWidget Var
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		TSubclassOf<UBattleWidget> BattleWidgetClass;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		TSubclassOf<UVictoryWidget> VictoryWidgetClass;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		TSubclassOf<UVictoryWidgetSlot> VictoryWidgetSlotClass;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		UBattleWidget* BattleWidget;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		UVictoryWidget* VictoryWidget;
+	
 
 	AGameModeBase* GameMode;
 
 	bool bIsBattle;
 	//function
-
-
 };

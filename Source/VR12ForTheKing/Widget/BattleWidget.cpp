@@ -15,9 +15,10 @@
 #include "../Component/StatusComponent.h"
 #include "ChanceCoinSlot.h"
 #include "Components/Overlay.h"
+#include "../Widget/VictoryWidget.h"
+#include "../GameState/MoveBoardGameState.h"
 void UBattleWidget::HideWidget()
 {
-	
 	this->HB_Action->SetVisibility(ESlateVisibility::Hidden);
 	this->DiscriptionOverlay->SetVisibility(ESlateVisibility::Hidden);
 	//this->SetVisibility(ESlateVisibility::Collapsed);
@@ -48,36 +49,47 @@ void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 		ActionWidget->InitWidget(ActionArray[i], this, BattleComponent);
 		HB_Action->AddChildToHorizontalBox(ActionWidget);
 	}
-	AMyGameModeBase* NewGamModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+
+
+	/*AMyGameModeBase* NewGamModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 	UBattleManagerComponent* NewBattleManagerComponent =
-		Cast<UBattleManagerComponent>(NewGamModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+		Cast<UBattleManagerComponent>(NewGamModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));*/
 
-	for (int32 i = 0; i < NewBattleManagerComponent->GetPlayerCharacterArrayNum(); ++i) // check whether there is deadcharacter, if deadcharacter exist create resurrection widget
-	{
-		if (NewBattleManagerComponent->GetPlayerCharacter(i) == NewTargetCharacter) continue;
-		UStatusComponent* StatusComponent = Cast<UStatusComponent>(NewBattleManagerComponent->GetPlayerCharacter(i)->GetComponentByClass(UStatusComponent::StaticClass()));
-		if (StatusComponent->IsDead() == true)
-		{
-			UActionWidget* ResurrectActionWidget = CreateWidget<UActionWidget>(GetWorld()->GetFirstPlayerController(), ActionWidgetClass);	
-			checkf(ResurrectActionWidget != nullptr, TEXT("ResurrectActionWidget is not created"));
-			ResurrectActionWidget->InitWidget("Resurrection", this, BattleComponent, NewBattleManagerComponent->GetPlayerCharacter(i));
-			HB_Action->AddChildToHorizontalBox(ResurrectActionWidget);
-		}
+	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+	check(GameState);
+	// Todo : Modify Resurrect Function To MultiPlayer 
+	//for (int32 i = 0; i < NewBattleManagerComponent->GetPlayerCharacterArrayNum(); ++i) // check whether there is deadcharacter, if deadcharacter exist create resurrection widget
+	//{
+	//	if (NewBattleManagerComponent->GetPlayerCharacter(i) == NewTargetCharacter) continue;
+	//	UStatusComponent* StatusComponent = Cast<UStatusComponent>(NewBattleManagerComponent->GetPlayerCharacter(i)->GetComponentByClass(UStatusComponent::StaticClass()));
+	//	if (StatusComponent->IsDead() == true)
+	//	{
+	//		UActionWidget* ResurrectActionWidget = CreateWidget<UActionWidget>(GetWorld()->GetFirstPlayerController(), ActionWidgetClass);	
+	//		checkf(ResurrectActionWidget != nullptr, TEXT("ResurrectActionWidget is not created"));
+	//		ResurrectActionWidget->InitWidget("Resurrection", this, BattleComponent, NewBattleManagerComponent->GetPlayerCharacter(i));
+	//		HB_Action->AddChildToHorizontalBox(ResurrectActionWidget);
+	//	}
+	//}
 
-	}
+	ShowWidget();
+	WBP_VictoryWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UBattleWidget::InitActionDiscription(FName NewActionName)
 {
+	/* Todo : 
 	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
 	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
 
 	UDataTable* ActionDataTable = TileEventMangaer->GetActionDataTable();
 	checkf(ActionDataTable != nullptr, TEXT("ActionDataTable is not valid"));
-	PlayerAction = ActionDataTable->FindRow<FAction>(NewActionName, 0);
+	PlayerAction = ActionDataTable->FindRow<FAction>(NewActionName, 0);*/
+	PlayerActionName = NewActionName;
+	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+	check(GameState);
+	PlayerAction = GameState->GetBattleAction(PlayerActionName);
 	checkf(PlayerAction != nullptr, TEXT("Cannot find NewAction"));
 
-	PlayerActionName = NewActionName;
 	TB_ActionName->SetText(PlayerAction->Name);
 
 	checkf(ActionRangeTextArray.Num() > (int32)PlayerAction->ActionRange, TEXT("ActionRangeTextArray has not matched Text with NewAction's Range Type"));
@@ -89,7 +101,6 @@ void UBattleWidget::InitActionDiscription(FName NewActionName)
 	TB_Damage->SetText(FText::FromString(FString::Printf(TEXT("%d"), PlayerAction->Power)));
 	TB_SlotAccuracy->SetText(FText::FromString(FString::Printf(TEXT("%d"), PlayerAction->CheckPercent)));
 	TB_ActionDiscription->SetText(PlayerAction->Discription);
-
 
 	InitChanceCoinBox();
 }
@@ -143,6 +154,15 @@ void UBattleWidget::InitChanceCoinBox()
 	LastChanceCoinSlot->SetVisibility(ESlateVisibility::Collapsed);
 	CoinChanceBox->AddChildToHorizontalBox(LastChanceCoinSlot);
 
+}
+
+void UBattleWidget::ChangeToVictoryWidget()
+{
+	HB_Action->SetVisibility(ESlateVisibility::Collapsed);
+	CoinChanceBox->SetVisibility(ESlateVisibility::Collapsed);
+	DiscriptionOverlay->SetVisibility(ESlateVisibility::Collapsed);
+
+	WBP_VictoryWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UBattleWidget::CoinTimerFunction()

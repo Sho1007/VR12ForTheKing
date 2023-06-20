@@ -59,7 +59,7 @@ void ASelectCharacterGameState::ReadyPlayer(int32 SlotIndex, bool bIsReady)
 
 	if (CheckAllReady())
 	{
-		GetWorld()->ServerTravel("/Game/Maps/L_MoveBoard");
+		GetWorld()->ServerTravel("/Game/Maps/L_MoveBoard", true);
 	}
 }
 

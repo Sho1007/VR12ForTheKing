@@ -25,7 +25,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
 	void SpawnEvent(AHexTile* CenterTile);
 	void SetFocusTarget(AActor* NewActor);
@@ -35,14 +35,12 @@ public:
 	UDataTable* GetActionDataTable();
 	const float GetEventOccurChance() const;
 	AEventActor* SetCurrentTileEvent(AHexTile* NewHexTile);
-	AEventActor* GetTileEvent() const;
+	AEventActor* GetCurrentTileEvent() const;
 	FAction* FindActionInfo(FName TargetActionRow) const;
 
-	void HideWidget();
-
 private:
-	void InitAndShowEventDiscription();
-	void CreateTileEventWidget();
+	UFUNCTION()
+	void OnRep_CurrentTileEvent();
 
 private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -53,6 +51,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	float EventOccurChance = 0.2f;
 
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentTileEvent, meta = (AllowPrivateAccess = true))
 	AEventActor* CurrentTileEvent;
 
 	AEventActor* CurrentFocusEvent;
@@ -60,8 +59,4 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<ATileEventMeshCapturor> TileEventMeshCapturorClass;
 	ATileEventMeshCapturor* TileEventMeshCapturor;
-
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UTileEventWidget> TileEventWidgetClass;
-	UTileEventWidget* TileEventWidget;
 };

@@ -29,6 +29,7 @@ public:
 
 DECLARE_DELEGATE_OneParam(FDele_UpdatePlayerData, TArray<FPlayerData>&)
 
+class AMyCharacter;
 UCLASS()
 class VR12FORTHEKING_API ASelectCharacterGameState : public AGameStateBase
 {
@@ -61,4 +62,6 @@ public:
 private:
 	UPROPERTY(EditInstanceOnly, ReplicatedUsing = OnRep_PlayerDataArray, meta = (AllowPrivateAccess = true))
 	TArray<FPlayerData> PlayerDataArray;
+	UPROPERTY(EditInstanceOnly, Replicated, meta = (AllowPrivateAccess = true))
+	TArray<AMyCharacter*> PlayerCharacterArray;
 };

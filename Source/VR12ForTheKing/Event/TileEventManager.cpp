@@ -4,19 +4,22 @@
 #include "../Event/TileEventManager.h"
 
 #include "Engine/DataTable.h"
+#include "Net/UnrealNetwork.h"
+
 #include "../HexGrid/HexTile.h"
 #include "../Event/EventActor.h"
 #include "TileEventMeshCapturor.h"
 #include "../HexGrid/HexGridManager.h"
 #include "../Widget/TileEventWidget.h"
 #include "../Component/BattleComponent.h"
+#include "../HUD/MoveBoardHUD.h"
 
 // Sets default values
 UTileEventManager::UTileEventManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryComponentTick.bCanEverTick = false;
-
+	SetIsReplicated(true);
 }
 
 // Called when the game starts or when spawned
@@ -29,8 +32,13 @@ void UTileEventManager::BeginPlay()
 	check(TileEventMeshCapturorClass != nullptr);
 	TileEventMeshCapturor = GetWorld()->SpawnActor<ATileEventMeshCapturor>(TileEventMeshCapturorClass, FVector(0,0,0), FRotator(0,0,0));
 	check(TileEventMeshCapturor != nullptr);
+}
 
-	CreateTileEventWidget();
+void UTileEventManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UTileEventManager, CurrentTileEvent);
 }
  
 void UTileEventManager::SpawnEvent(AHexTile* CenterTile)
@@ -97,16 +105,12 @@ AEventActor* UTileEventManager::SetCurrentTileEvent(AHexTile* NewHexTile)
 {
 	CurrentTileEvent = NewHexTile->GetTileEvent();
 
-	if (CurrentTileEvent != nullptr)
-	{
-		TileEventMeshCapturor->SetFocusTarget(CurrentTileEvent);
-		InitAndShowEventDiscription();
-	}
+	OnRep_CurrentTileEvent();
 
 	return CurrentTileEvent;
 }
 
-AEventActor* UTileEventManager::GetTileEvent() const
+AEventActor* UTileEventManager::GetCurrentTileEvent() const
 {
 	return CurrentTileEvent;
 }
@@ -119,23 +123,14 @@ FAction* UTileEventManager::FindActionInfo(FName TargetActionRow) const
 	return ActionInfo;
 }
 
-void UTileEventManager::HideWidget()
+void UTileEventManager::OnRep_CurrentTileEvent()
 {
-	TileEventWidget->HideEventInfoWidget();
-	TileEventWidget->HideEventWidget();
-}
-
-void UTileEventManager::InitAndShowEventDiscription()
-{
-	TileEventWidget->InitEventWidget(CurrentTileEvent);
-	TileEventWidget->ShowEventWidget();
-}
-
-void UTileEventManager::CreateTileEventWidget()
-{
-	checkf(TileEventWidgetClass != nullptr, TEXT("TileEventWidgetClass is nullptr"));
-	TileEventWidget = CreateWidget<UTileEventWidget>(GetWorld()->GetFirstPlayerController(), TileEventWidgetClass);
-	checkf(TileEventWidget != nullptr, TEXT("TileEventWidget is not created"));
-	TileEventWidget->AddToPlayerScreen(0);
-	HideWidget();
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("OnRep_CurrentTileEvent")));
+	if (CurrentTileEvent != nullptr)
+	{
+		TileEventMeshCapturor->SetFocusTarget(CurrentTileEvent);
+		AMoveBoardHUD* HUD = GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>();
+		check(HUD);
+		HUD->InitTileEventWidget(CurrentTileEvent);
+	}
 }

@@ -3,6 +3,8 @@
 
 #include "../Component/MoveManagerComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 #include "../HUD/MoveBoardHUD.h"
 #include "../Widget/MoveWidget.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -11,6 +13,8 @@
 #include "../HexGrid/HexTile.h"
 #include "../Event/TileEventManager.h"
 #include "../Character/MyCharacter.h"
+
+#include "../GameState/MoveBoardGameState.h"
 
 // Sets default values for this component's properties
 UMoveManagerComponent::UMoveManagerComponent()
@@ -22,6 +26,8 @@ UMoveManagerComponent::UMoveManagerComponent()
 	// ...
 
 	MoveJudgeArray.Init(true, 5);
+
+	SetIsReplicated(true);
 }
 
 
@@ -38,6 +44,14 @@ void UMoveManagerComponent::BeginPlay()
 	check(HexGridManager != nullptr);
 }
 
+void UMoveManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UMoveManagerComponent, MovableCount);
+	DOREPLIFETIME(UMoveManagerComponent, MoveJudgeArray);
+}
+
 void UMoveManagerComponent::Init()
 {
 	// Todo : Load DataFile
@@ -46,35 +60,43 @@ void UMoveManagerComponent::Init()
 	Turn = 0;
 }
 
+void UMoveManagerComponent::TestMulticast_Implementation()
+{
+	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->UpdateMoveJudge(MoveJudgeArray);
+}
+
+void UMoveManagerComponent::HideMoveJudgeWidget_Implementation()
+{
+	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->HideMoveJudgeWidget();
+}
+
 void UMoveManagerComponent::PrepareTurn()
 {
-	check(PlayerCharacterArray.Num() > 0);
-
 	// Todo : Update Turn Widget;
 	Turn++;
 	if (Turn / 15 > Day)
 	{
 		Day++;
 	}
-	CurrentCharacter = PlayerCharacterArray[(Turn - 1) % PlayerCharacterArray.Num()];
-	CurrentController = PlayerControllerArray[(Turn - 1) % PlayerControllerArray.Num()];
 
 	ExecuteTurn();
 }
 
 void UMoveManagerComponent::ExecuteTurn()
 {
+	AMyCharacter* CurrentTurnCharacter = GetWorld()->GetGameState<AMoveBoardGameState>()->GetCurrentTurnCharacter();
+	check(CurrentTurnCharacter != nullptr);
 	// SpawnEvent
 	UActorComponent*  ActorComponent = GetOwner()->GetComponentByClass(UTileEventManager::StaticClass());
 	check(ActorComponent != nullptr);
 	UTileEventManager* TileEventManager = Cast<UTileEventManager>(ActorComponent);
 	check(TileEventManager != nullptr);
-	TileEventManager->SpawnEvent(CurrentCharacter->GetCurrentTile());
+	TileEventManager->SpawnEvent(CurrentTurnCharacter->GetCurrentTile());
 
 	CheckMoveCount();
-	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->UpdateMoveJudge(MoveJudgeArray);
+	OnRep_MoveJudgeArray();
 
-	HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
+	HexGridManager->SetStartTile(CurrentTurnCharacter->GetCurrentTile());
 	bIsMoved = false;
 }
 
@@ -96,15 +118,23 @@ void UMoveManagerComponent::CheckMoveCount()
 	}
 }
 
+void UMoveManagerComponent::OnRep_MoveJudgeArray()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("UMoveManagerComponent::OnRepMoveJudgeArray : MoveableCount : %d, MoveJudgeArray : %d %d %d %d %d"), MovableCount, MoveJudgeArray[0], MoveJudgeArray[1], MoveJudgeArray[2], MoveJudgeArray[3], MoveJudgeArray[4]));
+	TestMulticast();
+}
+
 void UMoveManagerComponent::MoveCharacter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UMoveManagerComponent::MoveCharacter : CurrentCharacter : %s"), *CurrentCharacter->GetName());
-	GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->HideMoveJudgeWidget();
+	AMyCharacter* CurrentTurnCharacter = GetWorld()->GetGameState<AMoveBoardGameState>()->GetCurrentTurnCharacter();
+	check(CurrentTurnCharacter != nullptr);
 
 	bIsMoved = true;
 
 	// 현재는 HexGridManager 가 Component가 아니라서 하드코딩 -> 추후 컴포넌트로 바꾸고 컴포넌트끼리 통신하도록
 	NextTile = HexGridManager->GetNextPath();
+
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("UMoveManagerComponent::MoveCharacter : CurrentCharacter : %s, NextTile : %s"), *CurrentTurnCharacter->GetName(), *NextTile->GetName()));
 
 	UTileEventManager* TileEventManager = GetOwner()->FindComponentByClass<UTileEventManager>();
 	check(TileEventManager != nullptr);
@@ -116,14 +146,14 @@ void UMoveManagerComponent::MoveCharacter()
 		}
 		else
 		{
-			CurrentCharacter->SetDestination(NextTile->GetActorLocation());
+			CurrentTurnCharacter->SetDestination(NextTile->GetActorLocation());
 		}
 	}
 	else
 	{
 		if (MovableCount)
 		{
-			HexGridManager->SetStartTile(CurrentCharacter->GetCurrentTile());
+			HexGridManager->SetStartTile(CurrentTurnCharacter->GetCurrentTile());
 			bIsMoved = false;
 		}
 		else
@@ -135,7 +165,11 @@ void UMoveManagerComponent::MoveCharacter()
 
 void UMoveManagerComponent::ReachToDestination()
 {
-	if (CurrentCharacter->GetCurrentTile() != NextTile)
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("UMoveManagerComponent::ReachToDestination")));
+	AMyCharacter* CurrentTurnCharacter = GetWorld()->GetGameState<AMoveBoardGameState>()->GetCurrentTurnCharacter();
+	check(CurrentTurnCharacter != nullptr);
+
+	if (CurrentTurnCharacter->GetCurrentTile() != NextTile)
 	{
 		MovableCount--;
 	}
@@ -143,7 +177,7 @@ void UMoveManagerComponent::ReachToDestination()
 	if (NextTile)
 	{
 		NextTile->SetIsPath(false);
-		CurrentCharacter->SetCurrentTile(NextTile);
+		CurrentTurnCharacter->SetCurrentTile(NextTile);
 	}
 
 	MoveCharacter();
@@ -167,19 +201,4 @@ void UMoveManagerComponent::StartTurn()
 const bool UMoveManagerComponent::IsMoved() const
 {
 	return bIsMoved;
-}
-
-const AMyPlayerController* UMoveManagerComponent::GetCurrentController() const
-{
-	return CurrentController;
-}
-
-void UMoveManagerComponent::SetPlayerCharacterArray(const TArray<AMyCharacter*>& NewPlayerCharacterArray)
-{
-	PlayerCharacterArray = NewPlayerCharacterArray;
-}
-
-void UMoveManagerComponent::SetPlayerControllerArray(const TArray<AMyPlayerController*>& NewPlayerControllerArray)
-{
-	PlayerControllerArray = NewPlayerControllerArray;
 }

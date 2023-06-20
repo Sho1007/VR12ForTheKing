@@ -20,7 +20,7 @@ void UMainMenuWidget::NewGameButtonOnClicked()
 
 void UMainMenuWidget::JoinGameButtonOnClicked()
 {
-	GetWorld()->GetFirstPlayerController()->ClientTravel("127.0.0.1", ETravelType::TRAVEL_Absolute, false);
+	GetWorld()->GetFirstPlayerController()->ClientTravel("127.0.0.1", ETravelType::TRAVEL_Absolute);
 }
 
 void UMainMenuWidget::QuitButtonOnClicked()

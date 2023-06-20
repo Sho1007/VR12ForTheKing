@@ -31,6 +31,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HideEventInfoWidget();
 	
+	void HideWidget();
 	
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, BindWidget))

@@ -28,12 +28,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void NotifyActorBeginCursorOver() override;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(NetMulticast, Reliable)
 	void SetIsPath(bool bNewIsPath, int NewDistance = 0);
+	void SetIsPath_Implementation(bool bNewIsPath, int NewDistance = 0);
 
 	void ClickTile();
 	void UnClickTile();

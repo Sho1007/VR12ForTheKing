@@ -33,7 +33,7 @@ public:
 		void RemoveUnitFromImageArray(int32 RemoveIndex);
 
 	UFUNCTION(BlueprintCallable)
-		void AddUnitToImageArray(TArray<AMyCharacter*>& NewTurnArray);
+		void AddUnitToImageArray(const TArray<AMyCharacter*>& NewTurnArray);
 private:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> BasicTurnArray;

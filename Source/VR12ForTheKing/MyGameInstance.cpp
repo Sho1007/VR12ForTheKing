@@ -3,19 +3,6 @@
 
 #include "MyGameInstance.h"
 
-TArray<FCharacterData>& UMyGameInstance::GetCharacterDataArray()
-{
-	// TODO: insert return statement here
-
-	return CharacterDataArray;
-}
-
-void UMyGameInstance::InitCharacterDataArray()
-{
-	CharacterDataArray.Empty();
-	CharacterDataArray.Init(FCharacterData(), 3);
-}
-
 void UMyGameInstance::AddPlayerController(APlayerController* NewPlayerController)
 {
 	if (FindPlayerControllerIndex(NewPlayerController) == INDEX_NONE)

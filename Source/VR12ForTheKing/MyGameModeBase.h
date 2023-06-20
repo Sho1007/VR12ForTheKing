@@ -55,14 +55,10 @@ public:
 	// Event Button Function
 	void DoEventAction(ETileEventActionType NewEventActionType);
 
-public:
-	// Getter / Setter
-	UTurnWidget* GetTurnWidget() const;
 private:
 	void CreatePlayer();
 
 	// Widget
-	void CreateTurnWidget();
 	void CreateStatusWidget();
 	void CreateInventoryWidget();
 
@@ -104,11 +100,6 @@ private:
 	// MoveManager Var
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UMoveManagerComponent* MoveManager;
-
-	// Widget Var
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
-	TSubclassOf<UTurnWidget> TurnWidgetClass;
-	UTurnWidget* TurnWidget;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UStatusWidget> StatusWidgetClass;

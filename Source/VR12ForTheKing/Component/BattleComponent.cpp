@@ -12,6 +12,9 @@
 #include "../Widget/BattleWidget.h"
 #include "../Widget/DamageText.h"
 #include "Components/WidgetComponent.h"
+
+#include "../GameState/MoveBoardGameState.h"
+#include "../PlayerController/MoveBoardPlayerController.h"
 // Sets default values for this component's properties
 UBattleComponent::UBattleComponent()
 {
@@ -87,11 +90,15 @@ AMyCharacter* UBattleComponent::GetActionTarget()
 
 void UBattleComponent::EndTurn()
 {
-	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	// From : 
+	/*AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 	UBattleManagerComponent* NewBattleManagerComponent =
 		Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-	NewBattleManagerComponent->MoveToNextUnitTurn();
+	NewBattleManagerComponent->MoveToNextUnitTurn();*/
 
+	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+	check(GameState);
+	GameState->MoveToNextTurn();
 }
 
 
@@ -105,20 +112,20 @@ void UBattleComponent::Attack_Implementation()
 
 
 void UBattleComponent::ChanceCoinCheck()
-{
-	
-
-	
-	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
-	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
+{	
+	/*UTileEventManager* TileEventMangaer = GetWorld()->GetGameState<AMoveBoardGameState>();
+	check(TileEventMangaer);
 
 	UDataTable* ActionDataTable = TileEventMangaer->GetActionDataTable();
 	checkf(ActionDataTable != nullptr, TEXT("ActionDataTable is not valid"));
 	FAction* TargetAction = ActionDataTable->FindRow<FAction>(TargetActionName, 0);
-	checkf(TargetAction != nullptr, TEXT("Cannot find NewAction"));
+	checkf(TargetAction != nullptr, TEXT("Cannot find NewAction"));*/
+
+	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+	check(GameState);
+	FAction* TargetAction = GameState->GetBattleAction(TargetActionName);
 
 	ChanceArray.Empty();
-
 
 	for (int i = 0; i < TargetAction->CheckCount; ++i)
 	{
@@ -135,21 +142,28 @@ void UBattleComponent::ChanceCoinCheck()
 		}
 	}
 
-	
-	ChanceArray.Add(false);// for last collapsed slot to show all the chancecoin
-	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	UBattleManagerComponent* NewBattleManagerComponent =
-	Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-	UBattleWidget* NewBattleWidget = Cast<UBattleWidget>(NewBattleManagerComponent->GetBattleWidget());
+	CalculateDamage(TargetAction->CheckCount);
 
-
-
-
-	CalculateDamage(TargetAction->CheckCount); 
 	if (FactionType == EFactionType::Player)
 	{
-		NewBattleWidget->StartUpdateChanceSlot(ChanceArray);
+		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+		{
+			AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
+			check(PC);
+			PC->StartUpdateChanceSlot(ChanceArray);
+		}
 	}
+
+	//ChanceArray.Add(false);// for last collapsed slot to show all the chancecoin
+	//AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	//UBattleManagerComponent* NewBattleManagerComponent =
+	//Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
+	//UBattleWidget* NewBattleWidget = Cast<UBattleWidget>(NewBattleManagerComponent->GetBattleWidget());
+
+	//if (FactionType == EFactionType::Player)
+	//{
+	//	NewBattleWidget->StartUpdateChanceSlot(ChanceArray);
+	//}
 }
 
 bool UBattleComponent::MeleeAttack()
@@ -264,12 +278,17 @@ void UBattleComponent::ReceiveDamage(int NewDamage)
 	
 	if (StatusComponent->IsDead())
 	{
+		/* From :
 		AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 		UBattleManagerComponent* NewBattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-		
 		AMyCharacter* DeadCharacter = Cast<AMyCharacter>(this->GetOwner());
-		NewBattleManagerComponent->RemoveDeadUnitFromArray(DeadCharacter);
+		NewBattleManagerComponent->RemoveDeadUnitFromArray(DeadCharacter);*/
 
+		AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+		check(GameState);
+		GameState->RemoveDeadUnitFromArray(this->GetOwner<AMyCharacter>());
+		
+		// Todo : Play Animation And Destroy at end of animation
 		if (GetFactionType() == EFactionType::Enemy)
 		{
 			this->GetOwner()->Destroy();

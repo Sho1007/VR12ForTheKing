@@ -14,6 +14,8 @@
 #include "../Widget/InventorySlotButton.h"
 #include "../Character/MyPlayerController.h"
 
+#include "../PlayerController/MoveBoardPlayerController.h"
+
 void UStatusBoardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -151,6 +153,11 @@ void UStatusBoardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const F
 {
 	UE_LOG(LogTemp, Warning, TEXT("Mouse Enterd in %s"), *this->GetName());
 
+	AMoveBoardPlayerController* PC = GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>();
+	if (PC)
+	{
+		PC->SetIsOnWidget(true);
+	}
 	// Todo : Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController())->SetIsOnWidget(true);
 }
 
@@ -158,6 +165,11 @@ void UStatusBoardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Mouse Leaved in %s"), *this->GetName());
 
+	AMoveBoardPlayerController* PC = GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>();
+	if (PC)
+	{
+		PC->SetIsOnWidget(false);
+	}
 	// Todo : Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController())->SetIsOnWidget(false);
 }
 

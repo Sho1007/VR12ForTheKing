@@ -32,7 +32,7 @@ void ATileEventMeshCapturor::Tick(float DeltaTime)
 
 void ATileEventMeshCapturor::SetFocusTarget(AEventActor* NewTargetActor)
 {
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("ATileEventMeshCapturor::SetFocusTarget : TileEventMesh : %s"), *NewTargetActor->GetTileEventMesh()->GetName()));
 	SetActorTransform(NewTargetActor->GetTileEventMesh()->GetCapturePosition());
 	SceneCaptureComponent->ShowOnlyActorComponents(NewTargetActor->GetTileEventMesh());
 }
-

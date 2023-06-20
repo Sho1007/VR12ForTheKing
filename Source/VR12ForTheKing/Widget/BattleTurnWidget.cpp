@@ -82,7 +82,7 @@ void UBattleTurnWidget::RemoveUnitFromImageArray(int32 RemoveIndex)
 	UE_LOG(LogTemp, Warning, TEXT("TurnImageArrayNum %d"), TurnImageArray->GetChildrenCount());
 }
 
-void UBattleTurnWidget::AddUnitToImageArray(TArray<AMyCharacter*>& NewTurnArray)
+void UBattleTurnWidget::AddUnitToImageArray(const TArray<AMyCharacter*>& NewTurnArray)
 {
 	TurnImageArray->ClearChildren();
 

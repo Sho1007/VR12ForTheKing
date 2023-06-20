@@ -22,6 +22,7 @@
 #include "Widget/TurnWidget.h"
 #include "Widget/StatusWidget.h"
 #include "Widget/InventoryWidget.h"
+#include "Widget/TileEventWidget.h"
 
 AMyGameModeBase::AMyGameModeBase()
 {
@@ -56,7 +57,6 @@ void AMyGameModeBase::BeginPlay()
 
 	//MoveManager->StartTurn();
 
-	CreateTurnWidget();
 	CreateStatusWidget();
 }
 
@@ -70,7 +70,8 @@ void AMyGameModeBase::PostLogin(APlayerController* NewPlayer)
 void AMyGameModeBase::LeftClick(APlayerController* PlayerController)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Clicked Player : %s"), *PlayerController->GetName());
-	if (!MoveManager->IsMoved() && MoveManager->GetCurrentController() == PlayerController)
+	// Temp :GetWorld()->GetFirstPlayerController() == PlayerController
+	if (!MoveManager->IsMoved() && GetWorld()->GetFirstPlayerController() == PlayerController)
 	{
 		MoveManager->MoveCharacter();
 	}
@@ -87,7 +88,7 @@ void AMyGameModeBase::CheckEndTile(AActor* NewActor, APlayerController* TargetPl
 {
 	//Cast<AMyGameInstance>(GetGameInstance());
 
-	if (!MoveManager->IsMoved() && MoveManager->GetCurrentController() == TargetPlayerController)
+	if (!MoveManager->IsMoved() && GetWorld()->GetFirstPlayerController() == TargetPlayerController)
 	{
 		AHexTile* HexTile = Cast<AHexTile>(NewActor);
 		if (HexTile)
@@ -123,9 +124,9 @@ void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 	switch (NewEventActionType)
 	{
 	case ETileEventActionType::Battle:
-		TileEventManager->HideWidget();
+		GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetTileEventWidget()->HideWidget();
 		GetWorld()->GetFirstPlayerController()->GetHUD<AMoveBoardHUD>()->GetMoveWidget()->HideWidget();
-		TurnWidget->ChangetoBattleTurnWidget();
+		
 		for (int i = 0; i < CharacterArray.Num(); ++i)
 		{
 			CharacterArray[i]->SetMoveMode(false);
@@ -135,11 +136,6 @@ void AMyGameModeBase::DoEventAction(ETileEventActionType NewEventActionType)
 	case ETileEventActionType::Retreat:
 		break;
 	}
-}
-
-UTurnWidget* AMyGameModeBase::GetTurnWidget() const
-{
-	return TurnWidget;
 }
 
 void AMyGameModeBase::CreatePlayer()
@@ -174,17 +170,8 @@ void AMyGameModeBase::CreatePlayer()
 	}
 
 
-	MoveManager->SetPlayerCharacterArray(CharacterArray);
-	MoveManager->SetPlayerControllerArray(PlayerControllerArray);
-}
-
-void AMyGameModeBase::CreateTurnWidget()
-{
-	checkf(TurnWidgetClass != nullptr, TEXT("TurnWidgetClass is nullptr"));
-	TurnWidget = CreateWidget<UTurnWidget>(GetWorld()->GetFirstPlayerController(), TurnWidgetClass);
-	checkf(TurnWidget != nullptr, TEXT("TurnWidget is not created"));
-	TurnWidget->AddToPlayerScreen(0);
-	TurnWidget->InitWidget();
+	//MoveManager->SetPlayerCharacterArray(CharacterArray);
+	//MoveManager->SetPlayerControllerArray(PlayerControllerArray);
 }
 
 void AMyGameModeBase::CreateStatusWidget()

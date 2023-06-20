@@ -11,22 +11,26 @@
 #include "BattleWidget.h"
 #include "../Character/MyPlayerController.h"
 #include "../Character/MyCharacter.h"
-
+#include "../GameState/MoveBoardGameState.h"
 
 
 void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget, UBattleComponent* NewBattleComponent, AMyCharacter* NewDeadPlayer)
 {
-	UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
-	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
+	ActionName = NewActionName;
 	TargetBattleComponent = NewBattleComponent;
 	if (NewDeadPlayer != nullptr)
 	{
 		DeadPlayer = NewDeadPlayer;
 	}
+	/*UTileEventManager* TileEventMangaer = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->GetComponentByClass(UTileEventManager::StaticClass()));
+	checkf(TileEventMangaer != nullptr, TEXT("GameMode doesn't have TileEventManager Component"));
 	UDataTable* ActionDataTable = TileEventMangaer->GetActionDataTable();
 	checkf(ActionDataTable != nullptr, TEXT("ActionDataTable is not valid"));
-	ActionName = NewActionName;
-	FAction* NewAction = ActionDataTable->FindRow<FAction>(ActionName, 0);
+	FAction* NewAction = ActionDataTable->FindRow<FAction>(ActionName, 0);*/
+
+	FAction* NewAction = GetWorld()->GetGameState<AMoveBoardGameState>()->GetBattleAction(ActionName);
+	
+
 	checkf(NewAction != nullptr, TEXT("Cannot find NewAction"));
 	Btn_Action->WidgetStyle.Normal.SetResourceObject(NewAction->Image);
 	Btn_Action->OnClicked.AddDynamic(this, &UActionWidget::ActionButtonOnClicked);

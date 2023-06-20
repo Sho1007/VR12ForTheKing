@@ -12,6 +12,7 @@
 void UTileEventWidget::InitEventWidget(const AEventActor* NewEventActor)
 {
 	WBP_TileEvent->InitWidget(NewEventActor);
+	WBP_TileEvent->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UTileEventWidget::ShowEventWidget()
@@ -42,4 +43,10 @@ void UTileEventWidget::HideEventInfoWidget()
 {
 	checkf(WBP_EventInfo != NULL, TEXT("UMoveWidget::HideEventInfoWidget : Event Info Widget is not valid"));
 	WBP_EventInfo->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UTileEventWidget::HideWidget()
+{
+	HideEventInfoWidget();
+	HideEventWidget();
 }

@@ -3,8 +3,10 @@
 
 #include "../Event/EventActor.h"
 
+#include "Net/UnrealNetwork.h"
 #include "Components/BoxComponent.h"
 #include "Components/ChildActorComponent.h"
+
 #include "TileEventMesh.h"
 
 // Sets default values
@@ -12,6 +14,7 @@ AEventActor::AEventActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	BoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>("BoxCollision");
 	SetRootComponent(BoxCollisionComponent);
@@ -23,13 +26,20 @@ void AEventActor::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AEventActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AEventActor, TileEventMesh);
+}
+
 // Called every frame
 void AEventActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AEventActor::SetEventInfo(const FEventInfo& NewEventInfo)
+void AEventActor::SetEventInfo_Implementation(const FEventInfo& NewEventInfo)
 {
 	EventInfo = NewEventInfo;
 	if (EventInfo.TileEventMeshClass != nullptr)

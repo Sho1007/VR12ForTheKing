@@ -5,10 +5,12 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
-#include "../Event/EventActor.h"
 #include "Kismet/GamePlayStatics.h"
+
 #include "../MyGameModeBase.h"
+#include "../Event/EventActor.h"
 #include "../Event/TileEventManager.h"
+#include "../PlayerController/MoveBoardPlayerController.h"
 
 // Sets default values
 AHexTile::AHexTile()
@@ -40,13 +42,20 @@ void AHexTile::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AHexTile::NotifyActorBeginCursorOver()
+{
+	Super::NotifyActorBeginCursorOver();
+
+	GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>()->SetEndTile(this);
+}
+
 // Called every frame
 void AHexTile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AHexTile::SetIsPath(bool bNewIsPath, int NewDistance)
+void AHexTile::SetIsPath_Implementation(bool bNewIsPath, int NewDistance)
 {
 	TextRenderComponent->SetVisibility(bNewIsPath);
 	StaticMeshComponent->SetRenderCustomDepth(bNewIsPath);

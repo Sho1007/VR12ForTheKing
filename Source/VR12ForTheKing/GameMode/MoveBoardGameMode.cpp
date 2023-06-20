@@ -15,35 +15,12 @@
 AMoveBoardGameMode::AMoveBoardGameMode()
 	: Super()
 {
-	// BattleManager
-	BattleManager = CreateDefaultSubobject<UBattleManagerComponent>(TEXT("BattleManager"));
-	check(BattleManager != nullptr);
-	BattleManager->SetGameMode(this);
-
-	// MoveManager
-	MoveManager = CreateDefaultSubobject<UMoveManagerComponent>(TEXT("MoveManager"));
-	check(MoveManager != nullptr);
-
-	// HexGridManager
-	HexGridManager = CreateDefaultSubobject<UHexGridManager>(TEXT("HexGridManager"));
-	check(HexGridManager != nullptr);
-
-	// TileEventManager
-	TileEventManager = CreateDefaultSubobject<UTileEventManager>(TEXT("TileEventManager"));
-	check(TileEventManager != nullptr);
-
-	bIsInit = false;
 	PrimaryActorTick.SetTickFunctionEnable(false);
 }
 
 void AMoveBoardGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (bIsInit == false)
-	{
-		InitGameMode();
-	}
 }
 
 void AMoveBoardGameMode::PostLogin(APlayerController* NewPlayer)
@@ -60,21 +37,4 @@ void AMoveBoardGameMode::HandleSeamlessTravelPlayer(AController*& C)
 {
 	Super::HandleSeamlessTravelPlayer(C);
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("AMoveBoardGameMode::HandleSeamlessTravelPlayer")));
-}
-
-void AMoveBoardGameMode::InitGameMode()
-{
-	MoveManager->Init();
-
-	// Todo : Check is MoveBoardMap to Show and Hide
-	HexGridManager->CreateGrid();
-}
-
-void AMoveBoardGameMode::CreatePlayer()
-{
-	TArray<AMyCharacter*>& PlayerCharacterArray = GetGameState<AMoveBoardGameState>()->GetPlayerCharacterArray();
-
-	GetWorld()->SpawnActor<AMyCharacter>();
-
-	//PlayerCharacterArray.Add();
 }

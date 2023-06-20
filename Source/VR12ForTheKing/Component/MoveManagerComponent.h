@@ -24,6 +24,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
 	void Init();
 
@@ -35,29 +36,35 @@ public:
 
 	AHexTile* GetNextTile() const;
 private:
+	UFUNCTION(NetMulticast, Reliable)
+	void TestMulticast();
+	void TestMulticast_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void HideMoveJudgeWidget();
+	void HideMoveJudgeWidget_Implementation();
+
 	void PrepareTurn();
 	void ExecuteTurn();
 	void FinishTurn();
 
 	void CheckMoveCount();
+
+	UFUNCTION()
+	void OnRep_MoveJudgeArray();
 public:
 	// Getter / Setter
 	const bool IsMoved() const;
-	const AMyPlayerController* GetCurrentController() const;
-	void SetPlayerCharacterArray(const TArray<AMyCharacter*>& NewPlayerCharacterArray);
-	void SetPlayerControllerArray(const TArray<AMyPlayerController*>& NewPlayerControllerArray);
+
 private:
 	UHexGridManager* HexGridManager;
 
 	int32 Turn;
 	int32 Day;
 
-	AMyCharacter* CurrentCharacter;
-	AMyPlayerController* CurrentController;
-	TArray<AMyCharacter*> PlayerCharacterArray;
-	TArray<AMyPlayerController*> PlayerControllerArray;
-
+	UPROPERTY(Replicated, meta = (AllowPrivateAccess = true))
 	int32 MovableCount;
+	UPROPERTY(ReplicatedUsing = OnRep_MoveJudgeArray, meta = (AllowPrivateAccess = true))
 	TArray<bool> MoveJudgeArray;
 
 	AHexTile* NextTile;

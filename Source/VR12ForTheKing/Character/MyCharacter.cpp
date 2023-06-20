@@ -3,12 +3,15 @@
 
 #include "../Character/MyCharacter.h"
 
+#include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
+
 #include "../Component/BattleComponent.h"
 #include "../Component/StatusComponent.h"
 #include "../Component/InventoryComponent.h"
 #include "../HexGrid/HexTile.h"
 #include "../MyGameModeBase.h"
+#include "../GameState/MoveBoardGameState.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -16,7 +19,7 @@ AMyCharacter::AMyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SetReplicates(true);
+	bReplicates = true;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
 	SetRootComponent(CapsuleComponent);
@@ -44,6 +47,13 @@ void AMyCharacter::BeginPlay()
 	TestRandomizeStatus();
 }
 
+void AMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMyCharacter, CharacterData);
+}
+
 // Called every frame
 void AMyCharacter::Tick(float DeltaTime)
 {
@@ -66,16 +76,27 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 }
 void AMyCharacter::ReachToDestination_Implementation()
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("ReachToDestination_Implementation")));
 	SetActorTickEnabled(false);
 	if (bIsMoveMode)
 	{
-		GameMode->ReachToTile();
+		//GameMode->ReachToTile();
+		AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+		check(GameState != nullptr);
+		GameState->ReachToTile();
 		return;
 	}
 	else
 	{
 		BattleComponent->ReachToDestination();
 	}
+}
+
+void AMyCharacter::InitPlayerCharacter(FCharacterData* NewCharacterData)
+{
+	CharacterData = *NewCharacterData;
+
+	// Update CharacterData to Component
 }
 
 void AMyCharacter::SetMoveMode(bool NewMoveMode)
@@ -97,7 +118,7 @@ void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
 
 void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float NewRadius)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AMyCharacter::SetDestination"));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("New Destination : %s"), *NewDestination.ToString()));
 	if (NewSpeed)
 	{
 		MoveSpeed = NewSpeed;
@@ -118,17 +139,27 @@ AHexTile* AMyCharacter::GetCurrentTile()
 
 UTexture2D* AMyCharacter::GetCharacterImage()
 {
-	return CharacterImage;
+	return CharacterData.CharacterImage;
 }
 
 void AMyCharacter::SetCharacterImage(UTexture2D* NewCharacterImage)
 {
-	CharacterImage = NewCharacterImage;
+	CharacterData.CharacterImage = NewCharacterImage;
 }
 
 FText AMyCharacter::GetCharacterName() const
 {
-	return CharacterName;
+	return CharacterData.CharacterName;
+}
+
+int32 AMyCharacter::GetControllerIndex() const
+{
+	return CharacterData.ControllerIndex;
+}
+
+void AMyCharacter::SetControllerIndex(int32 NewControllerIndex)
+{
+	CharacterData.ControllerIndex = NewControllerIndex;
 }
 
 void AMyCharacter::TestRandomizeStatus()

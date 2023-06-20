@@ -58,12 +58,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(NetMulticast, Reliable)
 	void SetEventInfo(const FEventInfo& NewEventInfo);
+	void SetEventInfo_Implementation(const FEventInfo& NewEventInfo);
 
 	const FText GetEventName() const;
 	const FText GetDiscription1() const;
