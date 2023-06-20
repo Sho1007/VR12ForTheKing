@@ -84,7 +84,7 @@ FName UActionWidget::GetActionName()
 void UActionWidget::ActionButtonOnClicked()
 {
 
-	if (TargetBattleComponent->GetActionTarget() != nullptr  && TargetBattleComponent->GetActionTarget()->IsValidLowLevelFast()) // check ActionTarget is nullpter, to check whether widget have to be hide or not
+	if (TargetBattleComponent->GetActionTarget() != nullptr  && !TargetBattleComponent->GetActionTarget()->IsPendingKill()) // check ActionTarget is nullpter, to check whether widget have to be hide or not
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hide Widget"));
 		ParentWidget->HideWidget();

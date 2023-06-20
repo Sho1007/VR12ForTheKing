@@ -2,7 +2,7 @@
 
 
 #include "../Component/BattleManagerComponent.h"
-
+#include "Engine/DataTable.h"
 #include "../Character/MyCharacter.h"
 #include "Kismet/GamePlayStatics.h"
 #include "Camera/CameraComponent.h"
@@ -21,9 +21,11 @@
 #include "../Widget/BattleTurnWidget.h"
 #include "../Widget/VictoryWidget.h"
 #include "../Widget/VictoryWidgetSlot.h"
+#include "Components/SkeletalMeshComponent.h"
 
-//#include "TimerManager.h"
-
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
+#include "LevelSequenceActor.h"
 
 // Sets default values for this component's properties
 UBattleManagerComponent::UBattleManagerComponent()
@@ -61,6 +63,23 @@ void UBattleManagerComponent::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("OutArrayNum : %d, BattleMapArrayNum : %d"), OutArray.Num(), BattleMapArray.Num());
 
 	//checkf(BattleMapArray.Num() == 0, TEXT("No BattleMap in this level"));
+}
+
+void UBattleManagerComponent::PlayLevelSequnce()
+{
+	LevelSequenceActor->GetSequencePlayer()->Play();
+}
+
+void UBattleManagerComponent::PlayAnimation(FName TargetAnimName)
+{
+	
+	//checkf(PlayerAnimDataTable != nullptr, TEXT("AnimDataTable is not valid"));
+	//UAnimSequence* Anim = PlayerAnimDataTable->FindRow<UAnimSequence>(TargetAnimName, 0);
+	//ACharacter* Character = Cast<ACharacter>(GetOwner());
+
+
+	
+	
 }
 
 // Called every frame
@@ -216,6 +235,11 @@ AMyCharacter* UBattleManagerComponent::GetPlayerCharacter(int32 Index)
 int32 UBattleManagerComponent::GetPlayerCharacterArrayNum()
 {
 	return PlayerCharacterArray.Num();
+}
+
+UDataTable* UBattleManagerComponent::GetPlayerAnimDataTable()
+{
+	return PlayerAnimDataTable;
 }
 
 UBattleWidget* UBattleManagerComponent::GetBattleWidget()
@@ -730,16 +754,19 @@ void UBattleManagerComponent::ReceiveReward()
 		else if(RewardArray.Num()<=0)
 		{
 			MoveToNextStage();
+			VictoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+			BattleWidget->ShowWidget();
 		}
 	
 	}
 	else
 	{
 	
-		UseBattleTurnArray.Add(nullptr);
-		UseBattleTurnArray.RemoveAt(0);
 		if (RewardArray.Num() > 0)
 		{
+
+			UseBattleTurnArray.Add(nullptr);
+			UseBattleTurnArray.RemoveAt(0);
 			UInventoryComponent* PlayerInventory = Cast<UInventoryComponent>(UseBattleTurnArray[0]->FindComponentByClass(UInventoryComponent::StaticClass()));
 			PlayerInventory->AddItem(RewardArray[0].ItemRow, 1);
 			RewardArray.RemoveAt(0);
@@ -751,6 +778,8 @@ void UBattleManagerComponent::ReceiveReward()
 		else if (RewardArray.Num() <= 0)
 		{
 			MoveToNextStage();
+			VictoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+			BattleWidget->ShowWidget();
 		}
 	}
 
@@ -776,9 +805,11 @@ void UBattleManagerComponent::EndBattle()
 
 void UBattleManagerComponent::MoveToNextStage()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UBattleManagerComponent::MoveToNextStage"));
 	BattleMapArray[MapIndex]->MoveNextSceneIndex();
 	TeleportCharacter();
 	SpawnEnemy();
+	GetWorld()->GetTimerManager().ClearTimer(CameraLerpTimerHandle);
 	MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
 }
 

@@ -13,6 +13,8 @@ class ABattleMap;
 class UBattleComponent;
 class UVictoryWidget;
 class UVictoryWidgetSlot;
+class ALevelSequenceActor;
+class UDataTable;
 struct FItemInstance;
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -31,6 +33,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UFUNCTION(CallinEditor)
+	void PlayLevelSequnce();
+
+	void PlayAnimation(FName TargetAnimName);
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -44,13 +50,14 @@ public:
 	void RemoveDeadUnitFromArray(AMyCharacter* TargetCharacter);
 	void ResetActionTargetWhenEnemyDead();
 	void ResurrectCharacter(AMyCharacter* ResurrectCharacter);
-
+	
 public:
 	// Getter / Setter
 	bool SetGameMode(AGameModeBase* NewGameMode);
 	bool IsBattle();
 	AMyCharacter* GetPlayerCharacter(int32 Index);
 	int32 GetPlayerCharacterArrayNum();
+	UDataTable* GetPlayerAnimDataTable();
 	UBattleWidget* GetBattleWidget();
 	void ReceiveReward();
 private:
@@ -70,6 +77,10 @@ private:
 	void MoveToNextStage();
 	void GameOver();
 private:
+	// Sequence Var
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	ALevelSequenceActor* LevelSequenceActor;
+
 	// Battle Var
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
@@ -80,6 +91,8 @@ private:
 		TArray<AMyCharacter*> TargetPlayerArray;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		TArray<FItemInstance> RewardArray;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+		UDataTable* PlayerAnimDataTable;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 		int32 DeadEnemyCount;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
