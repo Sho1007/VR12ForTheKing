@@ -8,7 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
-class AMyGameModeBase;
+//class AMyGameModeBase;
 class AHexTile;
 class AMyCharacter;
 class AEventActor;
@@ -40,6 +40,7 @@ public:
 private:
 	void LeftClickPressed();
 	
+	
 	void CheckFocusActor();
 	AActor* GetHitActor();
 protected:
@@ -66,6 +67,6 @@ private:
 	TArray<AMyCharacter*> PlayerCharacterArray;
 	int32 CurrentCharacterIndex;
 
-	AMyGameModeBase* GameMode;
+	//AMyGameModeBase* GameMode;
 	FText PlayerName = FText::FromString(FString("Player"));
 };

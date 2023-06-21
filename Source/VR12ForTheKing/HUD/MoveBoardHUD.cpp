@@ -32,6 +32,7 @@ void AMoveBoardHUD::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 void AMoveBoardHUD::InitHUD()
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("AMoveBoardHUD::InitHUD")));
 	AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(GetOwningPlayerController());
 	check(PC);
 
@@ -87,8 +88,9 @@ void AMoveBoardHUD::SetBattleTurnArray(TArray<AMyCharacter*>& NewBattleTrunAray)
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("AMoveBoardHUD::SetBattleTurnArray")));
 }
 
-void AMoveBoardHUD::StartUpdateChanceSlot(const TArray<bool>& NewChanceArray)
+void AMoveBoardHUD::StartUpdateChanceSlot(int32 CoinSize, EStatusType StatusType, const TArray<bool>& NewChanceArray)
 {
+	BattleWidget->StartUpdateChanceSlot(CoinSize, StatusType, NewChanceArray);
 }
 
 void AMoveBoardHUD::InitBattleWidget(AMyCharacter* TargetCharacter)

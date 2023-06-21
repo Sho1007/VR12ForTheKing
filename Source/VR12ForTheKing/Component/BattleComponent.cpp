@@ -5,7 +5,9 @@
 #include "../Character/MyCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "StatusComponent.h"
-#include "../MyGameModeBase.h"
+
+#include "Net/UnrealNetwork.h"
+//#include "../MyGameModeBase.h"
 #include "BattleManagerComponent.h"
 #include "../Event/TileEventManager.h"
 #include "../Widget/ActionWidget.h"
@@ -21,7 +23,7 @@ UBattleComponent::UBattleComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	SetIsReplicated(true);
 	// ...
 }
 
@@ -33,6 +35,13 @@ void UBattleComponent::BeginPlay()
 
 	// ...
 	
+}
+
+void UBattleComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UBattleComponent, ActionTarget);
 }
 
 
@@ -79,7 +88,6 @@ const TArray<FName>& UBattleComponent::GetActionArray() const
 
 void UBattleComponent::SetActionTarget(AMyCharacter* NewActionTarget)
 {
-
 	ActionTarget = NewActionTarget;
 }
 
@@ -121,9 +129,12 @@ void UBattleComponent::ChanceCoinCheck()
 	FAction* TargetAction = ActionDataTable->FindRow<FAction>(TargetActionName, 0);
 	checkf(TargetAction != nullptr, TEXT("Cannot find NewAction"));*/
 
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleComponent::ChanceCoinCheck")));
+
 	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
 	check(GameState);
 	FAction* TargetAction = GameState->GetBattleAction(TargetActionName);
+	check(TargetAction);
 
 	ChanceArray.Empty();
 
@@ -141,6 +152,8 @@ void UBattleComponent::ChanceCoinCheck()
 			ChanceArray.Add(false);
 		}
 	}
+	// for last collapsed slot to show all the chancecoin
+	ChanceArray.Add(false);
 
 	CalculateDamage(TargetAction->CheckCount);
 
@@ -150,11 +163,11 @@ void UBattleComponent::ChanceCoinCheck()
 		{
 			AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
 			check(PC);
-			PC->StartUpdateChanceSlot(ChanceArray);
+			PC->StartUpdateChanceSlot(TargetAction->CheckCount, TargetAction->StatType, ChanceArray);
 		}
 	}
 
-	//ChanceArray.Add(false);// for last collapsed slot to show all the chancecoin
+	//
 	//AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 	//UBattleManagerComponent* NewBattleManagerComponent =
 	//Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
@@ -168,16 +181,14 @@ void UBattleComponent::ChanceCoinCheck()
 
 bool UBattleComponent::MeleeAttack()
 {
-	
-	UE_LOG(LogTemp, Warning, TEXT("MeleeAttack"));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 30, FColor::Purple, FString::Printf(TEXT("%s MeleeAttack"), *GetOwner()->GetName()));
+	/*UE_LOG(LogTemp, Warning, TEXT("MeleeAttack"));
 	if (ActionTarget == nullptr || !IsValidChecked(ActionTarget))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
 		return false;
-
-	}
+	}*/
 	
-
 	//BattleWidget->StartUpdateChanceSlot(ChanceArray);
 	// Damage;
 
@@ -191,7 +202,7 @@ bool UBattleComponent::MeleeAttack()
 
 void UBattleComponent::RangetAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("RangeAttack"));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 30, FColor::Purple, FString::Printf(TEXT("%s RangetAttack"), *GetOwner()->GetName()));
 	SetCharacterRotation();
 	GetOwner()->SetActorRotation(CharacterRot, ETeleportType::None);
 	GiveDamage();
@@ -202,25 +213,18 @@ void UBattleComponent::RangetAttack()
 
 void UBattleComponent::WeakHeal()
 {
-	if (ActionTarget == nullptr || !ActionTarget->IsValidLowLevelFast())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Target is not set"));
-	}
-	if (ActionTarget != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("WeakHeal"));
-		EndTurn();
-	}
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 30, FColor::Purple, FString::Printf(TEXT("%s WeakHeal"), *GetOwner()->GetName()));
+	EndTurn();
 }
 
 void UBattleComponent::Resurrection(AMyCharacter* TargetCharacter)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Resurrection"));
-	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	/*AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 	UBattleManagerComponent* NewBattleManagerComponent =
 		Cast<UBattleManagerComponent>(GameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
 
-	NewBattleManagerComponent->ResurrectCharacter(TargetCharacter);
+	NewBattleManagerComponent->ResurrectCharacter(TargetCharacter);*/
 
 	EndTurn();
 }
@@ -321,24 +325,24 @@ bool UBattleComponent::IsDead()
 
 
 
-void UBattleComponent::DoAction(UActionWidget* ActionWidget)
+void UBattleComponent::DoAction_Implementation(FName ActionName, AMyCharacter* DeadPlayer)
 {
-
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleComponent::DoAction")));
 	if (this->FactionType == EFactionType::Enemy)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *TargetActionName.ToString());
 		int32 ActionNum = FMath::RandRange(0, ActionArray.Num() - 1);
 		TargetActionName = ActionArray[ActionNum];
-		UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *TargetActionName.ToString());
 		ChanceCoinCheck();
-		DoActionWork(TargetActionName);
+		DoActionWork();
 	}
 	else if (this->FactionType == EFactionType::Player)
 	{
-		TargetActionName = ActionWidget->GetActionName();
+		TargetActionName = ActionName;
 
 		if (TargetActionName == "Resurrection")
 		{
-			Resurrection(ActionWidget->GetDeadPlayer());
+			Resurrection(DeadPlayer);
 		}
 		else
 		{
@@ -347,8 +351,15 @@ void UBattleComponent::DoAction(UActionWidget* ActionWidget)
 	}
 }
 
-void UBattleComponent::DoActionWork(FName NewTargetActionName)
+void UBattleComponent::DoActionWork()
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleComponent::DoActionWork, %s"), *TargetActionName.ToString()));
+
+	if (FactionType == EFactionType::Player)
+	{
+		ActionTarget = GetWorld()->GetGameState<AMoveBoardGameState>()->GetPlayerController(GetOwner<AMyCharacter>()->GetControllerIndex())->GetActionTarget();
+	}
+
 	if (TargetActionName == "NormalAttack")
 	{
 		MeleeAttack();

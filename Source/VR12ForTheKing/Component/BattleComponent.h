@@ -52,7 +52,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -92,10 +92,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool IsDead();
 
+	UFUNCTION(Server, Reliable)
+	void DoAction(FName ActionName = FName("None"), AMyCharacter* DeadPlayer = nullptr);
+	void DoAction_Implementation(FName ActionName = FName("None"), AMyCharacter* DeadPlayer = nullptr);
 	UFUNCTION(BlueprintCallable)
-		void DoAction(UActionWidget* ActionWidget = nullptr);
-	UFUNCTION(BlueprintCallable)
-		void DoActionWork(FName TargetActionName);
+		void DoActionWork();
 	UFUNCTION(BlueprintCallable)
 		void ReachToDestination();
 
@@ -135,7 +136,7 @@ protected:
 		TArray<FName> ActionArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<bool> ChanceArray;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 		AMyCharacter* ActionTarget;
 	
 private:

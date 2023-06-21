@@ -10,6 +10,7 @@
  * 
  */
 class AMyCharacter;
+class AMoveBoardPlayerController;
 class UMoveManagerComponent;
 class UHexGridManager;
 class UBattleManagerComponent;
@@ -32,7 +33,9 @@ public:
 	AMyCharacter* GetCurrentTurnCharacter();
 	void InitGameState();
 	void SetReadyPlayer();
+	UFUNCTION(Server, Reliable)
 	void MoveCharacter(APlayerController* TargetPlayerController);
+	void MoveCharacter_Implementation(APlayerController* TargetPlayerController);
 	void ReachToTile();
 
 	// Event
@@ -42,6 +45,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeToBattleWidget();
 	void ChangeToBattleWidget_Implementation();
+	void DoBattleAction(FName ActionName, AMyCharacter* DeadPlayer);
+	void DoBattleActionWork();
 
 	void RemoveDeadUnitFromArray(AMyCharacter* DeadCharacter);
 
@@ -52,25 +57,25 @@ public:
 	// Getter / Setter
 	void SetEndTile(APlayerController* NewPlayerController, AHexTile* NewEndTile);
 	int32 GetControllerID(APlayerController* TargetPlayerController);
-
+	AMoveBoardPlayerController* GetPlayerController(int32 ControllerIndex);
 	FAction* GetBattleAction(FName TargetActionName);
+	AMyCharacter* GetBattleTurnCharacter() const;
 private:
 	void StartGame();
 	void SetNextTurn();
 	void CreatePlayerCharacter();
 	
-
 private:
 	bool bIsInit;
 	bool bIsLoaded;
 
 	UPROPERTY(meta = (AllowPrivateAccess = true))
-		int32 ReadyPlayerCount;
+	int32 ReadyPlayerCount;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-		TSubclassOf<AMyCharacter> CharacterClass;
+	TSubclassOf<AMyCharacter> CharacterClass;
 	UPROPERTY(meta = (AllowPrivateAccess = true))
-		TArray<AMyCharacter*> PlayerCharacterArray;
+	TArray<AMyCharacter*> PlayerCharacterArray;
 	AMyCharacter* CurrentTurnCharacter;
 	int32 CharacterIndex;
 

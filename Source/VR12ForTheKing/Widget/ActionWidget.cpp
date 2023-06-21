@@ -12,6 +12,7 @@
 #include "../Character/MyPlayerController.h"
 #include "../Character/MyCharacter.h"
 #include "../GameState/MoveBoardGameState.h"
+#include "../PlayerController/MoveBoardPlayerController.h"
 
 
 void UActionWidget::InitWidget(FName NewActionName, UBattleWidget* NewParentWidget, UBattleComponent* NewBattleComponent, AMyCharacter* NewDeadPlayer)
@@ -87,19 +88,27 @@ FName UActionWidget::GetActionName()
 //when BattleComponenet action activated call function action ended in battlemangetcomponent
 void UActionWidget::ActionButtonOnClicked()
 {
-
-	if (TargetBattleComponent->GetActionTarget() != nullptr  && !TargetBattleComponent->GetActionTarget()->IsPendingKill()) // check ActionTarget is nullpter, to check whether widget have to be hide or not
+	AMoveBoardPlayerController* PC = GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>();
+	check(PC);
+	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+	check(GameState);
+	AMyCharacter* ActionTarget = PC->GetActionTarget();
+	if (ActionTarget != nullptr && ActionTarget->IsPendingKill() == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hide Widget"));
 		ParentWidget->HideWidget();
+		PC->DoBattleAction(ActionName, DeadPlayer);
 	}
-
-	//this->SetVisibility(ESlateVisibility::Collapsed);
-
-
-	TargetBattleComponent->DoAction(this);
+	else
+	{
+		return;
+	}
 	
+	//if (TargetBattleComponent->GetActionTarget() != nullptr  && !TargetBattleComponent->GetActionTarget()->IsPendingKill()) // check ActionTarget is nullpter, to check whether widget have to be hide or not
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Hide Widget"));
+	//	ParentWidget->HideWidget();
+	//}
 
+	////this->SetVisibility(ESlateVisibility::Collapsed);
+	//TargetBattleComponent->DoAction(ActionName, DeadPlayer);
 }
-
-

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../VR12ForTheKing.h"
 #include "GameFramework/HUD.h"
 #include "MoveBoardHUD.generated.h"
 
@@ -35,7 +35,7 @@ public:
 	void ChangeToBattleWidget();
 
 	void SetBattleTurnArray(TArray<AMyCharacter*>& NewBattleTrunAray);
-	void StartUpdateChanceSlot(const TArray<bool>& NewChanceArray);
+	void StartUpdateChanceSlot(int32 CoinSize, EStatusType StatusType, const TArray<bool>& NewChanceArray);
 
 	void InitBattleWidget(AMyCharacter* TargetCharacter);
 	void HideBattleWidget();

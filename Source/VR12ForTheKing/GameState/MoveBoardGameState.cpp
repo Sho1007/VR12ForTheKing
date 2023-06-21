@@ -6,6 +6,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
 
+#include "../PlayerController/MoveBoardPlayerController.h"
 #include "../Character/MyCharacter.h"
 #include "../Component/MoveManagerComponent.h"
 #include "../Component/BattleManagerComponent.h"
@@ -94,7 +95,7 @@ void AMoveBoardGameState::SetReadyPlayer()
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("AMoveBoardGameState::OnRep_ReadyPlayerCount : PlayerCount : %d, PlayerArrayNum : %d"), ReadyPlayerCount, PlayerArray.Num()));
 
-	if (ReadyPlayerCount > 1 && ReadyPlayerCount == PlayerArray.Num())
+	if (ReadyPlayerCount == 3)
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("AMoveBoardGameState::OnRep_ReadyPlayerCount : Ready to Play")));
 
@@ -103,7 +104,7 @@ void AMoveBoardGameState::SetReadyPlayer()
 	}
 }
 
-void AMoveBoardGameState::MoveCharacter(APlayerController* TargetPlayerController)
+void AMoveBoardGameState::MoveCharacter_Implementation(APlayerController* TargetPlayerController)
 {
 	if (MoveManagerComponent->IsMoved()) return;
 	int32 NewControllerIndex = GetControllerID(TargetPlayerController);
@@ -153,6 +154,16 @@ void AMoveBoardGameState::ChangeToBattleWidget_Implementation()
 	HUD->ChangeToBattleWidget();
 }
 
+void AMoveBoardGameState::DoBattleAction(FName ActionName, AMyCharacter* DeadPlayer)
+{
+	BattleManager->DoBattleAction(ActionName, DeadPlayer);
+}
+
+void AMoveBoardGameState::DoBattleActionWork()
+{
+	BattleManager->DoBattleActionWork();
+}
+
 void AMoveBoardGameState::RemoveDeadUnitFromArray(AMyCharacter* DeadCharacter)
 {
 	BattleManager->RemoveDeadUnitFromArray(DeadCharacter);
@@ -186,10 +197,22 @@ int32 AMoveBoardGameState::GetControllerID(APlayerController* TargetPlayerContro
 	return -1;
 }
 
+AMoveBoardPlayerController* AMoveBoardGameState::GetPlayerController(int32 ControllerIndex)
+{
+	if (ControllerIndex < 0 || ControllerIndex >= PlayerArray.Num()) return nullptr;
+
+	return Cast<AMoveBoardPlayerController>(PlayerArray[ControllerIndex]->GetPlayerController());
+}
+
 FAction* AMoveBoardGameState::GetBattleAction(FName TargetActionName)
 {
 	if (TargetActionName.IsNone()) return nullptr;
 	return TileEventManager->FindActionInfo(TargetActionName);
+}
+
+AMyCharacter* AMoveBoardGameState::GetBattleTurnCharacter() const
+{
+	return BattleManager->GetCurrentTurnCharacter();
 }
 
 void AMoveBoardGameState::StartGame()

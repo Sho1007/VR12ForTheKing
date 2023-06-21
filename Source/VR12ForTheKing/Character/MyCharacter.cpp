@@ -10,8 +10,9 @@
 #include "../Component/StatusComponent.h"
 #include "../Component/InventoryComponent.h"
 #include "../HexGrid/HexTile.h"
-#include "../MyGameModeBase.h"
+//#include "../MyGameModeBase.h"
 #include "../GameState/MoveBoardGameState.h"
+#include "../PlayerController/MoveBoardPlayerController.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -33,17 +34,13 @@ AMyCharacter::AMyCharacter()
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }
 
-void AMyCharacter::Init(AMyGameModeBase* NewGameMode)
-{
-	GameMode = NewGameMode;
-}
-
 // Called when the game starts or when spawned
 void AMyCharacter::BeginPlay()
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Magenta, FString::Printf(TEXT("AMyCharacter::BeginPlay")));
 	Super::BeginPlay();
 	SetActorTickEnabled(false);
-
+	
 	TestRandomizeStatus();
 }
 
@@ -52,12 +49,37 @@ void AMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMyCharacter, CharacterData);
+	DOREPLIFETIME(AMyCharacter, bIsMoveMode);
+}
+
+void AMyCharacter::NotifyActorBeginCursorOver()
+{
+	Super::NotifyActorBeginCursorOver();
+
+	if (bIsMoveMode) return;
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("AMyCharacter::NotifyActorBeginCursorOver")));
+	AMoveBoardPlayerController* PC = GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>();
+	check(PC);
+	PC->SetFocusActor(this);
+}
+
+void AMyCharacter::NotifyActorEndCursorOver()
+{
+	Super::NotifyActorEndCursorOver();
+
+	if (bIsMoveMode) return;
+
+	AMoveBoardPlayerController* PC = GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>();
+	check(PC);
+	PC->ResetFocusActor(this);
 }
 
 // Called every frame
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("Distance : %f"), FVector::Distance(Destination, GetActorLocation())));
 	if (FVector::Distance(Destination, GetActorLocation()) <= ReachSuccessRadius)
 	{
@@ -77,6 +99,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AMyCharacter::ReachToDestination_Implementation()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("ReachToDestination_Implementation")));
+
 	SetActorTickEnabled(false);
 	if (bIsMoveMode)
 	{
@@ -97,6 +120,11 @@ void AMyCharacter::InitPlayerCharacter(FCharacterData* NewCharacterData)
 	CharacterData = *NewCharacterData;
 
 	// Update CharacterData to Component
+}
+
+AMyCharacter* AMyCharacter::GetActionTarget() const
+{
+	return BattleComponent->GetActionTarget();
 }
 
 void AMyCharacter::SetMoveMode(bool NewMoveMode)
@@ -180,6 +208,14 @@ void AMyCharacter::TestRandomizeStatus()
 	StatusComponent->SetMaxHP(FMath::RandRange(1, 10));
 	StatusComponent->SetCurrentHP(FMath::RandRange(1, StatusComponent->GetMaxHP()));
 	StatusComponent->SetAttackPower(FMath::RandRange(1, 10));
+
+	if (BattleComponent->GetFactionType() == EFactionType::Player)
+	{
+		StatusComponent->SetMaxHP(300);
+		StatusComponent->SetCurrentHP(300);
+		StatusComponent->SetAttackPower(300);
+		StatusComponent->SetSpeed(300);
+	}
 }
 
 int32 AMyCharacter::GetTurnSpeed_Implementation(const int32 CurrentRoundCount)

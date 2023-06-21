@@ -26,11 +26,6 @@ void AMoveBoardGameMode::BeginPlay()
 void AMoveBoardGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-
-	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetGameInstance());
-	check(MyGameInstance);
-	
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, FString::Printf(TEXT("%s's Index : %d"), *NewPlayer->GetName(), MyGameInstance->FindPlayerControllerIndex(NewPlayer)));
 }
 
 void AMoveBoardGameMode::HandleSeamlessTravelPlayer(AController*& C)

@@ -15,7 +15,7 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::NewGameButtonOnClicked()
 {
-	GetWorld()->ServerTravel("/Game/Maps/L_SelectCharacter?listen");
+	GetWorld()->ServerTravel("/Game/Maps/L_MoveBoard?listen");
 }
 
 void UMainMenuWidget::JoinGameButtonOnClicked()

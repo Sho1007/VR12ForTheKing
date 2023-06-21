@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../VR12ForTheKing.h"
 #include "Blueprint/UserWidget.h"
 #include "BattleWidget.generated.h"
 
@@ -30,8 +30,9 @@ public:
 	void ShowWidget();
 	void InitWidget(AMyCharacter* NewTargetCharacter);
 	void InitActionDiscription(FName NewActionName);
-	void StartUpdateChanceSlot(TArray<bool> NewChanceArray);
-	void InitChanceCoinBox();
+	void StartUpdateChanceSlot(int32 CoinSize, EStatusType StatusType, TArray<bool> NewChanceArray);
+
+	void InitChanceCoinBox(int32 CoinSize, EStatusType StatusType);
 
 	void ChangeToVictoryWidget();
 

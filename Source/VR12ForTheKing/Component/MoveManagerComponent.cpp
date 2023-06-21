@@ -8,7 +8,7 @@
 #include "../HUD/MoveBoardHUD.h"
 #include "../Widget/MoveWidget.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "../MyGameModeBase.h"	// 추후 Component 통신 되면 지워야할수도
+//#include "../MyGameModeBase.h"	// 추후 Component 통신 되면 지워야할수도
 #include "../HexGrid/HexGridManager.h"
 #include "../HexGrid/HexTile.h"
 #include "../Event/TileEventManager.h"
@@ -146,7 +146,7 @@ void UMoveManagerComponent::MoveCharacter()
 		}
 		else
 		{
-			CurrentTurnCharacter->SetDestination(NextTile->GetActorLocation());
+			CurrentTurnCharacter->SetDestination(NextTile->GetActorLocation(), 500, 30);
 		}
 	}
 	else

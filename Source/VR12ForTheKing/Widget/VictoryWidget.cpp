@@ -5,7 +5,7 @@
 #include"Components/VerticalBox.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
-#include "../MyGameModeBase.h"
+//#include "../MyGameModeBase.h"
 #include "../Component/BattleManagerComponent.h"
 
 void UVictoryWidget::AddItemToItemListBox(UWidget* NewVictoryWidgetSlot)
@@ -23,9 +23,9 @@ void UVictoryWidget::InitWidget()
 void UVictoryWidget::OnClickedReceiveButton()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ButtonClicked"));
-	AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	/*AMyGameModeBase* NewGameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 	UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(NewGameModeBase->FindComponentByClass(UBattleManagerComponent::StaticClass()));
-	BattleManagerComponent->ReceiveReward();
+	BattleManagerComponent->ReceiveReward();*/
 	ItemListBox->RemoveChildAt(0);
 	UE_LOG(LogTemp, Warning, TEXT("ItemListBoxNum %d"), ItemListBox->GetChildrenCount());
 

@@ -8,7 +8,7 @@
 
 class UCapsuleComponent;
 class AHexTile;
-class AMyGameModeBase;
+//class AMyGameModeBase;
 class UBattleComponent;
 class UStatusComponent;
 class UInventoryComponent;
@@ -27,7 +27,7 @@ public:
 		// Todo : Change Character Color To Widget
 		//CharacterClass = NewClass;
 		// Todo : Spawn Character Test Actor with Class
-		ControllerIndex = 0;
+		ControllerIndex = 1;
 	}
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -50,12 +50,12 @@ class VR12FORTHEKING_API AMyCharacter : public APawn
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
-
-	void Init(AMyGameModeBase* NewGameMode);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void NotifyActorBeginCursorOver() override;
+	virtual void NotifyActorEndCursorOver() override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -69,6 +69,8 @@ public:
 	void InitPlayerCharacter(FCharacterData* NewCharacterData);
 public:
 	// Getter / Setter
+	AMyCharacter* GetActionTarget() const;
+
 	void SetMoveMode(bool NewMoveMode);
 	void SetCurrentTile(AHexTile* NewCurrentTile);
 
@@ -108,14 +110,15 @@ private:
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	FCharacterData CharacterData;
 
-	AMyGameModeBase* GameMode;
+	//AMyGameModeBase* GameMode;
 
 	// Move Var
-	UPROPERTY(BlueprintReadWrite, Category = "Status", EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, Category = "Status", Replicated, EditAnywhere, meta = (AllowPrivateAccess = true))
 	bool bIsMoveMode = true;
 	float ReachSuccessRadius = 10.0f;
 	AHexTile* CurrentTile;
 	FVector Destination;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float MoveSpeed = 500.0f;

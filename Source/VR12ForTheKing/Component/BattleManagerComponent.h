@@ -27,7 +27,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
 	UFUNCTION(CallinEditor)
 	void PlayLevelSequnce();
@@ -41,6 +41,8 @@ public:
 
 	void DebugInfo();
 
+	void DoBattleAction(FName ActionName, AMyCharacter* DeadPlayer);
+	void DoBattleActionWork();
 	void InitBattle(AActor* BattleTile);
 	void MoveToNextUnitTurn();
 	void RemoveDeadUnitFromArray(AMyCharacter* TargetCharacter);
@@ -55,9 +57,12 @@ public:
 	int32 GetPlayerCharacterArrayNum();
 	UDataTable* GetPlayerAnimDataTable();
 	void ReceiveReward();
+	AMyCharacter* GetCurrentTurnCharacter() const;
 private:
 	// Battle Process
-	bool SpawnEnemy();
+	UFUNCTION(Server, Reliable)
+	void SpawnEnemy();
+	void SpawnEnemy_Implementation();
 	bool TeleportCharacter();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -66,18 +71,25 @@ private:
 	UFUNCTION()
 	void LerpTimerFunction();
 	void CalculateTurn();
-	void InitUnitTurn();
+	/*void InitUnitTurn();*/
 	void CreateVictoryWidget();
 
 	void EndBattle();
 	void MoveToNextStage();
 	void GameOver();
 private:
+	// Test Var
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AActor> SpawnTestActor;
+
 	// Sequence Var
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	ALevelSequenceActor* LevelSequenceActor;
 
 	// Battle Var
+	UPROPERTY(Replicated, meta = (AllowPrivateAccess = true))
+	AMyCharacter* CurrentTurnCharacter;
+
 	TArray<TSubclassOf<AMyCharacter>> EnemyClassArray;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (AllowPrivateAccess = true))
 		TArray<AMyCharacter*> EnemyCharacterArray;

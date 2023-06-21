@@ -35,14 +35,18 @@ public:
 	UFUNCTION(Server, Reliable)
 	void DoEventAction(ETileEventActionType NewEventActionType);
 	void DoEventAction_Implementation(ETileEventActionType NewEventActionType);
+	
+	UFUNCTION(Server, Reliable)
+	void DoBattleAction(FName ActionName, AMyCharacter* DeadPlayer);
+	void DoBattleAction_Implementation(FName ActionName, AMyCharacter* DeadPlayer);
 
 	UFUNCTION(Client, Reliable)
 	void SetBattleTurnArray(const TArray<AMyCharacter*>& NewBattleTurnArray);
 	void SetBattleTurnArray_Implementation(const TArray<AMyCharacter*>& NewBattleTurnArray);
 
 	UFUNCTION(Client, Reliable)
-	void StartUpdateChanceSlot(const TArray<bool>& NewChanceArray);
-	void StartUpdateChanceSlot_Implementation(const TArray<bool>& NewChanceArray);
+	void StartUpdateChanceSlot(int32 CoinSize, EStatusType StatusType, const TArray<bool>& NewChanceArray);
+	void StartUpdateChanceSlot_Implementation(int32 CoinSize, EStatusType StatusType, const TArray<bool>& NewChanceArray);
 
 	UFUNCTION(Client, Reliable)
 	void InitBattleWidget(AMyCharacter* TargetCharacter);
@@ -71,15 +75,27 @@ public:
 	void SetEndTile(AHexTile* NewEndTile);
 	void SetEndTile_Implementation(AHexTile* NewEndTile);
 
+	AMyCharacter* GetActionTarget() const;
+	UFUNCTION(Server, Reliable)
+	void SetActionTarget(AMyCharacter* NewActionTarget);
+	void SetActionTarget_Implementation(AMyCharacter* NewActionTarget);
+
+	void SetFocusActor(AMyCharacter* NewFocusActor);
+	void ResetFocusActor(AMyCharacter* NewFocusActor);
+
 private:
 	void InitPlayerController();
-
-	UFUNCTION(Server, Reliable)
 	void LeftClickOnPressed();
-	void LeftClickOnPressed_Implementation();
+	UFUNCTION(Server, Reliable)
+	void Req_LeftClick();
+	void Req_LeftClick_Implementation();
 private:
 	bool bIsInit;
 	bool bIsOnWidget;
+
+	UPROPERTY(Replicated, meta = (AllowPrivateAccess = true))
+	AMyCharacter* ActionTarget;
+	AMyCharacter* FocusActor;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	UInputMappingContext* IMC_Default;

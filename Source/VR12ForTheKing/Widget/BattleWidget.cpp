@@ -11,7 +11,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Components/TextBlock.h"
 #include "../Component/BattleManagerComponent.h"
-#include "../MyGameModeBase.h"
+//#include "../MyGameModeBase.h"
 #include "../Component/StatusComponent.h"
 #include "ChanceCoinSlot.h"
 #include "Components/Overlay.h"
@@ -83,7 +83,10 @@ void UBattleWidget::InitActionDiscription(FName NewActionName)
 
 	UDataTable* ActionDataTable = TileEventMangaer->GetActionDataTable();
 	checkf(ActionDataTable != nullptr, TEXT("ActionDataTable is not valid"));
-	PlayerAction = ActionDataTable->FindRow<FAction>(NewActionName, 0);*/
+
+	PlayerAction = ActionDataTable->FindRow<FAction>(NewActionName, 0);
+	*/
+
 	PlayerActionName = NewActionName;
 	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
 	check(GameState);
@@ -102,43 +105,42 @@ void UBattleWidget::InitActionDiscription(FName NewActionName)
 	TB_SlotAccuracy->SetText(FText::FromString(FString::Printf(TEXT("%d"), PlayerAction->CheckPercent)));
 	TB_ActionDiscription->SetText(PlayerAction->Discription);
 
-	InitChanceCoinBox();
+	InitChanceCoinBox(PlayerAction->CheckCount, PlayerAction->StatType);
 }
 
-void UBattleWidget::StartUpdateChanceSlot(TArray<bool> NewChanceArray)
+void UBattleWidget::StartUpdateChanceSlot(int32 CoinSize, EStatusType StatusType, TArray<bool> NewChanceArray)
 {
-
-	InitChanceCoinBox();
+	InitChanceCoinBox(CoinSize, StatusType);
 	TargetChanceArray = NewChanceArray;
 	ChanceCoinBoxIndex = 0;
 	GetWorld()->GetTimerManager().SetTimer(CoinCheckTimerHandle, this, &UBattleWidget::CoinTimerFunction, 0.5f, true);
 	
 }
 
-void UBattleWidget::InitChanceCoinBox()
+void UBattleWidget::InitChanceCoinBox(int32 CoinSize, EStatusType StatusType)
 {
+	check(CoinChanceBox);
 	if (CoinChanceBox != nullptr)
 	{
 		CoinChanceBox->ClearChildren();
 		CoinChanceBox->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	for (int i = 0; i < PlayerAction->CheckCount; ++i) // Add Chance Slot amount of CheckCount
+	for (int i = 0; i < CoinSize; ++i) // Add Chance Slot amount of CheckCount
 	{
 		UChanceCoinSlot* NewChanceCoinSlot = CreateWidget<UChanceCoinSlot>(GetWorld()->GetFirstPlayerController(), ChanceCoinSlotClass);// create ChanceCoinSlot Widget
 		NewChanceCoinSlot->SetSwitchCoinImage(0);
 		CoinChanceBox->AddChildToHorizontalBox(NewChanceCoinSlot);
 
-
-		if (PlayerAction->StatType == EStatusType::Strength)
+		if (StatusType == EStatusType::Strength)
 		{
 			CoinTexture = NewChanceCoinSlot->GetCoinImageFromArray(0);
 		}
-		else if (PlayerAction->StatType == EStatusType::Focus)
+		else if (StatusType == EStatusType::Focus)
 		{
 			CoinTexture = NewChanceCoinSlot->GetCoinImageFromArray(1);
 		}
-		else if (PlayerAction->StatType == EStatusType::Intelligence)
+		else if (StatusType == EStatusType::Intelligence)
 		{
 			CoinTexture = NewChanceCoinSlot->GetCoinImageFromArray(2);
 		}
@@ -153,11 +155,11 @@ void UBattleWidget::InitChanceCoinBox()
 	UChanceCoinSlot* LastChanceCoinSlot = CreateWidget<UChanceCoinSlot>(GetWorld()->GetFirstPlayerController(), ChanceCoinSlotClass);// create ChanceCoinSlot Widget
 	LastChanceCoinSlot->SetVisibility(ESlateVisibility::Collapsed);
 	CoinChanceBox->AddChildToHorizontalBox(LastChanceCoinSlot);
-
 }
 
 void UBattleWidget::ChangeToVictoryWidget()
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Magenta, FString::Printf(TEXT("UBattleWidget::ChangeToVictoryWidget")));
 	HB_Action->SetVisibility(ESlateVisibility::Collapsed);
 	CoinChanceBox->SetVisibility(ESlateVisibility::Collapsed);
 	DiscriptionOverlay->SetVisibility(ESlateVisibility::Collapsed);
@@ -186,8 +188,15 @@ void UBattleWidget::CoinTimerFunction()
 	{
 		GetWorld()->GetTimerManager().ClearTimer(CoinCheckTimerHandle);
 		CoinChanceBox->SetVisibility(ESlateVisibility::Hidden);
-		UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(TargetCharacter->FindComponentByClass(UBattleComponent::StaticClass()));
-		NewBattleComponent->DoActionWork(PlayerActionName);
+		if (GetOwningPlayer()->HasAuthority())
+		{
+			/* From : 
+			UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(TargetCharacter->FindComponentByClass(UBattleComponent::StaticClass()));
+			NewBattleComponent->DoActionWork(PlayerActionName);*/
+			AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+			check(GameState);
+			GameState->DoBattleActionWork();
+		}
 		ChanceCoinBoxIndex = 0;
 	}
 }

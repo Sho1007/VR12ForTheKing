@@ -7,7 +7,9 @@
 #include "Kismet/GamePlayStatics.h"
 #include "Camera/CameraComponent.h"
 
-#include "../MyGameModeBase.h"
+#include "Net/UnrealNetwork.h"
+
+//#include "../MyGameModeBase.h"
 #include "../HexGrid/HexGridManager.h"
 #include "../HexGrid/HexTile.h"
 #include "../Event/EnemyEventActor.h"
@@ -37,7 +39,7 @@ UBattleManagerComponent::UBattleManagerComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
+	SetIsReplicated(true);
 	// ...
 }
 
@@ -64,7 +66,14 @@ void UBattleManagerComponent::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("OutArrayNum : %d, BattleMapArrayNum : %d"), OutArray.Num(), BattleMapArray.Num());
 
-	//checkf(BattleMapArray.Num() == 0, TEXT("No BattleMap in this level"));
+	checkf(BattleMapArray.Num() != 0, TEXT("No BattleMap in this level"));
+}
+
+void UBattleManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UBattleManagerComponent, CurrentTurnCharacter);
 }
 
 void UBattleManagerComponent::PlayLevelSequnce()
@@ -118,6 +127,22 @@ void UBattleManagerComponent::DebugInfo()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *Iter->GetName());
 	}
+}
+
+void UBattleManagerComponent::DoBattleAction(FName ActionName, AMyCharacter* DeadPlayer)
+{
+	check(CurrentTurnCharacter);
+
+	UBattleComponent* BattleComponent = CurrentTurnCharacter->FindComponentByClass<UBattleComponent>();
+	check(BattleComponent);
+	BattleComponent->DoAction(ActionName, DeadPlayer);
+}
+
+void UBattleManagerComponent::DoBattleActionWork()
+{
+	UBattleComponent* BattleComponent = CurrentTurnCharacter->FindComponentByClass<UBattleComponent>();
+	check(BattleComponent);
+	BattleComponent->DoActionWork();
 }
 
 void UBattleManagerComponent::InitBattle(AActor* BattleTile)
@@ -218,7 +243,8 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 		}
 	}
 
-	InitUnitTurn();// check whether first index of BattleTurnIndex is Enemy or not and StartUnitTurn;
+	//InitUnitTurn();// check whether first index of BattleTurnIndex is Enemy or not and StartUnitTurn;
+	MoveToNextUnitTurn();
 	return;
 }
 
@@ -256,8 +282,9 @@ UDataTable* UBattleManagerComponent::GetPlayerAnimDataTable()
 	return PlayerAnimDataTable;
 }
 
-bool UBattleManagerComponent::SpawnEnemy()
+void UBattleManagerComponent::SpawnEnemy_Implementation()
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleManagerComponent::SpawnEnemy")));
 	int32 SpawnEnemyCount = 0;
 
 	for (; SpawnEnemyCount < 3; ++SpawnEnemyCount)
@@ -265,12 +292,16 @@ bool UBattleManagerComponent::SpawnEnemy()
 		if (SpawnEnemyCount + SpawnEnemyIndex >= EnemyClassArray.Num())
 		{
 			SpawnEnemyIndex += SpawnEnemyCount;
-			return true;
+			return;
 		}
 
 
 		FTransform EnemySpawnTransform = BattleMapArray[MapIndex]->GetEnemySpawnPosition()[SpawnEnemyCount]->GetActorTransform();
-		AMyCharacter* EnemyCharacter = GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AMyCharacter* EnemyCharacter = GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform, SpawnParams);
+		EnemyCharacter->SetMoveMode(false);
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("World Name : %s"), *GetWorld()->GetName()));
 		UBattleComponent* BattleComponent = Cast<UBattleComponent>(EnemyCharacter->GetComponentByClass(UBattleComponent::StaticClass()));
 		UInventoryComponent* InventoryComponent = Cast<UInventoryComponent>(EnemyCharacter->GetComponentByClass(UInventoryComponent::StaticClass()));
 		checkf(BattleComponent != nullptr, TEXT("EnemyCharacter has not BattleComponent"));
@@ -287,9 +318,8 @@ bool UBattleManagerComponent::SpawnEnemy()
 
 	}
 	
-		SpawnEnemyIndex += SpawnEnemyCount + 1;
-		return true;
-	
+	SpawnEnemyIndex += SpawnEnemyCount + 1;
+	return;
 }
 
 bool UBattleManagerComponent::TeleportCharacter()
@@ -297,7 +327,7 @@ bool UBattleManagerComponent::TeleportCharacter()
 	for (int i = 0; i < PlayerCharacterArray.Num(); ++i)
 	{
 		FTransform CharacterSpawnTransform = BattleMapArray[MapIndex]->GetPlayerSpawnPosition()[i]->GetActorTransform();
-		PlayerCharacterArray[i]->SetActorTransform(CharacterSpawnTransform);
+		PlayerCharacterArray[i]->SetActorTransform(CharacterSpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
 		UBattleComponent* BattleComponent = Cast<UBattleComponent>(PlayerCharacterArray[i]->GetComponentByClass(UBattleComponent::StaticClass()));
 		checkf(BattleComponent != nullptr, TEXT("PlayerCharacter has not BattleComponent"));
 		BattleComponent->SetTargetCamera(BattleMapArray[MapIndex]->GetPlayerSpawnPosition()[i]->GetCameraPosition());
@@ -368,56 +398,56 @@ void UBattleManagerComponent::CalculateTurn()
 
 }
 
-void UBattleManagerComponent::InitUnitTurn()
-{
-
-
-	AMyCharacter* FirstIndexCharacter = UseBattleTurnArray[0];
-	UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]->FindComponentByClass(UBattleComponent::StaticClass()));
-	if (NewBattleComponent->GetFactionType() == EFactionType::Player)
-	{
-		//checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
-
-		// From : BattleWidget->InitWidget(UseBattleTurnArray[0]);
-		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
-		{
-			AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
-			check(PC);
-			if (UseBattleTurnArray[0]->GetControllerIndex() == GetWorld()->GetGameState<AMoveBoardGameState>()->GetControllerID(PC))
-			{
-				PC->InitBattleWidget(UseBattleTurnArray[0]);
-			}
-			else
-			{
-				PC->HideBattleWidget();
-			}
-		}
-
-		
-		UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *UseBattleTurnArray[0]->GetName());
-	}
-	else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
-	{
-		
-	
-		if (TargetPlayerArray.Num() != 0) // check if TargetPlayerArray is notempty
-		{
-
-		  int32 TargerCharacterNum = FMath::RandRange(0, TargetPlayerArray.Num() - 1); // Get Random Index In TargetCharacter Array
-		  UE_LOG(LogTemp, Warning, TEXT("%s  RandomEnemyAttack"), *UseBattleTurnArray[0]->GetName()); // enemyunit random attack
-		  NewBattleComponent->SetActionTarget(TargetPlayerArray[TargerCharacterNum]); // set ActionTarget At TargetCharacter Array
-		  NewBattleComponent->DoAction(); // Do RandomEnemyAttack
-		
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Target is not exist"));
-		}
-	
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("TargetPlayer num %d"), TargetPlayerArray.Num());
-}
+//void UBattleManagerComponent::InitUnitTurn()
+//{
+//	return;
+//
+//	CurrentTurnCharacter = UseBattleTurnArray[0];
+//	UBattleComponent* NewBattleComponent = Cast<UBattleComponent>(UseBattleTurnArray[0]->FindComponentByClass(UBattleComponent::StaticClass()));
+//	if (NewBattleComponent->GetFactionType() == EFactionType::Player)
+//	{
+//		//checkf(UseBattleTurnArray[0] != nullptr, TEXT("UseBattleTurnArray is null"));
+//
+//		// From : BattleWidget->InitWidget(UseBattleTurnArray[0]);
+//		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+//		{
+//			AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
+//			check(PC);
+//			if (UseBattleTurnArray[0]->GetControllerIndex() == GetWorld()->GetGameState<AMoveBoardGameState>()->GetControllerID(PC))
+//			{
+//				PC->InitBattleWidget(UseBattleTurnArray[0]);
+//			}
+//			else
+//			{
+//				PC->HideBattleWidget();
+//			}
+//		}
+//
+//		
+//		UE_LOG(LogTemp, Warning, TEXT("%s Turn"), *UseBattleTurnArray[0]->GetName());
+//	}
+//	else if (NewBattleComponent->GetFactionType() == EFactionType::Enemy)
+//	{
+//		
+//	
+//		if (TargetPlayerArray.Num() != 0) // check if TargetPlayerArray is notempty
+//		{
+//
+//		  int32 TargerCharacterNum = FMath::RandRange(0, TargetPlayerArray.Num() - 1); // Get Random Index In TargetCharacter Array
+//		  UE_LOG(LogTemp, Warning, TEXT("%s  RandomEnemyAttack"), *UseBattleTurnArray[0]->GetName()); // enemyunit random attack
+//		  NewBattleComponent->SetActionTarget(TargetPlayerArray[TargerCharacterNum]); // set ActionTarget At TargetCharacter Array
+//		  NewBattleComponent->DoAction(); // Do RandomEnemyAttack
+//		
+//		}
+//		else
+//		{
+//			UE_LOG(LogTemp, Warning, TEXT("Target is not exist"));
+//		}
+//	
+//	}
+//
+//	UE_LOG(LogTemp, Warning, TEXT("TargetPlayer num %d"), TargetPlayerArray.Num());
+//}
 
 void UBattleManagerComponent::MoveToNextUnitTurn()
 {
@@ -425,16 +455,18 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 
 	checkf(UseBattleTurnArray.Num() != 0, TEXT("UsebattleTurnArray is empty"));
 
-	AMyCharacter* CurrentTurnCharacter = UseBattleTurnArray[0];
+	CurrentTurnCharacter = UseBattleTurnArray[0];
 
 	UseBattleTurnArray.Add(CurrentTurnCharacter);
 	UseBattleTurnArray.RemoveAt(0);
 
 	if (CurrentTurnCharacter == nullptr)
 	{
+		CurrentTurnCharacter = UseBattleTurnArray[0];
+
+		UseBattleTurnArray.Add(CurrentTurnCharacter);
+		UseBattleTurnArray.RemoveAt(0);
 		// Todo : Do Next Round
-		UseBattleTurnArray.Add(nullptr);
-		return;
 	}
 
 	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
@@ -443,6 +475,8 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 		check(PC);
 		PC->AddUnitToImageArray(UseBattleTurnArray);
 	}
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("%s's Turn"), *CurrentTurnCharacter->GetName()));
 
 	UBattleComponent* BattleComponent = CurrentTurnCharacter->FindComponentByClass<UBattleComponent>();
 	check(BattleComponent);
@@ -576,9 +610,9 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray(AMyCharacter* TargetCharac
 void UBattleManagerComponent::ResetActionTargetWhenEnemyDead()
 {
 
-	checkf(UseBattleTurnArray.Num() != 0, TEXT("UseBattleTurnArray is Empty"));
+	checkf(UseBattleTurnArray.Num() != 0, TEXT("UseBattleTurnArray is Empty"));/*
 	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));
+	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));*/
 
 	for (int i = 0; i < UseBattleTurnArray.Num(); ++i)
 	{
@@ -599,8 +633,8 @@ void UBattleManagerComponent::ResurrectCharacter(AMyCharacter* ResurrectCharacte
 	UStatusComponent* NewStatusComponent = Cast<UStatusComponent>(ResurrectCharacter->FindComponentByClass(UStatusComponent::StaticClass()));
 	NewStatusComponent->SetCurrentHP(1);
 
-	AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));
+	/*AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));*/
 
 	for (int32 i = 1; i < UseBattleTurnArray.Num(); ++i)
 	{
@@ -743,6 +777,11 @@ void UBattleManagerComponent::ReceiveReward()
 
 }
 
+AMyCharacter* UBattleManagerComponent::GetCurrentTurnCharacter() const
+{
+	return CurrentTurnCharacter;
+}
+
 void UBattleManagerComponent::EndBattle()
 {
 	++VictoryCount;
@@ -756,10 +795,7 @@ void UBattleManagerComponent::EndBattle()
 	{
 		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
 		check(PC);
-		if (UseBattleTurnArray[0]->GetControllerIndex() == GetWorld()->GetGameState<AMoveBoardGameState>()->GetControllerID(PC))
-		{
-			PC->ChangeToVictoryWidget();
-		}
+		PC->ChangeToVictoryWidget();
 	}
 }
 

@@ -8,7 +8,7 @@
 #include "InputMappingContext.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "../MyGameModeBase.h"
+//#include "../MyGameModeBase.h"
 
 #include "../HexGrid/HexTile.h"
 #include "../Character/MyCharacter.h"
@@ -28,12 +28,6 @@ void AMyPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	SetShowMouseCursor(true);
-
-	GameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (!GameMode)
-	{
-		UE_LOG(LogTemp, Error, TEXT("GameMode is not valid!"));
-	}
 
 	UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (IMC_Default && SubSystem)
@@ -97,7 +91,7 @@ void AMyPlayerController::LeftClickPressed()
 
 	UE_LOG(LogTemp, Warning, TEXT("LeftClickPressed"));
 
-	UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(GameMode->GetComponentByClass(UBattleManagerComponent::StaticClass()));
+	/*UBattleManagerComponent* BattleManagerComponent = Cast<UBattleManagerComponent>(GameMode->GetComponentByClass(UBattleManagerComponent::StaticClass()));
 	checkf(BattleManagerComponent != nullptr, TEXT("GameMode has not BattleManagerComponent"));
 	if (BattleManagerComponent->IsBattle())
 	{
@@ -114,13 +108,13 @@ void AMyPlayerController::LeftClickPressed()
 		}
 	}
 
-	GameMode->LeftClick(this);
+	GameMode->LeftClick(this);*/
 }
 
 void AMyPlayerController::CheckFocusActor()
 {
 	AActor* HitActor = GetHitActor();
-	GameMode->CheckFocusActor(HitActor, this);
+	//GameMode->CheckFocusActor(HitActor, this);
 }
 
 AActor* AMyPlayerController::GetHitActor()
