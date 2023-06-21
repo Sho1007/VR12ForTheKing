@@ -35,7 +35,7 @@ void UHexGridManager::BeginPlay()
 void UHexGridManager::CreateGrid()
 {
 	// ! Warning : X, Y is Y, X in Unreal Coordinate
-	FVector SpawnLocation;
+	
 	FRotator SpawnRotation(0, 0, 0);
 	for (int i = 0; i < Height; ++i)
 	{

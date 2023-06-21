@@ -70,6 +70,8 @@ private:
 	int GetIndex(FIntPoint Pos);
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	FVector SpawnLocation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AHexTile> HexTileClass;
 
 	TArray<FTileRow> HexGrid;
