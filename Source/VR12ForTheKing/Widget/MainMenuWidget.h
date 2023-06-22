@@ -26,6 +26,8 @@ private:
 	void QuitButtonOnClicked();
 
 private:
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	FString LevelName;
 	UPROPERTY(meta = (AllowPrivateAccess = true, BindWidget))
 	UButton* Btn_NewGame;
 	UPROPERTY(meta = (AllowPrivateAccess = true, BindWidget))
