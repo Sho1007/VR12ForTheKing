@@ -134,14 +134,16 @@ void AMyCharacter::SetMoveMode(bool NewMoveMode)
 
 void AMyCharacter::SetCurrentTile(AHexTile* NewCurrentTile)
 {
-	// Todo : Ÿ���� ���� �� (Collision �ְ�, EndOverlap) Leave
-	// Ÿ�Ͽ� �� ����� �� (BeginOverlap) Arrive �����ϵ��� ����
 	if (CurrentTile != nullptr)
 	{
 		CurrentTile->LeaveFromTile(this);
 	}
 	CurrentTile = NewCurrentTile;
 	CurrentTile->ArriveToTile(this);
+
+	FVector NewLocation = NewCurrentTile->GetActorLocation();
+	NewLocation.Z = this->GetActorLocation().Z;
+	SetActorLocation(NewLocation);
 }
 
 void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float NewRadius)
@@ -159,7 +161,7 @@ void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float 
 	FVector Direction = Destination - this->GetActorLocation();
 	this->SetActorRotation(Direction.Rotation());
 
-	this->SkeletalMeshComponent->PlayAnimation();
+	//this->SkeletalMeshComponent->PlayAnimation();
 
 	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("SetDestination Called : %s"), *Destination.ToString()));
 	SetActorTickEnabled(true);

@@ -21,6 +21,7 @@ AMoveBoardGameState::AMoveBoardGameState(const FObjectInitializer& ObjectInitial
 {
 	bIsInit = false;
 	bIsLoaded = false;
+	bIsStarted = false;
 	ReadyPlayerCount = 0;
 
 	MoveManagerComponent = CreateDefaultSubobject<UMoveManagerComponent>(FName(TEXT("MoveManagerComponent")));
@@ -54,21 +55,17 @@ void AMoveBoardGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(AMoveBoardGameState, MoveManagerComponent);
 }
 
-AMyCharacter* AMoveBoardGameState::GetCurrentTurnCharacter()
-{
-	return CurrentTurnCharacter;
-}
-void AMoveBoardGameState::CreatePlayerCharacter()
+void AMoveBoardGameState::CreatePlayerCharacter(APlayerController* TargetController)
 {
 	// Create Player Character with Player Data
 	// Todo : Set SpawnPosition
 	check(CharacterClass != nullptr);
 	AMyCharacter* NewPlayerCharacter = GetWorld()->SpawnActor<AMyCharacter>(CharacterClass, FVector(0, 0, 100), FRotator(0,0,0));
+	FCharacterData* NewCharacterData = new FCharacterData();
+	NewCharacterData->ControllerIndex = GetControllerID(TargetController);
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("PlayerController Index : %d"), GetControllerID(TargetController)));
+	NewPlayerCharacter->InitPlayerCharacter(NewCharacterData);
 
-	NewPlayerCharacter->InitPlayerCharacter(new FCharacterData());
-
-	NewPlayerCharacter->SetCurrentTile(HexGridManagerComponet->GetTile(0,0));
-	NewPlayerCharacter->SetActorLocation(HexGridManagerComponet->GetTile(0, 0)->GetActorLocation() + FVector(0,0,100));
 	PlayerCharacterArray.Add(NewPlayerCharacter);
 }
 void AMoveBoardGameState::InitGameState()
@@ -76,17 +73,6 @@ void AMoveBoardGameState::InitGameState()
 	if (HasAuthority())
 	{
 		HexGridManagerComponet->CreateGrid();
-		MoveManagerComponent->Init();
-	}
-
-	if (bIsLoaded)
-	{
-
-	}
-	else
-	{
-		CharacterIndex = 0;
-		if (HasAuthority()) CreatePlayerCharacter();
 	}
 }
 
@@ -99,8 +85,6 @@ void AMoveBoardGameState::SetReadyPlayer()
 	if (ReadyPlayerCount == 3)
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("AMoveBoardGameState::OnRep_ReadyPlayerCount : Ready to Play")));
-
-		SetNextTurn();
 		StartGame();
 	}
 }
@@ -109,7 +93,7 @@ void AMoveBoardGameState::MoveCharacter_Implementation(APlayerController* Target
 {
 	if (MoveManagerComponent->IsMoved()) return;
 	int32 NewControllerIndex = GetControllerID(TargetPlayerController);
-	if (NewControllerIndex == CurrentTurnCharacter->GetControllerIndex())
+	if (NewControllerIndex == MoveManagerComponent->GetCurrentTurnCharacter()->GetControllerIndex())
 	{
 		MoveManagerComponent->MoveCharacter();
 	}
@@ -123,7 +107,7 @@ void AMoveBoardGameState::ReachToTile()
 void AMoveBoardGameState::DoEventAction(APlayerController* TargetPlayerController, ETileEventActionType NewEventActionType)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf(TEXT("AMoveBoardGameState::DoEventAction")));
-	if (CurrentTurnCharacter->GetControllerIndex() != GetControllerID(TargetPlayerController)) return;
+	if (MoveManagerComponent->GetCurrentTurnCharacter()->GetControllerIndex() != GetControllerID(TargetPlayerController)) return;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf(TEXT("AMoveBoardGameState::DoEventAction")));
 	switch (NewEventActionType)
@@ -177,10 +161,10 @@ void AMoveBoardGameState::MoveToNextTurn()
 
 void AMoveBoardGameState::SetEndTile(APlayerController* NewPlayerController, AHexTile* NewEndTile)
 {
-	if (MoveManagerComponent->IsMoved()) return;
+	if (!bIsStarted || MoveManagerComponent->IsMoved()) return;
 	int32 NewControllerIndex = GetControllerID(NewPlayerController);
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, FString::Printf(TEXT("AMoveBoardGameState::SetEndTile %d, %d"), NewControllerIndex, CurrentTurnCharacter->GetControllerIndex()));
-	if (CurrentTurnCharacter->GetControllerIndex() == NewControllerIndex)
+	if (MoveManagerComponent->GetCurrentTurnCharacter()->GetControllerIndex() == NewControllerIndex)
 	{
 		HexGridManagerComponet->SetEndTile(NewEndTile, MoveManagerComponent->GetMovableCount());
 	}
@@ -218,11 +202,11 @@ AMyCharacter* AMoveBoardGameState::GetBattleTurnCharacter() const
 
 void AMoveBoardGameState::StartGame()
 {
+	bIsStarted = true;
+	MoveManagerComponent->Init(PlayerCharacterArray);
+	for (int i = 0; i < PlayerCharacterArray.Num(); ++i)
+	{
+		PlayerCharacterArray[i]->SetCurrentTile(HexGridManagerComponet->GetTile(0, 0));
+	}
 	MoveManagerComponent->StartTurn();
-}
-
-void AMoveBoardGameState::SetNextTurn()
-{
-	CharacterIndex = (CharacterIndex + 1) % PlayerCharacterArray.Num();
-	CurrentTurnCharacter = PlayerCharacterArray[CharacterIndex];
 }

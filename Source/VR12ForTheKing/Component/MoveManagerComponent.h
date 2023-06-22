@@ -26,7 +26,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
-	void Init();
+	void Init(const TArray<AMyCharacter*>& NewPlayerCharacterArray);
 
 	int32 GetMovableCount() const;
 
@@ -56,7 +56,15 @@ public:
 	// Getter / Setter
 	const bool IsMoved() const;
 
+	AMyCharacter* GetCurrentTurnCharacter() const;
+
 private:
+	void SetNextTurn();
+private:
+	TArray<AMyCharacter*> PlayerCharacterArray;
+	int32 CurrentTurnIndex;
+	AMyCharacter* CurrentTurnCharacter;
+
 	UHexGridManager* HexGridManager;
 
 	int32 Turn;

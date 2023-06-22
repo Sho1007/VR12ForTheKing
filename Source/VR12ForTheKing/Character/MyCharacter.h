@@ -119,6 +119,8 @@ private:
 	AHexTile* CurrentTile;
 	FVector Destination;
 
+	// 
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float MoveSpeed = 500.0f;

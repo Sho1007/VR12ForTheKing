@@ -26,6 +26,8 @@ void AMoveBoardGameMode::BeginPlay()
 void AMoveBoardGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
+
+	GetGameState<AMoveBoardGameState>()->CreatePlayerCharacter(NewPlayer);
 }
 
 void AMoveBoardGameMode::HandleSeamlessTravelPlayer(AController*& C)

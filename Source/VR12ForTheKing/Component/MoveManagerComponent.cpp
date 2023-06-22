@@ -37,8 +37,6 @@ void UMoveManagerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
-	Init();
 
 	HexGridManager = Cast<UHexGridManager>(GetOwner()->GetComponentByClass(UHexGridManager::StaticClass()));
 	check(HexGridManager != nullptr);
@@ -52,12 +50,15 @@ void UMoveManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(UMoveManagerComponent, MoveJudgeArray);
 }
 
-void UMoveManagerComponent::Init()
+void UMoveManagerComponent::Init(const TArray<AMyCharacter*>& NewPlayerCharacterArray)
 {
+
 	// Todo : Load DataFile
 
 	Day = 0;
 	Turn = 0;
+
+	PlayerCharacterArray = NewPlayerCharacterArray;
 }
 
 void UMoveManagerComponent::TestMulticast_Implementation()
@@ -73,18 +74,18 @@ void UMoveManagerComponent::HideMoveJudgeWidget_Implementation()
 void UMoveManagerComponent::PrepareTurn()
 {
 	// Todo : Update Turn Widget;
-	Turn++;
+	CurrentTurnIndex++;
 	if (Turn / 15 > Day)
 	{
 		Day++;
 	}
+	CurrentTurnCharacter = PlayerCharacterArray[CurrentTurnIndex % PlayerCharacterArray.Num()];
 
 	ExecuteTurn();
 }
 
 void UMoveManagerComponent::ExecuteTurn()
 {
-	AMyCharacter* CurrentTurnCharacter = GetWorld()->GetGameState<AMoveBoardGameState>()->GetCurrentTurnCharacter();
 	check(CurrentTurnCharacter != nullptr);
 	// SpawnEvent
 	UActorComponent*  ActorComponent = GetOwner()->GetComponentByClass(UTileEventManager::StaticClass());
@@ -126,7 +127,6 @@ void UMoveManagerComponent::OnRep_MoveJudgeArray()
 
 void UMoveManagerComponent::MoveCharacter()
 {
-	AMyCharacter* CurrentTurnCharacter = GetWorld()->GetGameState<AMoveBoardGameState>()->GetCurrentTurnCharacter();
 	check(CurrentTurnCharacter != nullptr);
 
 	bIsMoved = true;
@@ -166,7 +166,6 @@ void UMoveManagerComponent::MoveCharacter()
 void UMoveManagerComponent::ReachToDestination()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("UMoveManagerComponent::ReachToDestination")));
-	AMyCharacter* CurrentTurnCharacter = GetWorld()->GetGameState<AMoveBoardGameState>()->GetCurrentTurnCharacter();
 	check(CurrentTurnCharacter != nullptr);
 
 	if (CurrentTurnCharacter->GetCurrentTile() != NextTile)
@@ -201,4 +200,13 @@ void UMoveManagerComponent::StartTurn()
 const bool UMoveManagerComponent::IsMoved() const
 {
 	return bIsMoved;
+}
+
+AMyCharacter* UMoveManagerComponent::GetCurrentTurnCharacter() const
+{
+	return CurrentTurnCharacter;
+}
+
+void UMoveManagerComponent::SetNextTurn()
+{
 }

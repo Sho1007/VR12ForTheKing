@@ -30,7 +30,6 @@ protected:
 
 public:
 	// Move
-	AMyCharacter* GetCurrentTurnCharacter();
 	void InitGameState();
 	void SetReadyPlayer();
 	UFUNCTION(Server, Reliable)
@@ -52,7 +51,7 @@ public:
 
 	// Turn
 	void MoveToNextTurn();
-
+	void CreatePlayerCharacter(APlayerController* TargetController);
 public:
 	// Getter / Setter
 	void SetEndTile(APlayerController* NewPlayerController, AHexTile* NewEndTile);
@@ -60,14 +59,14 @@ public:
 	AMoveBoardPlayerController* GetPlayerController(int32 ControllerIndex);
 	FAction* GetBattleAction(FName TargetActionName);
 	AMyCharacter* GetBattleTurnCharacter() const;
+	
 private:
 	void StartGame();
-	void SetNextTurn();
-	void CreatePlayerCharacter();
 	
 private:
 	bool bIsInit;
 	bool bIsLoaded;
+	bool bIsStarted;
 
 	UPROPERTY(meta = (AllowPrivateAccess = true))
 	int32 ReadyPlayerCount;
@@ -76,8 +75,6 @@ private:
 	TSubclassOf<AMyCharacter> CharacterClass;
 	UPROPERTY(meta = (AllowPrivateAccess = true))
 	TArray<AMyCharacter*> PlayerCharacterArray;
-	AMyCharacter* CurrentTurnCharacter;
-	int32 CharacterIndex;
 
 	// Component
 	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = true))
