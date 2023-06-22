@@ -156,6 +156,11 @@ void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float 
 		ReachSuccessRadius = NewRadius;
 	}
 	Destination = FVector(NewDestination.X, NewDestination.Y, GetActorLocation().Z);
+	FVector Direction = Destination - this->GetActorLocation();
+	this->SetActorRotation(Direction.Rotation());
+
+	this->SkeletalMeshComponent->PlayAnimation();
+
 	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("SetDestination Called : %s"), *Destination.ToString()));
 	SetActorTickEnabled(true);
 }

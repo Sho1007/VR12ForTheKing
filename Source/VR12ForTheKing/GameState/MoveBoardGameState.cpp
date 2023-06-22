@@ -68,6 +68,7 @@ void AMoveBoardGameState::CreatePlayerCharacter()
 	NewPlayerCharacter->InitPlayerCharacter(new FCharacterData());
 
 	NewPlayerCharacter->SetCurrentTile(HexGridManagerComponet->GetTile(0,0));
+	NewPlayerCharacter->SetActorLocation(HexGridManagerComponet->GetTile(0, 0)->GetActorLocation() + FVector(0,0,100));
 	PlayerCharacterArray.Add(NewPlayerCharacter);
 }
 void AMoveBoardGameState::InitGameState()

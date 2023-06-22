@@ -42,10 +42,8 @@ public:
 	FItem* GetItemInfoAtInventory(int32 ItemIndex);
 	TArray<FItemInstance>& GetEquipmentSlot();
 	FItem* GetEquipItemInfo(int32 NewSlotIndex) const;
-
 public:
 	FDele_Single UpdateInventory;
-
 private:
 	void AttachItemOption(EEquipmentType NewEquipmentType);
 	void DetachItemOption(EEquipmentType NewEquipmentType);

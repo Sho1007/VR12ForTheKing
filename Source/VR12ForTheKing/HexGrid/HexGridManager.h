@@ -48,8 +48,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-
-public:
 	UFUNCTION(BlueprintCallable, CallInEditor)
 	void CreateGrid();
 

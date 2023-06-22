@@ -15,11 +15,9 @@ UCLASS()
 class VR12FORTHEKING_API AHexTile : public AActor
 {
 	GENERATED_BODY()
-	
 public:	
 	// Sets default values for this actor's properties
 	AHexTile();
-
 public:
 	void SetParentTile(AHexTile* NewParentTile);
 	AHexTile* GetParentTile() { return ParentTile; }
@@ -29,7 +27,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void NotifyActorBeginCursorOver() override;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
