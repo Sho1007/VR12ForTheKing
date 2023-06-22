@@ -78,6 +78,10 @@ void UBattleManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 
 void UBattleManagerComponent::PlayLevelSequnce()
 {
+	TArray<AActor*> LevelSequenceActorArray;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALevelSequenceActor::StaticClass(), LevelSequenceActorArray);
+
+	LevelSequenceActor = Cast<ALevelSequenceActor>(LevelSequenceActorArray[0]);
 	LevelSequenceActor->GetSequencePlayer()->Play();
 }
 
