@@ -47,7 +47,7 @@ public:
 	const TArray<ABattleCharacterSpawnPosition*>& GetPlayerSpawnPosition() const;
 
 	UFUNCTION(BlueprintCallable)
-	const AActor* GetNeutralSideCamera() const;
+	AActor* GetNeutralSideCamera() const;
 	UFUNCTION(BlueprintCallable)
 	const AActor* GetNextNeutralSideCamera() const;
 
@@ -60,7 +60,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	const bool MoveNextSceneIndex();
 private:
-	int32 CurrentSceneIndex = 0;
+	int32 CurrentSceneIndex = -1;
 
 	UPROPERTY(BlueprintReadOnly, EditInstanceOnly, meta = (AllowPrivateAccess = true))
 	TArray<FBattleSceneInfo> BattleSceneInfoArray;

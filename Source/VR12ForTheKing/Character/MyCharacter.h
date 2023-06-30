@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Engine/DataTable.h"
 #include "MyCharacter.generated.h"
 
 class UCapsuleComponent;
@@ -12,6 +13,18 @@ class AHexTile;
 class UBattleComponent;
 class UStatusComponent;
 class UInventoryComponent;
+
+USTRUCT(BlueprintType)
+struct FAnimData : public FTableRowBase
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName AnimName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UAnimMontage* AnimMontage;
+};
 
 
 USTRUCT(BlueprintType)
@@ -42,6 +55,7 @@ public:
 	int32 ControllerIndex;
 };
 
+class UDataTable;
 UCLASS()
 class VR12FORTHEKING_API AMyCharacter : public APawn
 {
@@ -62,11 +76,18 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ReachToDestination();
-	void ReachToDestination_Implementation();
 
 	void InitPlayerCharacter(FCharacterData* NewCharacterData);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void PlayAnimation(FName AnimName);
+	void PlayAnimation_Implementation(FName AnimName);
+	UFUNCTION(NetMulticast, Reliable)
+	void StopAnimation();
+	void StopAnimation_Implementation();
+	UFUNCTION()
+	void OnMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 public:
 	// Getter / Setter
 	AMyCharacter* GetActionTarget() const;
@@ -106,6 +127,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = true))
 	UCapsuleComponent* CapsuleComponent;
 private:
+	// Animation
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	UDataTable* AnimDataTable;
+
 	// PlayerInfo
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	FCharacterData CharacterData;

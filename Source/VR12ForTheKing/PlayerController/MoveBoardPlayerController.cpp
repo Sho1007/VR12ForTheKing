@@ -10,6 +10,7 @@
 
 #include "Camera/CameraComponent.h"
 
+#include "../MyGameInstance.h"
 #include "../GameState/MoveBoardGameState.h"
 #include "../HUD/MoveBoardHUD.h"
 #include "../Character/MyCharacter.h"
@@ -21,10 +22,50 @@ AMoveBoardPlayerController::AMoveBoardPlayerController()
 	bIsOnWidget = false;
 }
 
-void AMoveBoardPlayerController::MoveCamera_Implementation(FTransform TargetCameraTransform)
+void AMoveBoardPlayerController::ReceiveReward_Implementation()
 {
-	GetPawn()->SetActorLocation(TargetCameraTransform.GetLocation());
-	GetPawn()->FindComponentByClass<UCameraComponent>()->SetWorldRotation(TargetCameraTransform.GetRotation());
+	UE_LOG(LogTemp, Warning, TEXT("AMoveBoardPlayerController::ReceiveReward"));
+}
+
+void AMoveBoardPlayerController::MoveLerpCamera_Implementation(AActor* TargetCamera)
+{
+	SetViewTargetWithBlend(TargetCamera, 1);
+
+	return;
+	/*FTimerManager& TM = GetWorld()->GetTimerManager();
+	TargetTransform = NewTargetTransform;
+	TM.ClearTimer(MoveLerpTimerHandle);
+	TM.SetTimer(MoveLerpTimerHandle, this, &AMoveBoardPlayerController::MoveLerpCamera_Timer, 0.01f, true);*/
+}
+
+void AMoveBoardPlayerController::MoveLerpCamera_Timer()
+{
+	GetPawn()->SetActorLocation(FMath::Lerp(GetPawn()->GetActorLocation(), TargetTransform.GetLocation(), 0.01f));
+	UCameraComponent* CC = GetPawn()->FindComponentByClass<UCameraComponent>();
+	CC->SetRelativeRotation(FMath::Lerp(CC->GetRelativeRotation(), TargetTransform.GetRotation().Rotator(), 0.01f));
+}
+
+void AMoveBoardPlayerController::PlaySequence_Implementation()
+{
+	AMoveBoardGameState* GameState = GetWorld()->GetGameState<AMoveBoardGameState>();
+	check(GameState);
+	GameState->PlaySequence();
+}
+
+void AMoveBoardPlayerController::ShowWidgetEndSequence_Implementation()
+{
+	GetHUD<AMoveBoardHUD>()->ShowWidgetEndSequence();
+}
+
+void AMoveBoardPlayerController::HideWidgetWhileSequence_Implementation()
+{
+	GetHUD<AMoveBoardHUD>()->HideWidgetWhileSequence();
+}
+
+void AMoveBoardPlayerController::MoveCamera_Implementation(AActor* TargetCamera)
+{
+	SetViewTarget(TargetCamera);
+//	GetPawn()->FindComponentByClass<UCameraComponent>()->SetRotation
 }
 
 void AMoveBoardPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -57,6 +98,11 @@ void AMoveBoardPlayerController::ReadyToPlay_Implementation()
 void AMoveBoardPlayerController::DoEventAction_Implementation(ETileEventActionType NewEventActionType)
 {
 	GetWorld()->GetGameState<AMoveBoardGameState>()->DoEventAction(this, NewEventActionType);
+}
+
+void AMoveBoardPlayerController::SetItemDetail_Implementation(FName ItemRow)
+{
+	GetHUD<AMoveBoardHUD>()->SetItemDetail(GetGameInstance<UMyGameInstance>()->FindItem(ItemRow));
 }
 
 void AMoveBoardPlayerController::DoBattleAction_Implementation(FName ActionName, AMyCharacter* DeadPlayer)

@@ -5,6 +5,11 @@
 
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GamePlayStatics.h"
+
+#include "LevelSequence.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 
 #include "../PlayerController/MoveBoardPlayerController.h"
 #include "../Character/MyCharacter.h"
@@ -45,6 +50,7 @@ void AMoveBoardGameState::BeginPlay()
 	{
 		bIsInit = true;
 		InitGameState();
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALevelSequenceActor::StaticClass(), LevelSequenceActorArray);
 	}
 }
 
@@ -67,6 +73,19 @@ void AMoveBoardGameState::CreatePlayerCharacter(APlayerController* TargetControl
 	NewPlayerCharacter->InitPlayerCharacter(NewCharacterData);
 
 	PlayerCharacterArray.Add(NewPlayerCharacter);
+}
+void AMoveBoardGameState::PlaySequence()
+{
+	//LevelSequenceActor = Cast<ALevelSequenceActor>(LevelSequenceActorArray[0]);
+	//LevelSequenceActor->GetSequencePlayer()->Play();
+	if (!GEngine) return;
+	if (HasAuthority())
+	{
+		FQualifiedFrameTime EndTime = Cast<ALevelSequenceActor>(LevelSequenceActorArray[0])->GetSequencePlayer()->GetEndTime();
+		BattleManager->OnEndSequence(EndTime.AsSeconds());
+	}
+	Cast<ALevelSequenceActor>(LevelSequenceActorArray[0])->GetSequencePlayer()->Play();
+	
 }
 void AMoveBoardGameState::InitGameState()
 {
@@ -206,7 +225,7 @@ void AMoveBoardGameState::StartGame()
 	MoveManagerComponent->Init(PlayerCharacterArray);
 	for (int i = 0; i < PlayerCharacterArray.Num(); ++i)
 	{
-		PlayerCharacterArray[i]->SetCurrentTile(HexGridManagerComponet->GetTile(0, 0));
+		PlayerCharacterArray[i]->SetCurrentTile(HexGridManagerComponet->GetTile(2, 8));
 	}
 	MoveManagerComponent->StartTurn();
 }

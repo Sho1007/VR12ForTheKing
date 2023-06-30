@@ -5,6 +5,7 @@
 
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/DataTable.h"
 
 #include "../Component/BattleComponent.h"
 #include "../Component/StatusComponent.h"
@@ -40,6 +41,8 @@ void AMyCharacter::BeginPlay()
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Magenta, FString::Printf(TEXT("AMyCharacter::BeginPlay")));
 	Super::BeginPlay();
 	SetActorTickEnabled(false);
+
+	SkeletalMeshComponent->GetAnimInstance()->OnPlayMontageNotifyBegin.AddDynamic(this, &AMyCharacter::OnMontageNotifyBegin);
 	
 	TestRandomizeStatus();
 }
@@ -96,10 +99,10 @@ void AMyCharacter::Tick(float DeltaTime)
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 }
-void AMyCharacter::ReachToDestination_Implementation()
+void AMyCharacter::ReachToDestination()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("ReachToDestination_Implementation")));
-
+	StopAnimation();
 	SetActorTickEnabled(false);
 	if (bIsMoveMode)
 	{
@@ -120,6 +123,41 @@ void AMyCharacter::InitPlayerCharacter(FCharacterData* NewCharacterData)
 	CharacterData = *NewCharacterData;
 
 	// Update CharacterData to Component
+}
+
+void AMyCharacter::PlayAnimation_Implementation(FName AnimName)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Turquoise, FString::Printf(TEXT("AMyCharacter::PlayAnimation %s"), *AnimName.ToString()));
+	if (AnimName.IsNone()) return;
+	FAnimData* AnimData = AnimDataTable->FindRow<FAnimData>(AnimName, FString(""));
+	if (AnimData)
+	{
+		SkeletalMeshComponent->GetAnimInstance()->Montage_Play(AnimData->AnimMontage);
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Turquoise, FString::Printf(TEXT("AMyCharacter::PlayAnimation : AnimDataTable is NULL")));
+	}
+}
+
+void AMyCharacter::StopAnimation_Implementation()
+{
+	SkeletalMeshComponent->GetAnimInstance()->Montage_Stop(0.3f);
+}
+
+void AMyCharacter::OnMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
+{
+	if (HasAuthority())
+	{
+		if (NotifyName == "EndAttack")
+		{
+			BattleComponent->EndAttack();
+		}
+		else if (NotifyName == "GiveDamage")
+		{
+			BattleComponent->GiveDamage();
+		}
+	}
 }
 
 AMyCharacter* AMyCharacter::GetActionTarget() const
@@ -161,7 +199,7 @@ void AMyCharacter::SetDestination(FVector NewDestination, float NewSpeed, float 
 	FVector Direction = Destination - this->GetActorLocation();
 	this->SetActorRotation(Direction.Rotation());
 
-	//this->SkeletalMeshComponent->PlayAnimation();
+	PlayAnimation(FName("Run"));
 
 	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Cyan, FString::Printf(TEXT("SetDestination Called : %s"), *Destination.ToString()));
 	SetActorTickEnabled(true);

@@ -78,6 +78,18 @@ void AMoveBoardHUD::ChangeToBattleWidget()
 	TurnWidget->ChangetoBattleTurnWidget();
 }
 
+void AMoveBoardHUD::HideWidgetWhileSequence()
+{
+	/*BattleWidget->SetVisibility(ESlateVisibility::Hidden);
+	StatusWidget->SetVisibility(ESlateVisibility::Hidden);
+	*/
+}
+void AMoveBoardHUD::ShowWidgetEndSequence()
+{
+	//BattleWidget->SetVisibility(ESlateVisibility::Visible);
+	//StatusWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
 void AMoveBoardHUD::InitTileEventWidget(AEventActor* NewTileEvent)
 {
 	TileEventWidget->InitEventWidget(NewTileEvent);
@@ -106,6 +118,11 @@ void AMoveBoardHUD::HideBattleWidget()
 void AMoveBoardHUD::ChangeToVictoryWidget()
 {
 	BattleWidget->ChangeToVictoryWidget();
+}
+
+void AMoveBoardHUD::SetItemDetail(FItem* TargetItem)
+{
+	StatusWidget->InitItemDetail(TargetItem);
 }
 
 void AMoveBoardHUD::DeleteHeartCount()

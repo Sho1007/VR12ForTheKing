@@ -66,6 +66,7 @@ void UBattleComponent::SetTargetCamera(AActor* NewTargetCamera)
 
 AActor* UBattleComponent::GetTargetCamera() const
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 600, FColor::Turquoise, FString::Printf(TEXT("TargetCamera : %s"), *TargetCamera->GetName()));
 	return TargetCamera;
 }
 
@@ -116,6 +117,14 @@ void UBattleComponent::BattleAction_Implementation()
 
 void UBattleComponent::Attack_Implementation()
 {
+}
+
+void UBattleComponent::EndAttack()
+{
+	//go back to BaseTransform position after give damage
+	FQuat GoBackQuat(0.0f, 0.0f, 1.0f, 0.0f);// use to change character rotation
+	GetOwner()->SetActorRotation(BaseTransform.GetRotation() * GoBackQuat, ETeleportType::None);
+	GetOwner<AMyCharacter>()->SetDestination(BaseTransform.GetLocation(), 0.0, 10.0); // fix shaking problem by setting Destionation Radius larger
 }
 
 
@@ -194,8 +203,12 @@ bool UBattleComponent::MeleeAttack()
 
 	UE_LOG(LogTemp, Warning, TEXT("ActionTargetName %s"), *ActionTarget->GetName());
 	bGoToTarget = true;
+
 	AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
-	NewCharacter->SetDestination(ActionTarget->GetActorLocation(), 0.0, 10.0);
+
+	FVector Direction = NewCharacter->GetActorLocation() - ActionTarget->GetActorLocation();
+	Direction.Normalize();
+	NewCharacter->SetDestination(ActionTarget->GetActorLocation() + Direction * 200.0f, 0.0, 10.0);
 
 	return true;
 }
@@ -327,7 +340,7 @@ bool UBattleComponent::IsDead()
 
 void UBattleComponent::DoAction_Implementation(FName ActionName, AMyCharacter* DeadPlayer)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleComponent::DoAction")));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleComponent::DoAction")));
 	if (this->FactionType == EFactionType::Enemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnemyAction %s"), *TargetActionName.ToString());
@@ -353,7 +366,7 @@ void UBattleComponent::DoAction_Implementation(FName ActionName, AMyCharacter* D
 
 void UBattleComponent::DoActionWork()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleComponent::DoActionWork, %s"), *TargetActionName.ToString()));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, FString::Printf(TEXT("UBattleComponent::DoActionWork, %s"), *TargetActionName.ToString()));
 
 	if (FactionType == EFactionType::Player)
 	{
@@ -379,18 +392,14 @@ void UBattleComponent::ReachToDestination()
 	//UE_LOG(LogTemp, Warning, TEXT("ReachToDestination"));
 	if (bGoToTarget)
 	{
-
+		AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
 		bGoToTarget = false;
 
 		//give damage to actiontarget
-		GiveDamage();
-
-		//go back to BaseTransform position after give damage
-
-		AMyCharacter* NewCharacter = Cast<AMyCharacter>(GetOwner());
-		FQuat GoBackQuat(0.0f, 0.0f, 1.0f, 0.0f);// use to change character rotation
-		GetOwner()->SetActorRotation(BaseTransform.GetRotation() * GoBackQuat, ETeleportType::None);
-		NewCharacter->SetDestination(BaseTransform.GetLocation(), 0.0, 10.0); // fix shaking problem by setting Destionation Radius larger
+		if (TargetActionName == "NormalAttack")
+		{
+			NewCharacter->PlayAnimation(FName("Attack_Sword"));
+		}
 	}
 	else
 	{

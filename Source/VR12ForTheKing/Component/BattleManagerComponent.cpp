@@ -76,13 +76,30 @@ void UBattleManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME(UBattleManagerComponent, CurrentTurnCharacter);
 }
 
+void UBattleManagerComponent::OnEndSequence(double EndTime)
+{
+	GetWorld()->GetTimerManager().SetTimer(SequenceTimerHandle, this, &UBattleManagerComponent::OnEndSequenceWork, EndTime, false);
+}
+
+void UBattleManagerComponent::OnEndSequenceWork()
+{
+	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+	{
+		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
+		check(PC);
+
+		PC->ShowWidgetEndSequence();
+	}
+
+	MoveToNextUnitTurn();
+}
+
 void UBattleManagerComponent::PlayLevelSequnce()
 {
-	TArray<AActor*> LevelSequenceActorArray;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALevelSequenceActor::StaticClass(), LevelSequenceActorArray);
+	
 
-	LevelSequenceActor = Cast<ALevelSequenceActor>(LevelSequenceActorArray[0]);
-	LevelSequenceActor->GetSequencePlayer()->Play();
+	//LevelSequenceActor = Cast<ALevelSequenceActor>(LevelSequenceActorArray[0]);
+	//LevelSequenceActor->GetSequencePlayer()->Play();
 }
 
 void UBattleManagerComponent::PlayAnimation(FName TargetAnimName)
@@ -203,52 +220,7 @@ void UBattleManagerComponent::InitBattle(AActor* BattleTile)
 	TargetPlayerArray = PlayerCharacterArray;
 	//DebugInfo();
 
-
-	SpawnEnemy();
-	TeleportCharacter();
-
-	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
-	{
-		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
-		check(PC);
-		PC->MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
-	}
-	
-	CalculateTurn();
-	
-	for (FConstPlayerControllerIterator Iter = GetWorld()->GetPlayerControllerIterator();
-		Iter; ++Iter)
-	{
-		AMoveBoardPlayerController* PC = CastChecked<AMoveBoardPlayerController>(Iter->Get());
-		PC->SetBattleTurnArray(UseBattleTurnArray);
-	}
-	/*AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
-	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));
-	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->SetTurnArray(UseBattleTurnArray);*/
-	
-
-	for (int i = 0; i < BattleTurnArray.Num(); ++i)
-	{
-		if (UseBattleTurnArray[i] != nullptr)
-		{
-			FString CharacterName = BattleTurnArray[i]->GetName();
-
-			UStatusComponent* StatusComponent = Cast<UStatusComponent>(BattleTurnArray[i]->FindComponentByClass(UStatusComponent::StaticClass()));
-			UBattleComponent* BattleComponent = Cast<UBattleComponent>(BattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
-
-			EFactionType CharacterFaction = BattleComponent->GetFactionType();
-
-			FString CharacterFactionName = UEnum::GetDisplayValueAsText(CharacterFaction).ToString();
-			UE_LOG(LogTemp, Warning, TEXT("%s  %s  MaxHP%d  CurrentHP%d"), *CharacterFactionName, *CharacterName, StatusComponent->GetMaxHP(), StatusComponent->GetCurrentHP());
-		}
-		else
-		{
-			continue;
-		}
-	}
-
-	//InitUnitTurn();// check whether first index of BattleTurnIndex is Enemy or not and StartUnitTurn;
-	MoveToNextUnitTurn();
+	MoveToNextStage();
 	return;
 }
 
@@ -290,6 +262,30 @@ void UBattleManagerComponent::SpawnEnemy_Implementation()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, FString::Printf(TEXT("UBattleManagerComponent::SpawnEnemy")));
 	int32 SpawnEnemyCount = 0;
+
+	for (int i = 0; i < BattleMapArray[MapIndex]->GetEnemySpawnPosition().Num(); ++i)
+	{
+		if (SpawnEnemyCount + SpawnEnemyIndex >= EnemyClassArray.Num())
+		{
+			SpawnEnemyIndex += SpawnEnemyCount;
+			return;
+		}
+		if (BattleMapArray[MapIndex]->GetEnemySpawnPosition()[i])
+		{
+			FTransform EnemySpawnTransform = BattleMapArray[MapIndex]->GetEnemySpawnPosition()[i]->GetActorTransform();
+			AMyCharacter* EnemyCharacter = GetWorld()->SpawnActor<AMyCharacter>(EnemyClassArray[SpawnEnemyCount + SpawnEnemyIndex], EnemySpawnTransform);
+			checkf(EnemyCharacter != nullptr, TEXT("UBattleManagerComponent::SpawnEnemy : EnemyCharacter is not spawned"));
+			SpawnEnemyCount++;
+			EnemyCharacterArray.Add(EnemyCharacter);
+			EnemyCharacter->SetMoveMode(false);
+			UBattleComponent* BattleComponent = Cast<UBattleComponent>(EnemyCharacter->GetComponentByClass(UBattleComponent::StaticClass()));
+			BattleComponent->SetBaseTransform(EnemySpawnTransform);
+			BattleComponent->SetTargetCamera(BattleMapArray[MapIndex]->GetEnemySpawnPosition()[i]->GetCameraPosition());
+		}
+	}
+
+	SpawnEnemyIndex += SpawnEnemyCount + 1;
+	return;
 
 	for (; SpawnEnemyCount < 3; ++SpawnEnemyCount)
 	{
@@ -343,7 +339,7 @@ bool UBattleManagerComponent::TeleportCharacter()
 
 void UBattleManagerComponent::MoveLerpCamera_Implementation(FTransform TargetCameraTransform)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("UBattleManagerComponent::MoveLerpCamera")));
+	
 
 	/* From : 
 	APlayerController* LocalPlayerController = GEngine->GetFirstLocalPlayerController(GetWorld());
@@ -351,6 +347,8 @@ void UBattleManagerComponent::MoveLerpCamera_Implementation(FTransform TargetCam
 
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	APawn* Pawn = PC->GetPawn();
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 600, FColor::Yellow, FString::Printf(TEXT("UBattleManagerComponent::MoveLerpCamera %s -> %s"), *Pawn->GetActorRotation().ToString(), *TargetCameraTransform.GetRotation().ToString()));
 	
 	TargetLocation = TargetCameraTransform.GetLocation();
 	TargetRotation = TargetCameraTransform.GetRotation().Rotator();
@@ -366,7 +364,7 @@ void UBattleManagerComponent::LerpTimerFunction()
 	APawn* Pawn = PC->GetPawn();
 
 	Pawn->SetActorLocation(FMath::Lerp(Pawn->GetActorLocation(), TargetLocation, 0.01f));
-	Pawn->FindComponentByClass<UCameraComponent>()->SetRelativeRotation(FMath::Lerp(Pawn->FindComponentByClass<UCameraComponent>()->GetRelativeRotation(), TargetRotation, 0.01f));
+	Pawn->SetActorRotation(FMath::Lerp(Pawn->GetActorRotation(), TargetRotation, 0.01f));
 	
 	if (Pawn->GetActorLocation() == TargetLocation)
 	{
@@ -457,9 +455,19 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UBattleManagerComponent::MoveToNextUnitTurn"));
 
-	checkf(UseBattleTurnArray.Num() != 0, TEXT("UsebattleTurnArray is empty"));
+	if (DeadEnemyCount == EnemyCharacterArray.Num())
+	{
+		return EndBattle(); // Check Victory;
+	}
+	if (DeadPlayerCount == PlayerCharacterArray.Num())
+	{
+		
+		return GameOver(); // Check GameOver;
+	}
 
+	checkf(UseBattleTurnArray.Num() != 0, TEXT("UsebattleTurnArray is empty"));
 	CurrentTurnCharacter = UseBattleTurnArray[0];
+	
 
 	UseBattleTurnArray.Add(CurrentTurnCharacter);
 	UseBattleTurnArray.RemoveAt(0);
@@ -472,7 +480,6 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 		UseBattleTurnArray.RemoveAt(0);
 		// Todo : Do Next Round
 	}
-
 	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
 	{
 		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
@@ -480,13 +487,19 @@ void UBattleManagerComponent::MoveToNextUnitTurn()
 		PC->AddUnitToImageArray(UseBattleTurnArray);
 	}
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("%s's Turn"), *CurrentTurnCharacter->GetName()));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 600, FColor::Turquoise, FString::Printf(TEXT("%s's Turn"), *CurrentTurnCharacter->GetName()));
 
 	UBattleComponent* BattleComponent = CurrentTurnCharacter->FindComponentByClass<UBattleComponent>();
 	check(BattleComponent);
 
 	// Maybe to Fix it
-	MoveLerpCamera(BattleComponent->GetTargetCamera()->GetActorTransform());
+	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+	{
+		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
+		check(PC);
+		PC->MoveLerpCamera(BattleComponent->GetTargetCamera());
+	}
+	//MoveLerpCamera(BattleComponent->GetTargetCamera()->GetActorTransform());
 	
 	if (BattleComponent->GetFactionType() == EFactionType::Player)
 	{
@@ -554,12 +567,16 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray(AMyCharacter* TargetCharac
 		UInventoryComponent* DeadEnemyInventoryComponent = Cast<UInventoryComponent>(TargetCharacter->FindComponentByClass(UInventoryComponent::StaticClass()));
 		int32 RandomRewardNum = FMath::RandRange(0, DeadEnemyInventoryComponent->GetItemArray().Num()-1); // Get Random Index In ItemArray
 		TArray<FItemInstance>RewardTempArray = DeadEnemyInventoryComponent->GetItemArray();
-		RewardArray.Add(RewardTempArray[RandomRewardNum]);
+		if (RewardTempArray[RandomRewardNum].ItemRow.IsNone() == false)
+		{
+			RewardArray.Add(RewardTempArray[RandomRewardNum]);
+		}
 
+		/* Debug Log
 		for (int i = 0; i < RewardArray.Num(); ++i)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("ReWardArray %s"), *RewardArray[i].ItemRow.ToString());
-		}
+		}*/
 	
 	}
 
@@ -582,16 +599,6 @@ void UBattleManagerComponent::RemoveDeadUnitFromArray(AMyCharacter* TargetCharac
 			++i;
 			//UE_LOG(LogTemp, Warning, TEXT("%d "), i);
 		}
-	}
-
-	if (DeadEnemyCount == EnemyCharacterArray.Num())
-	{
-		
-		EndBattle(); // Check Victory
-	}
-	if (DeadPlayerCount == PlayerCharacterArray.Num())
-	{
-		GameOver(); // Check GameOver
 	}
 
 
@@ -735,6 +742,8 @@ void UBattleManagerComponent::ReceiveReward()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ReceiveReward Called"));
 
+
+
 	if (UseBattleTurnArray[0] != nullptr)
 	{
 		
@@ -778,7 +787,6 @@ void UBattleManagerComponent::ReceiveReward()
 			MoveToNextStage();
 		}
 	}
-
 }
 
 AMyCharacter* UBattleManagerComponent::GetCurrentTurnCharacter() const
@@ -792,31 +800,113 @@ void UBattleManagerComponent::EndBattle()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Victory!!"));
 
+	if (RewardArray.Num() > 0)
+	{
+		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+		{
+			AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
+			check(PC);
+			PC->SetItemDetail(RewardArray[0].ItemRow);
+			PC->ChangeToVictoryWidget();
+		}
+	}
+	else
+	{
+		MoveToNextStage();
+	}
+
 	// From :
 	/*BattleWidget->HideWidget();
 	CreateVictoryWidget();*/
-	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
-	{
-		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
-		check(PC);
-		PC->ChangeToVictoryWidget();
-	}
+	
 }
 
 void UBattleManagerComponent::MoveToNextStage()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UBattleManagerComponent::MoveToNextStage"));
+	if (BattleMapArray[MapIndex]->MoveNextSceneIndex() == false)
+	{
+		// Ended
+		for (int i = 0; i < PlayerCharacterArray.Num(); ++i)
+		{
+			FVector TeleportLocation = PlayerCharacterArray[i]->GetCurrentTile()->GetActorLocation();
+			// Todo : Get Character Half Height and Plus it
+			TeleportLocation.Z += 100;
+			PlayerCharacterArray[i]->SetActorLocationAndRotation(TeleportLocation, FRotator(0,0,0).Quaternion());
+		}
+
+		return;
+	}
+	SpawnEnemy();
+	TeleportCharacter();
+
+	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+	{
+		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
+		check(PC);
+
+		PC->HideWidgetWhileSequence();
+		PC->PlaySequence();
+	}
+
+	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+	{
+		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
+		check(PC);
+		PC->MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera());
+	}
+
+	CalculateTurn();
+
+	for (FConstPlayerControllerIterator Iter = GetWorld()->GetPlayerControllerIterator();
+		Iter; ++Iter)
+	{
+		AMoveBoardPlayerController* PC = CastChecked<AMoveBoardPlayerController>(Iter->Get());
+		PC->SetBattleTurnArray(UseBattleTurnArray);
+	}
+
+	/*AMyGameModeBase* GameModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+	checkf(GameModeBase != nullptr, TEXT("GameModeBase doesn't exist"));
+	GameModeBase->GetTurnWidget()->GetBattleTurnWidget()->SetTurnArray(UseBattleTurnArray);*/
+
+
+	/*for (int i = 0; i < BattleTurnArray.Num(); ++i)
+	{
+		if (UseBattleTurnArray[i] != nullptr)
+		{
+			FString CharacterName = BattleTurnArray[i]->GetName();
+
+			UStatusComponent* StatusComponent = Cast<UStatusComponent>(BattleTurnArray[i]->FindComponentByClass(UStatusComponent::StaticClass()));
+			UBattleComponent* BattleComponent = Cast<UBattleComponent>(BattleTurnArray[i]->FindComponentByClass(UBattleComponent::StaticClass()));
+
+			EFactionType CharacterFaction = BattleComponent->GetFactionType();
+
+			FString CharacterFactionName = UEnum::GetDisplayValueAsText(CharacterFaction).ToString();
+			UE_LOG(LogTemp, Warning, TEXT("%s  %s  MaxHP%d  CurrentHP%d"), *CharacterFactionName, *CharacterName, StatusComponent->GetMaxHP(), StatusComponent->GetCurrentHP());
+		}
+		else
+		{
+			continue;
+		}
+	}*/
+
+	//InitUnitTurn();// check whether first index of BattleTurnIndex is Enemy or not and StartUnitTurn;
+	
+
+
+	// --------------------------------------------------------------------------------------- //
+	/*UE_LOG(LogTemp, Warning, TEXT("UBattleManagerComponent::MoveToNextStage"));
 	BattleMapArray[MapIndex]->MoveNextSceneIndex();
 	TeleportCharacter();
 	SpawnEnemy();
+
+
 	GetWorld()->GetTimerManager().ClearTimer(CameraLerpTimerHandle);
-	
 	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
 	{
 		AMoveBoardPlayerController* PC = Cast<AMoveBoardPlayerController>(Iter->Get());
 		check(PC);
 		PC->MoveCamera(BattleMapArray[MapIndex]->GetNeutralSideCamera()->GetActorTransform());
-	}
+	}*/
 }
 
 void UBattleManagerComponent::GameOver()

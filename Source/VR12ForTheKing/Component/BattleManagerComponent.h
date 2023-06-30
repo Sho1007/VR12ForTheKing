@@ -29,6 +29,10 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
+	void OnEndSequence(double EndTime);
+	UFUNCTION()
+	void OnEndSequenceWork();
+
 	UFUNCTION(CallinEditor)
 	void PlayLevelSequnce();
 
@@ -83,6 +87,7 @@ private:
 	TSubclassOf<AActor> SpawnTestActor;
 
 	// Sequence Var
+	FTimerHandle SequenceTimerHandle;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	ALevelSequenceActor* LevelSequenceActor;
 

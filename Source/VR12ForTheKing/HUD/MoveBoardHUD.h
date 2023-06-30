@@ -16,6 +16,8 @@ class AEventActor;
 class AMyCharacter;
 class UBattleWidget;
 class UTurnWidget;
+
+struct FItem;
 UCLASS()
 class VR12FORTHEKING_API AMoveBoardHUD : public AHUD
 {
@@ -28,6 +30,10 @@ private:
 	void InitHUD();
 
 public:
+	// Sequence
+	void HideWidgetWhileSequence();
+	void ShowWidgetEndSequence();
+
 	// TileEventWidget
 	void InitTileEventWidget(AEventActor* NewTileEvent);
 
@@ -40,6 +46,10 @@ public:
 	void InitBattleWidget(AMyCharacter* TargetCharacter);
 	void HideBattleWidget();
 	void ChangeToVictoryWidget();
+
+	// StatusWidget
+
+	void SetItemDetail(FItem* TargetItem);
 
 	// TurnWidget
 	void DeleteHeartCount();

@@ -65,6 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 		void Attack();
 	void Attack_Implementation();
+	
+	UFUNCTION()
+	void EndAttack();
 
 	UFUNCTION(BlueprintCallable)
 		bool MeleeAttack();

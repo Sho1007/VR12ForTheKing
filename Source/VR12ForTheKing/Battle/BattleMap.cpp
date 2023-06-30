@@ -26,7 +26,7 @@ const TArray<ABattleCharacterSpawnPosition*>& ABattleMap::GetPlayerSpawnPosition
 	return BattleSceneInfoArray[CurrentSceneIndex].PlayerSpawnPosition;
 }
 
-const AActor* ABattleMap::GetNeutralSideCamera() const
+AActor* ABattleMap::GetNeutralSideCamera() const
 {
 	return BattleSceneInfoArray[CurrentSceneIndex].NeutralSideCamera;
 }

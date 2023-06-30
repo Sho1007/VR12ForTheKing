@@ -3,7 +3,9 @@
 #include "../Widget/BattleWidget.h"
 
 #include "Components/HorizontalBox.h"
+#include "Kismet/GameplayStatics.h"
 
+#include "../MyGameInstance.h"
 #include "../Character/MyCharacter.h"
 #include "../Component/BattleComponent.h"
 #include "ActionWidget.h"
@@ -50,6 +52,8 @@ void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 		HB_Action->AddChildToHorizontalBox(ActionWidget);
 	}
 
+	
+
 
 	/*AMyGameModeBase* NewGamModeBase = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 	UBattleManagerComponent* NewBattleManagerComponent =
@@ -72,6 +76,7 @@ void UBattleWidget::InitWidget(AMyCharacter* NewTargetCharacter)
 	//}
 
 	ShowWidget();
+	WBP_VictoryWidget->InitWidget();
 	WBP_VictoryWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
@@ -176,11 +181,17 @@ void UBattleWidget::CoinTimerFunction()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Success"));
 	    NewChanceCoinSlot->SetSwitchCoinImage(1);
+		GetGameInstance<UMyGameInstance>()->PlaySound2D("ChanceCheckSuccessed");
+		
 	}
 	else if(TargetChanceArray[ChanceCoinBoxIndex] == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Fail"));
 		NewChanceCoinSlot->SetSwitchCoinImage(2);
+		if (ChanceCoinBoxIndex < CoinChanceBox->GetChildrenCount()-1)
+		{
+			GetGameInstance<UMyGameInstance>()->PlaySound2D("ChanceCheckFailed");
+		}
 	}
 	
 	ChanceCoinBoxIndex++;

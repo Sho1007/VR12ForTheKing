@@ -24,9 +24,31 @@ protected:
 public:
 	AMoveBoardPlayerController();
 
+	UFUNCTION(Server, Reliable)
+	void ReceiveReward();
+	void ReceiveReward_Implementation();
+
 	UFUNCTION(Client, Reliable)
-	void MoveCamera(FTransform TargetCameraTransform);
-	void MoveCamera_Implementation(FTransform TargetCameraTransform);
+	void MoveLerpCamera(AActor* TargetCamera);
+	void MoveLerpCamera_Implementation(AActor* TargetCamera);
+
+	void MoveLerpCamera_Timer();
+
+	UFUNCTION(Client, Reliable)
+	void PlaySequence();
+	void PlaySequence_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void ShowWidgetEndSequence();
+	void ShowWidgetEndSequence_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void HideWidgetWhileSequence();
+	void HideWidgetWhileSequence_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void MoveCamera(AActor* TargetCamera);
+	void MoveCamera_Implementation(AActor* TargetCamera);
 
 	UFUNCTION(Server, Reliable)
 	void ReadyToPlay();
@@ -36,6 +58,12 @@ public:
 	void DoEventAction(ETileEventActionType NewEventActionType);
 	void DoEventAction_Implementation(ETileEventActionType NewEventActionType);
 	
+	// Battle 
+
+	UFUNCTION(Client, Reliable)
+	void SetItemDetail(FName ItemRow);
+	void SetItemDetail_Implementation(FName ItemRow);
+
 	UFUNCTION(Server, Reliable)
 	void DoBattleAction(FName ActionName, AMyCharacter* DeadPlayer);
 	void DoBattleAction_Implementation(FName ActionName, AMyCharacter* DeadPlayer);
@@ -92,6 +120,10 @@ private:
 private:
 	bool bIsInit;
 	bool bIsOnWidget;
+
+	// Move Lerp
+	FTransform TargetTransform;
+	FTimerHandle MoveLerpTimerHandle;
 
 	UPROPERTY(Replicated, meta = (AllowPrivateAccess = true))
 	AMyCharacter* ActionTarget;

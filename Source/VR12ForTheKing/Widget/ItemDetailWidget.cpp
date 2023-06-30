@@ -10,6 +10,7 @@
 #include "Components/Image.h"
 #include "Components/VerticalBox.h"
 
+#include "../MyGameInstance.h"
 #include "../Component/InventoryComponent.h"
 #include "../Event/TileEventManager.h"
 #include "../Component/BattleComponent.h"
@@ -45,11 +46,9 @@ void UItemDetailWidget::InitWidget(FItem* NewItemInfo)
 	if (NewItemInfo->ItemType == EItemType::EQUIPMENT && NewItemInfo->EquipmentType == EEquipmentType::WEAPON)
 	{
 		VB_WeaponDiscription->SetVisibility(ESlateVisibility::HitTestInvisible);
-		UTileEventManager* TileEventManager = Cast<UTileEventManager>(GetWorld()->GetAuthGameMode()->FindComponentByClass(UTileEventManager::StaticClass()));
-		checkf(TileEventManager != nullptr, TEXT("GameMode has not TileEventManager Component"));
 
 		FName ActionRow = NewItemInfo->ActionArray[0];
-		FAction* ActionInfo = TileEventManager->FindActionInfo(ActionRow);
+		FAction* ActionInfo = GetGameInstance<UMyGameInstance>()->FindAction(ActionRow);
 
 		checkf(ActionInfo != nullptr, TEXT("ActionInfo is nullptr"));
 

@@ -29,6 +29,9 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	// Sequence
+	void PlaySequence();
+
 	// Move
 	void InitGameState();
 	void SetReadyPlayer();
@@ -67,6 +70,9 @@ private:
 	bool bIsInit;
 	bool bIsLoaded;
 	bool bIsStarted;
+
+	// Sequence
+	TArray<AActor*> LevelSequenceActorArray;
 
 	UPROPERTY(meta = (AllowPrivateAccess = true))
 	int32 ReadyPlayerCount;

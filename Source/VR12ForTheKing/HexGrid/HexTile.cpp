@@ -45,7 +45,7 @@ void AHexTile::BeginPlay()
 void AHexTile::NotifyActorBeginCursorOver()
 {
 	Super::NotifyActorBeginCursorOver();
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("AHexTile::NotifyActorBeginCursorOver")));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("AHexTile::NotifyActorBeginCursorOver")));
 	GetWorld()->GetFirstPlayerController<AMoveBoardPlayerController>()->SetEndTile(this);
 }
 

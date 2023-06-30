@@ -146,7 +146,7 @@ void UMoveManagerComponent::MoveCharacter()
 		}
 		else
 		{
-			CurrentTurnCharacter->SetDestination(NextTile->GetActorLocation(), 500, 30);
+			CurrentTurnCharacter->SetDestination(NextTile->GetActorLocation(), 500, 50);
 		}
 	}
 	else

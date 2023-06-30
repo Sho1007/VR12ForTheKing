@@ -17,10 +17,13 @@ class VR12FORTHEKING_API UVictoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	UVictoryWidget(const FObjectInitializer& ObjectInitializer);
+
 	UFUNCTION(BlueprintCallable)
 		void AddItemToItemListBox(UWidget* NewVictoryWidgetSlot);
 
 	void InitWidget();
+
 	UFUNCTION()
 	void OnClickedReceiveButton();
 private:
